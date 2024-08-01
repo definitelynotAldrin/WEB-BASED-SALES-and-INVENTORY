@@ -1,3 +1,6 @@
+// -------------------------------pop up stocks edit----------------------------------
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const editbtns = document.querySelectorAll('.btn-edit');
     const closeBtns = document.querySelectorAll('.btn-close');
@@ -28,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+// -------------------------------delete confirmation-------------------------------------
 
 
 document.addEventListener('DOMContentLoaded', function() {

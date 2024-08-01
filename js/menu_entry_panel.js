@@ -1,3 +1,5 @@
+// -----------------------------menu entry category---------------------------------------
+
 document.addEventListener('DOMContentLoaded', function() {
     const menuCategory = document.getElementById('menu_insert_category');
     const dishForm = document.querySelector('.inserting-dish-form');
@@ -24,3 +26,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
