@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kg Selector</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="kg-selector">
+        <div class="kg-box" data-kg="1">1 kg</div>
+        <div class="kg-box" data-kg="2">2 kg</div>
+        <div class="kg-box" data-kg="3">3 kg</div>
+        <div class="kg-box" data-kg="5">5 kg</div>
+    </div>
+
+    <form id="orderForm" action="order.php" method="POST">
+        <input type="hidden" name="kilogram" id="kilogram">
+        <label for="kilogram">Selected Kilogram:</label>
+        <input type="text" id="selectedKg" disabled>
+        <button type="submit">Submit Order</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const kgBoxes = document.querySelectorAll('.kg-box');
+    const hiddenKgInput = document.getElementById('kilogram');
+    const displayKgInput = document.getElementById('selectedKg');
+
+    kgBoxes.forEach(box => {
+        box.addEventListener('click', function() {
+            // Remove 'selected' class from all boxes
+            kgBoxes.forEach(b => b.classList.remove('selected'));
+            
+            // Add 'selected' class to the clicked box
+            this.classList.add('selected');
+            
+            // Get the kilogram value from the data attribute
+            const kgValue = this.getAttribute('data-kg');
+            
+            // Set the hidden input and display input values
+            hiddenKgInput.value = kgValue;
+            displayKgInput.value = `${kgValue} kg`;
+
+            // Log the selected kilogram value to the console
+            console.log(`Selected kilogram: ${kgValue}`);
+        });
+    });
+});
+
+    </script>
+</body>
+<style>
+/* Style for the kilogram selector boxes */
+.kg-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.kg-box {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.kg-box:hover {
+    background-color: #e0e0e0;
+    border-color: #888;
+}
+
+.kg-box.selected {
+    background-color: #d0d0d0;
+    border-color: #666;
+}
+
+</style>
+</html>

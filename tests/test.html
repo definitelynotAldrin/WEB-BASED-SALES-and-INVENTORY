@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Navbar Example</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-brand">Brand</div>
+        <button class="navbar-toggle" aria-label="Toggle navigation">
+            &#9776;
+        </button>
+        <nav class="navbar-menu">
+            <ul>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#settings">Settings</a></li>
+                <li><a href="#profile">Profile</a></li>
+                <li><a href="#logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="content">
+        <!-- Main content here -->
+    </main>
+    <div class="input-container">
+        <input type="text" id="weight" placeholder="Enter weight" />
+        <span class="unit">kg</span>
+    </div>
+    
+   
+</body>
+<style>
+    body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    justify-content: space-between;
+}
+
+.navbar-brand {
+    font-size: 1.5em;
+}
+
+.navbar-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: none; /* Initially hidden */
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.navbar-menu ul li {
+    margin-right: 20px;
+}
+
+.navbar-menu ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.input-container {
+    position: relative;
+    display: inline-block;
+}
+
+.input-container input {
+    padding-right: 40px; /* Adjust this value based on the width of the unit label */
+    box-sizing: border-box;
+}
+
+.input-container .unit {
+    position: absolute;
+    right: 10px; /* Adjust this value for proper spacing */
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #999; /* Optional: Adjust the color as needed */
+}
+
+@media (max-width: 768px) {
+    .navbar-toggle {
+        display: block; /* Show toggle button on mobile */
+    }
+
+    .navbar-menu {
+        display: none; /* Hide menu initially */
+        flex-direction: column;
+        background-color: #333;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+    }
+
+    .navbar-menu ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar-menu ul li {
+        margin: 0;
+        padding: 10px;
+    }
+
+    .navbar-menu.show {
+        display: flex; /* Show menu when toggle is clicked */
+    }
+}
+
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const navbarToggle = document.querySelector('.navbar-toggle');
+    const navbarMenu = document.querySelector('.navbar-menu');
+
+    navbarToggle.addEventListener('click', function() {
+        navbarMenu.classList.toggle('show');
+    });
+});
+
+</script>
+</html>
