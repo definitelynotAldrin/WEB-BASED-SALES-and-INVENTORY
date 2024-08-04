@@ -755,10 +755,19 @@ select{
  
 }
 
+@media (max-width: 990px){
+    .bottom-menu{
+        position: absolute;
+        bottom: 2%;
+        width: 100%;
+        padding-right: 4rem;
+    }
+
+}
+
 
 
 @media screen and (min-width: 769px) and (max-width: 990px){
-  
 
     .menu-card-content{
         flex-direction: row;
