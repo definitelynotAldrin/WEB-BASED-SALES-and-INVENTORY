@@ -224,7 +224,7 @@
     box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
     margin-top: 3rem;
     display: none;
-    z-index: 1;
+    z-index: 9999;
 }
 
 .notification-title{
@@ -291,10 +291,11 @@
     align-self: normal;
     padding: 1rem 4rem;
     gap: 0.5rem;
+    position: relative;
 }
 
 .first-panel-section{
-    width: 55%;
+    width: 50%;
     border: 1px solid rgba(0, 0, 0, 0.1);
     background: var(--secondary-white);
     padding: 1.5rem 2rem;
@@ -385,10 +386,10 @@
     gap: 0.2rem;
 }
 
-.card-buttons button, .serve-text{
+.card-buttons button, .card-text{
     padding: 0.3rem;
     width: 100%;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     font-weight: 500;
     text-transform: capitalize;
     white-space: nowrap;
@@ -397,50 +398,59 @@
     outline: none;
     cursor: pointer;
     text-align: center;
-}
-
-.btn-view{
-    background-color: var(--blue);
     color: var(--white);
 }
 
-.btn-view:active{
+
+
+.btn-settle{
+    background-color: var(--blue);
+}
+
+.btn-settle:active{
     background-color: #03396b;
 }
 
-.btn-serve, .serve-text{
+.btn-credit{
+    background-color: var(--red);
+}
+
+.btn-credit:active{
+    background-color: #860505;
+}
+
+.paid{
     background-color: #06D001;
-    color: var(--white);
 }
 
-.btn-serve:active{
-    background-color: #048f02;
+.credit{
+    background-color: var(--red);
 }
-
 
 .popup-card-container{
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 500px;
+    width: 950px;
     background-color: var(--white);
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 6px;
     padding: 30px;
+    z-index: 3;
     display: none;
 }
 
 .popup-card-header{
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     margin-bottom: 1rem;
 }
 
-.popup-card-header h1{
-    font-size: 1.2rem;
+.popup-order-title{
+    font-size: 1.3rem;
     color: rgba(0, 0, 0, 0.7);
+    text-transform: capitalize;
 }
 
 .popup-card-header i{
@@ -449,33 +459,53 @@
     cursor: pointer;
 }
 
-.popup-card-textarea{
+.popup-card-header-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.popup-card-header-col{
     display: flex;
     flex-direction: column;
 }
 
-.card-textarea h3{
-    font-size: 0.9rem;
-    font-weight: 500;
+.popup-order-name,
+.popup-order-number{
     text-transform: capitalize;
+    font-size: 1rem;
+    font-weight: 600;
     color: rgba(0, 0, 0, 0.7);
 }
 
-.card-textarea textarea{
+.popup-card-content{
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.popup-card-content-title{
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: var(--dark);
+    margin-bottom: 1rem;
+}
+
+.popup-card-table-container,
+.popup-card-payment-container{
     width: 100%;
     border: 1px solid rgba(0, 0, 0, 0.2);
-    outline: none;
-    color: var(--darker);
-    background-color: transparent;
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding: 0.7rem;
     border-radius: 4px;
-    text-align: left;
+    padding: 20px;
+}
+
+.popup-card-payment-container{
+    max-width: 400px;
 }
 
 .popup-card-table{
-    max-height: 180px;
+    max-height: 240px;
     overflow: auto;
 }
 
@@ -487,261 +517,118 @@ table {
 th, td {
     padding: 10px 0;
     text-align: left;
+    white-space: nowrap;
 }
 
 th{
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     text-transform: capitalize;
     color: rgba(0, 0, 0, 0.5);
+    padding: 0;
+    padding-bottom: 10px;
 }
 
 td{
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--dark);
+    color: rgba(0, 0, 0, 0.5);
 }
 
-/* .popup_order_quantity{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px;
-    background-color: var(--white);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
-    padding: 30px;
-    display: none;
+.popup-card-group-container{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.popup-header{
+.popup-card-group{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.popup-card-groups{
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 0.5rem;
 }
 
-.popup-header h1{
+.popup-card-group label{
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.popup-card-input-group{
+    display: flex;
+    align-items: center;
+    background-color: var(--semi-white);
+    padding: 8px 10px;
+    border-radius: 4px;
+}
+
+
+.popup-card-input-group input{
+    width: 100%;
+    padding: 5px;
+    padding-left: 0;
+    border: none;
+    outline: none;
+    background: transparent;
     font-size: 1.3rem;
     font-weight: 600;
     color: rgba(0, 0, 0, 0.7);
 }
 
-.popup-header i{
-    font-size: 3rem;
-    font-weight: 600;
-    color: var(--light-green);
-} */
 
-
-.card-group{
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.card-boxes{
-    width: 75px;
-    padding: 1rem;
-    background-color: var(--secondary-white);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1 1 75px;
-    margin: 2px;
-    cursor: pointer;
-}
-
-.card-boxes h3{
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--darker);
-}
-
-.card-boxes span{
-    font-size: 0.7rem;
-    font-weight: 500;
-    color: var(--dark);
-}
-
-.menu-item-quantity.active{
-    background-color: var(--light-green);
-    border-color: var(--darker);
-}
-
-
-.card-input-field{
-    flex-basis: 162px;
-    flex-direction: row;
-    gap: 0.5rem;
-}
-
-.card-input-field input{
+.popup-card-group textarea{
     width: 100%;
-    padding: 7px;
+    padding: 5px;
     outline: none;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: var(--semi-white);
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--dark);
-}
-
-.card-button-group{
-    margin-top: 1rem;
-}
-
-.card-button-group button{
-    font-size: 1rem;
-    font-weight: 500;
-    text-transform: capitalize;
-    color: var(--white);
-    background-color: var(--light-green);
-    padding: 0.7rem;
-    width: 100%;
     border-radius: 4px;
-    border: none;
-    outline: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    cursor: pointer;
-}
-
-.second-panel-section{
-    width: 45%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: var(--secondary-white);
-    padding: 1.5rem 2rem;
-    border-radius: 6px;
-}
-
-
-.table-container{
-    max-height: 350px;
-    overflow: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 10px 0;
-    text-align: left;
-}
-
-th{
-    font-size: 1rem;
-    font-weight: 500;
-    text-transform: capitalize;
-    color: rgba(0, 0, 0, 0.5);
-}
-
-td{
+    background: var(--semi-white);
     font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--dark);
-}
-
-.order-header{
-    width: 150px;
-}
-
-.subtotal-header{
-    white-space: nowrap;
-}
-
-.action-header{
-    width: 50px;
-}
-
-.btn-remove{
-    text-align: center;
-    color: var(--red);
-    font-size: 1.1rem;
-}
-
-
-.card-bottom-container{
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.card-bottom-groups{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    
-}
-
-.card-bottom-group{
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 1rem;
-    background-color: var(--semi-white);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    width: 100%;
-}
-
-.total-field{
-    align-items: end;
-}
-
-.total-field span{
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: rgba(0, 0, 0, 0.8);
-}
-
-.card-bottom-group h3{
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: rgba(0, 0, 0, 0.5);
-    text-transform: capitalize;
-    white-space: nowrap;
-}
-
-
-.card-bottom-group input{
-    width: 100%;
-    padding: 0.5rem 0;
-    border: none;
-    outline: none;
-    font-weight: 600;
-    color: var(--darker);
-    background-color: transparent;
-    font-size: 0.9rem;
-}
-.button-section{
-    margin-top: 0.5rem;
-}
-
-.button-section button{
-    font-size: 1rem;
     font-weight: 500;
-    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.popup-card-input-group span{
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.popup-card-button button{
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     width: 100%;
     padding: 10px;
-    border-radius: 4px;
-    background-color: var(--light-green);
-    color: var(--white);
-    outline: none;
     border: none;
+    outline: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: var(--white);
+    background-color: #06D001;
+    cursor: pointer;
+}
+
+.popup-card-button button:active{
+    background-color: #048f02;
+}
+
+.second-panel-section{
+    width: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--secondary-white);
+    padding: 1.5rem 2rem;
+    border-radius: 6px;
 }
 
 
@@ -788,6 +675,16 @@ td{
     .first-panel-section,
     .second-panel-section{
         padding: 1rem;
+    }
+}
+
+@media (max-width: 635px){
+    .popup-card-container{
+        width: 90%;
+    }
+
+    .popup-card-content{
+        flex-direction: column;
     }
 }
 
@@ -1002,6 +899,22 @@ td{
 }
 
 
+@media screen and (min-width: 635px) and (max-width: 1200px){
+    .popup-card-container{
+        width: 600px;
+    }
+
+    .popup-card-content{
+        flex-direction: column;
+    }
+
+    .popup-card-payment-container{
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+
 @media (max-width: 1200px){
     .menu-section-container{
         width: 100%;
@@ -1013,7 +926,6 @@ td{
         width: 100%;
     }
 
-    
 }
 
 

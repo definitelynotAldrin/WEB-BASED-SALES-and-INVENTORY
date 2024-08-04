@@ -120,7 +120,7 @@
             <div class="menu-section-container">
                 <div class="first-panel-section">
                     <div class="menu-header">
-                        <h1 class="menu-header-title">to prepare</h1>
+                        <h1 class="menu-header-title">unpaid</h1>
                     </div>
                     <div class="first-panel-cards-container order-cards-container">
                         <div class="card order-item-card">
@@ -131,8 +131,8 @@
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
                             <div class="card-buttons">
-                                <button class="btn-view">view order</button>
-                                <button class="btn-serve">serve</button>
+                                <button class="btn-settle">settle</button>
+                                <button class="btn-credit">credit</button>
                             </div>
                         </div>
                         <div class="card order-item-card">
@@ -143,8 +143,8 @@
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
                             <div class="card-buttons">
-                                <button class="btn-view">view order</button>
-                                <button class="btn-serve">serve</button>
+                                <button class="btn-settle">settle</button>
+                                <button class="btn-credit">credit</button>
                             </div>
                         </div>
                         <div class="card order-item-card">
@@ -155,8 +155,8 @@
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
                             <div class="card-buttons">
-                                <button class="btn-view">view order</button>
-                                <button class="btn-serve">serve</button>
+                                <button class="btn-settle">settle</button>
+                                <button class="btn-credit">credit</button>
                             </div>
                         </div>
                         <div class="card order-item-card">
@@ -167,69 +167,181 @@
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
                             <div class="card-buttons">
-                                <button class="btn-view">view order</button>
-                                <button class="btn-serve">serve</button>
+                                <button class="btn-settle">settle</button>
+                                <button class="btn-credit">credit</button>
                             </div>
-                        </div>               
-                    </div>
-                    <div class="popup-card-container popup-order-view">
-                        <div class="popup-card-header">
-                            <h1 class="popup-order-title">Order # 0000</h1>
+                        </div>
+                    </div> 
+                </div>
+                <div class="popup-card-container popup-settlement-paid">
+                    <div class="popup-card-header">
+                       <div class="popup-card-header-row">
+                            <h1 class="popup-order-title">Checkout</h1>
                             <i class="fa-regular fa-circle-xmark btn-close"></i>
-                        </div>
-                        <div class="popup-card-content">
+                       </div>
+                       <div class="popup-card-header-col">
+                            <h1 class="popup-order-number">Order # 0000</h1>
+                            <h1 class="popup-order-name">Customer name: <span>John Doe</span></h1>
+                       </div>
+                    </div>
+                    <div class="popup-card-content">
+                        <div class="popup-card-table-container">
+                            <h1 class="popup-card-content-title">order summary</h1>
                             <div class="popup-card-table">
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>Order name</th>
                                             <th>quantity</th>
+                                            <th>sub-total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             <td>Bangus</td>
                                             <td>2 Kilo (s)</td>
+                                            <td>700</td>
                                         </tr>
                                         <tr>
                                             <td>Rice</td>
                                             <td>2</td>
+                                            <td>130</td>
                                         </tr>
                                         <tr>
-                                            <td>Bangus</td>
+                                            <td>Shrimp</td>
                                             <td>2 Kilo (s)</td>
+                                            <td>800</td>
                                         </tr>
                                         <tr>
                                             <td>Rice</td>
                                             <td>2</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bangus</td>
-                                            <td>2 Kilo (s)</td>
+                                            <td>130</td>
                                         </tr>
                                         <tr>
                                             <td>Rice</td>
                                             <td>2</td>
+                                            <td>130</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="popup-card-textarea">
-                                <div class="card-textarea">
-                                    <h3>Customer name</h3>
-                                    <textarea name="" id="" disabled></textarea>
+                        </div>
+                        <div class="popup-card-payment-container">
+                            <h1 class="popup-card-content-title">order summary</h1>
+                            <div class="popup-card-group-container">
+                                <div class="popup-card-group">
+                                    <label for="">total</label>
+                                    <div class="popup-card-input-group">
+                                        <span>&#x20B1;</span>
+                                        <input type="number" step="1" min="0" disabled>
+                                    </div>
                                 </div>
-                                <div class="card-textarea">
-                                    <h3>note</h3>
-                                    <textarea name="" id="" disabled></textarea>
+                                <div class="popup-card-groups">
+                                    <div class="popup-card-group">
+                                        <label for="">cash tender</label>
+                                        <div class="popup-card-input-group">
+                                            <span>&#x20B1;</span>
+                                            <input type="number" step="1" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="popup-card-group">
+                                        <label for="">change</label>
+                                        <div class="popup-card-input-group">
+                                            <span>&#x20B1;</span>
+                                            <input type="number" step="1" min="0">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="popup-card-button">
+                                    <button>
+                                        <span>pay & save</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </div> 
+                    </div>
+                </div>
+                <div class="popup-card-container popup-settlement-credit">
+                    <div class="popup-card-header">
+                       <div class="popup-card-header-row">
+                            <h1 class="popup-order-title">credit process</h1>
+                            <i class="fa-regular fa-circle-xmark btn-close"></i>
+                       </div>
+                       <div class="popup-card-header-col">
+                            <h1 class="popup-order-number">Order # 0000</h1>
+                            <h1 class="popup-order-name">Customer name: <span>John Doe</span></h1>
+                       </div>
+                    </div>
+                    <div class="popup-card-content">
+                        <div class="popup-card-table-container">
+                            <h1 class="popup-card-content-title">order summary</h1>
+                            <div class="popup-card-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Order name</th>
+                                            <th>quantity</th>
+                                            <th>sub-total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Bangus</td>
+                                            <td>2 Kilo (s)</td>
+                                            <td>700</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rice</td>
+                                            <td>2</td>
+                                            <td>130</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Shrimp</td>
+                                            <td>2 Kilo (s)</td>
+                                            <td>800</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rice</td>
+                                            <td>2</td>
+                                            <td>130</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rice</td>
+                                            <td>2</td>
+                                            <td>130</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="popup-card-payment-container">
+                            <h1 class="popup-card-content-title">order summary</h1>
+                            <div class="popup-card-group-container">
+                                <div class="popup-card-group">
+                                    <label for="">total</label>
+                                    <div class="popup-card-input-group">
+                                        <span>&#x20B1;</span>
+                                        <input type="number" step="1" min="0">
+                                    </div>
+                                </div>
+                                <div class="popup-card-group">
+                                    <label for="">additional note</label>
+                                    <textarea name="" id="" cols="20"></textarea>
+                                </div>
+                                <div class="popup-card-button">
+                                    <button>
+                                        <span>save credit</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="second-panel-section">
                     <div class="menu-header">
-                        <h1 class="menu-header-title">served</h1>
+                        <h1 class="menu-header-title">paid / credit</h1>
                         <!-- <div class="dropdown-category menu-category">
                             <select name="menu_category" id="">
                                 <option value="" hidden>select menu category</option>
@@ -247,8 +359,11 @@
                             <div class="card-details order-card-details">
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
-                            <div class="card-buttons">
-                                <span class="serve-text">served</span>
+                            <div class="card-buttons text-indicator">
+                                <h3 class="card-text paid">
+                                    <i class="fa-regular fa-circle-check"></i>
+                                    <span>paid</span>
+                                </h3>
                             </div>
                         </div>
                         <div class="card order-serve-card">
@@ -258,21 +373,13 @@
                             <div class="card-details order-card-details">
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
-                            <div class="card-buttons">
-                                <span class="serve-text">served</span>
+                            <div class="card-buttons text-indicator">
+                                <h3 class="card-text credit">
+                                    <i class="fa-regular fa-circle-check"></i>
+                                    <span>Saved as Credit</span>
+                                </h3>
                             </div>
-                        </div>
-                        <div class="card order-serve-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons">
-                                <span class="serve-text">served</span>
-                            </div>
-                        </div>
+                        </div>                   
                     </div>
                 </div>
             </div>
@@ -282,6 +389,6 @@
 <!-- <script src="../js/menu_entry_panel.js"></script>
 <script src="../js/popup_forms.js"></script>
 <script src="../js/order_entry_panel.js"></script> -->
-<script src="../js/kitchen_panel.js"></script>
+<script src="../js/settlement_panel.js"></script>
 </body>
 </html>
