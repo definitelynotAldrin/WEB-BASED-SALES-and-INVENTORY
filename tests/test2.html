@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -82,4 +82,75 @@
 }
 
 </style>
-</html>
+</html> -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="playMusicButton">play</button>
+    <iframe id="soundcloudPlayer" width="560" height="315"
+        src="https://www.youtube.com/embed/UMogVGvhs7U?si=YVDFAqKIMFDEjtNm" title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</body>
+<style>
+
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const playButton = document.getElementById('playMusicButton');
+        const soundcloudPlayer = document.getElementById('soundcloudPlayer');
+
+        playButton.addEventListener('click', function () {
+            const iframe = soundcloudPlayer.contentWindow;
+            // Send a message to the SoundCloud iframe to play the track
+            iframe.postMessage(JSON.stringify({ method: 'play' }), '*');
+            console.log('Music is playing');
+        });
+    });
+
+</script>
+
+</html> -->
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play MP3</title>
+</head>
+<body>
+    <audio id="audioPlayer" controls>
+        <source src="path/to/your/music-file.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <button id="playButton">Play Music</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const playButton = document.getElementById('playButton');
+            const audioPlayer = document.getElementById('audioPlayer');
+
+            playButton.addEventListener('click', function() {
+                audioPlayer.play()
+                    .then(() => {
+                        console.log('Music')
+                        .catch(error => {
+        console.error('Error playing audio:', error);
+    });
+                });
+        });
+    </script>
+</body>
+</html> -->

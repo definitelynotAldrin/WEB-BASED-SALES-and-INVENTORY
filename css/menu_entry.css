@@ -251,6 +251,7 @@
     display: flex;
     align-items: center;
     gap: 0.7rem;
+    cursor: pointer;
 }
 
 .notification-img{
@@ -544,8 +545,13 @@ select{
         gap: 0.5rem;
         flex-direction: column;
     }
-}
 
+    .registered-menu-section,
+    .inserting-section{
+        padding: 1rem;
+    }
+   
+}
 
 @media (max-width: 699px){
     .logo-title{

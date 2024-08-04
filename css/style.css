@@ -250,6 +250,7 @@
     display: flex;
     align-items: center;
     gap: 0.7rem;
+    cursor: pointer;
 }
 
 .notification-img{
@@ -346,7 +347,7 @@
     background-color: #eeeeee;
     border: 1px solid rgba(0, 0, 0, 0.1);
     padding: 25px;
-    max-height: 355px;
+    max-height: 450px;
     overflow: auto;
 }
 
@@ -421,6 +422,41 @@
     color: rgba(0, 0, 0, 0.7);
     font-size: 1rem;
     font-weight: 700;
+}
+
+
+@media (max-width: 480px){
+
+    .header-card{
+        padding: 20px 15px;
+    }
+
+    .bottom-card{
+        padding: 25px 15px;
+        max-height: 405px;
+    }
+
+    .customers-cards{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .settlement{
+        width: 100%;
+        padding: 0;
+        border: none;
+    }
+
+    .customer-details p{
+        width: 100%;
+    }
+
+    .customers{
+        max-height: 570px;
+    }
+
 }
 
 @media (max-width: 699px){
