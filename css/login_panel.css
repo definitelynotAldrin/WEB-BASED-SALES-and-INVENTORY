@@ -137,7 +137,6 @@ body{
     overflow-x: scroll;
     scroll-snap-type: x mandatory;
     margin: 0 1rem;
-    scrollbar-width: none;
 }
 
 .card {
