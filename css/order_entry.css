@@ -389,7 +389,7 @@
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 6px;
     padding: 30px;
-    display: none;
+   display: none;
 }
 
 .popup-header{
@@ -550,6 +550,7 @@ td{
     text-align: center;
     color: var(--red);
     font-size: 1.1rem;
+    cursor: pointer;
 }
 
 
@@ -761,10 +762,62 @@ td{
         gap: 0.5rem;
         flex-direction: column;
     }
+
+    
+}
+
+@media (max-width: 405px){
+    .popup_order_quantity{
+        width: 330px;
+        padding: 15px;
+    }
+
+    .card-boxes{
+        width: 65px;
+        flex-basis: 65px;
+    }
+
+    .card-input-field{
+        flex-basis: 142px;
+    }
+
+    
+}
+
+@media screen and (min-width: 405px) and (max-width: 430px){
+    .popup_order_quantity{
+        width: 370px;
+        padding: 25px;
+    }
+
+    .card-boxes{
+        width: 65px;
+        flex-basis: 65px;
+    }
+
+    .card-input-field{
+        flex-basis: 142px;
+    }
+}
+
+@media screen and (min-width: 430px) and (max-width: 475px){
+    .popup_order_quantity{
+        width: 400px;
+        padding: 25px;
+    }
+
+    .card-boxes{
+        width: 60px;
+        flex-basis: 60px;
+    }
+
+    .card-input-field{
+        flex-basis: 130px;
+    }
 }
 
 
-@media (max-width: 550px){
+@media screen and (min-width: 475px) and (max-width: 550px){
     .popup_order_quantity{
         width: 450px;
         padding: 25px;
