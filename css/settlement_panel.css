@@ -59,7 +59,7 @@
     padding: 2rem;
     display: flex;
     flex-direction: column;
-    z-index: 2;
+    z-index: 5;
 }
 
 .side-navigation-logo{
@@ -861,6 +861,16 @@ td{
 
     .popup-overlay{
         height: 100%;
+    }
+}
+
+@media screen and (min-width: 1116px) and (max-width: 1200px){
+    .popup-card-container{
+        padding: 20px;
+    }
+
+    .popup-card-content{
+        gap: 0.5;
     }
 }
 

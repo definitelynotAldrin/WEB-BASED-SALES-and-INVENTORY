@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year Dropdown</title>
+</head>
+<body>
+    <select id="year_dropdown"></select>
+
+    <script>
+        const yearDropdown = document.getElementById('year_dropdown');
+        const currentYear = new Date().getFullYear();
+        const startYear = 2000; // Change this to whatever year you want to start from
+
+        for (let year = currentYear; year >= startYear; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.text = year;
+            yearDropdown.appendChild(option);
+        }
+    </script>
+</body>
+</html>

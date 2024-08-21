@@ -122,9 +122,9 @@
                     <div class="header-card-group">
                         <h3>sales</h3>
                         <select name="" id="">
-                            <option value="Annually">annually</option>
-                            <option value="Monthly">monthly</option>
-                            <option value="Weekly">weekly</option>
+                            <option value="Annually">overall</option>
+                            <option value="Monthly">this month</option>
+                            <option value="Weekly">this week</option>
                         </select>
                     </div>
                     <h1 class="header-card-value">&#x20B1;<span>234,555.90</span></h1>
@@ -133,23 +133,13 @@
                     <div class="header-card-group">
                         <h3>collectibles</h3>
                         <select name="" id="">
-                            <option value="annually">annually</option>
-                            <option value="monthly">monthly</option>
-                            <option value="weekly">weekly</option>
+                            <option value="Annually">overall</option>
+                            <option value="Monthly">this month</option>
+                            <option value="Weekly">this week</option>
                         </select>
                     </div>
                     <h1 class="header-card-value">&#x20B1;<span>100,789.00</span></h1>
                 </div>
-            </div>
-            <div class="chart-container">
-                <div class="chart-header">
-                    <select name="sales" id="sales_selection">
-                        <option value="annually">annually</option>
-                        <option value="monthly">monthly</option>
-                        <option value="weekly">weekly</option>
-                    </select>
-                </div>
-                <canvas id="sales_chart"></canvas>
             </div>
             <div class="bottom-cards-container">
                 <div class="bottom-card sellers">
@@ -161,8 +151,8 @@
                             </div>
                             <div class="bottom-cards-group menu-details">
                                 <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
-                                <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
-                                    elit. Laudantium adipisci nemo perspiciatis</p>
+                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
+                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
                             </div>
                         </div>
                         <div class="bottom-cards">
@@ -171,8 +161,8 @@
                             </div>
                             <div class="bottom-cards-group menu-details">
                                 <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
-                                <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
-                                    elit. Laudantium adipisci nemo perspiciatis</p>
+                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
+                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
                             </div>
                         </div>
                         <div class="bottom-cards">
@@ -181,8 +171,8 @@
                             </div>
                             <div class="bottom-cards-group menu-details">
                                 <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
-                                <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
-                                    elit. Laudantium adipisci nemo perspiciatis</p>
+                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
+                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
                             </div>
                         </div>
                         <div class="bottom-cards">
@@ -191,15 +181,35 @@
                             </div>
                             <div class="bottom-cards-group menu-details">
                                 <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
-                                <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
-                                    elit. Laudantium adipisci nemo perspiciatis</p>
+                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
+                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
+                            </div>
+                        </div>
+                        <div class="bottom-cards">
+                            <div class="bottom-card-img">
+                                <img src="../assets/shrimp.jpg" alt="">
+                            </div>
+                            <div class="bottom-cards-group menu-details">
+                                <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
+                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
+                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="bottom-card customers">
                     <h1 class="bottom-cards-title">valued customers</h1>
-                    <div class="bottom-card-content">
+                    <div class="bottom-card-content customer-card-container">
+                        <div class="bottom-cards customers-cards">
+                            <div class="bottom-cards-group customer-details">
+                                <h1 class="bottom-cards-customer">christian campbell</h1>
+                                <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p>
+                            </div>
+                            <div class="bottom-cards-group settlement">
+                                <h3>life time sales</h3>
+                                <span class="settlement-value">&#x20B1; 56,356.00</span>
+                            </div>
+                        </div>
                         <div class="bottom-cards customers-cards">
                             <div class="bottom-cards-group customer-details">
                                 <h1 class="bottom-cards-customer">christian campbell</h1>
@@ -243,8 +253,23 @@
                     </div>
                 </div>
             </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <select name="year" id="year_selection">
+
+                    </select>
+                    <select name="sales" id="sales_selection">
+                        <option value="annually">Annually</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
+                </div>
+                <canvas id="sales_chart"></canvas>
+            </div>
         </div>
     </div>
+
+   
 <script src="../js/sidenav.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="../js/chartJS.js"></script>
