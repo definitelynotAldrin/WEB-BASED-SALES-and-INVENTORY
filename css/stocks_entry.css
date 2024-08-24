@@ -86,7 +86,7 @@
 
 
 .side-navigation{
-    margin-top: 2rem;
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -933,6 +933,8 @@ select{
 }
 
 
+
+
 @media (max-width: 1200px){
     .menu-section-container{
         width: 100%;
@@ -944,7 +946,12 @@ select{
         width: 100%;
     }
 
-    
+    .delete-confirmation-overlay,
+    .popup-overlay{
+        height: 100%;
+    }
+         
+
 }
 
 

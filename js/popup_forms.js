@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteBtns = document.querySelectorAll('.btn-delete');
     const cancelBtns = document.querySelectorAll('.confirm-cancel');
     const popupConfirmation = document.querySelector('.delete-confirmation-container');
-    const confirmationOverlay = document.querySelector('.popup-overlay');
+    const confirmationOverlay = document.querySelector('.delete-confirmation-overlay');
 
     deleteBtns.forEach(function(deleteBtn) {
         deleteBtn.addEventListener('click', function () {

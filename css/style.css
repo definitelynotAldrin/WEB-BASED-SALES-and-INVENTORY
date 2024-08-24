@@ -326,9 +326,9 @@
     text-transform: capitalize;
     color: var(--darker);
     padding: 5px 10px;
-    border-color: rgba(0, 0, 0, 0.3);
+    border-color: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
-    background-color: var(--white);
+    background-color: #f3f3f3;
     outline: none;
     cursor: pointer;
 }

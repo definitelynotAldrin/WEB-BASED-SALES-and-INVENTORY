@@ -51,6 +51,12 @@
                             </a>
                         </li>
                         <li>
+                            <a href="../public/order_log.html">
+                                <i class="fa-solid fa-box-archive"></i>
+                                <span class="link-text">order log</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="../public/kitchen_dashboard.html">
                                 <i class="fa-solid fa-kitchen-set"></i>
                                 <span class="link-text">kitchen dashboard</span>
@@ -333,11 +339,24 @@
                     </a> -->
                 </div>
             </div>
+            <div class="delete-confirmation-overlay"></div>
+                <div class="delete-confirmation-container">
+                    <div class="delete-confirmation-content">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <h1>Are you sure?</h1>
+                        <p>Setting this item as an inactive will cause not showing in the order menu.</p>
+                        <div class="form-groups button-group confirmation-button">
+                            <button class="confirm-delete">remove</button>
+                            <button class="confirm-cancel">cancel</button>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
 <script src="../js/sidenav.js"></script>
 <script src="../js/menu_entry_panel.js"></script>
 <script src="../js/edit_tempFile.js"></script>
+<script src="../js/popup_forms.js"></script>
 </body>
 
 </html>
