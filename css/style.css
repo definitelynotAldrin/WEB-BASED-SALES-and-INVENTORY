@@ -86,7 +86,7 @@
 
 
 .side-navigation{
-    margin-top: 2rem;
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -304,6 +304,10 @@
     gap: 0.7rem;
 }
 
+.collectibles-card{
+    cursor: pointer;
+}
+
 .header-card-group{
     display: flex;
     align-items: center;
@@ -326,6 +330,7 @@
     border-radius: 3px;
     background-color: var(--white);
     outline: none;
+    cursor: pointer;
 }
 
 .header-card-value{
@@ -357,6 +362,7 @@
     border-radius: 3px;
     background-color: var(--white);
     outline: none;
+    cursor: pointer;
 }
 
 .bottom-cards-container{
@@ -674,8 +680,8 @@
     .header-cards-container,
     .bottom-cards-container,
     .chart-container{
-        padding-left: 1rem;
-        padding-right:1rem;
+        padding-left: 2rem;
+        padding-right:2rem;
     }
     
 
@@ -712,12 +718,20 @@
 
 @media screen and (min-width: 1395px) and (max-width: 1450px){
     .bottom-card-img{
-        width: 18%;
+        width: 15%;
     }
 }
 
 
-@media (min-width: 1200px) {
+@media screen and (min-width: 1450px){
+    .bottom-card-img{
+        width: 17%;
+    }
+}
+
+
+
+@media screen and(max-width: 1200px){
 
     .content-header{
         margin-left: 4rem;
@@ -727,8 +741,8 @@
     .header-cards-container,
     .bottom-cards-container,
     .chart-container{
-        padding-left: 1rem;
-        padding-right:1rem;
+        padding-left: 2rem;
+        padding-right:2rem;
     }
 
     

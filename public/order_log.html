@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kan-anan by the Sea</title>
+    <link rel="stylesheet" href="../css/order_log.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <script src="https://kit.fontawesome.com/39d1af4576.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="side-overlay"></div>
+        <div class="side-navigation-container">
+            <i class="fa-solid fa-x close-btn"></i>
+            <div class="side-navigation-logo">
+                <img src="../assets/me2.jpg" alt="" class="logo-img">
+                <h1 class="logo-title">Kan-anan by the Sea</h1>
+            </div>
+            <nav class="side-navigation">
+                <div class="menu">
+                    <ul class="nav-lists">
+                        <li>
+                            <a href="../public/index.html">
+                                <i class="fa-solid fa-border-all"></i>
+                                <span class="link-text">dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../public/menu_entry.html">
+                                <i class="fa-solid fa-shrimp"></i>
+                                <span class="link-text">Menu data entry</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../public/stocks_entry.html">
+                                <i class="fa-solid fa-cubes"></i>
+                                <span class="link-text">stocks data entry</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../public/order_entry.html" class="active">
+                                <i class="fa-solid fa-rectangle-list"></i>
+                                <span class="link-text">order data entry</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../public/kitchen_dashboard.html">
+                                <i class="fa-solid fa-kitchen-set"></i>
+                                <span class="link-text">kitchen dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../public/settlement_panel.html">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <span class="link-text">settlement</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bottom-menu">
+                    <ul class="nav-lists">
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span class="link-text">logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <div class="content-container">
+            <div class="content-header">
+                <div class="header-text">
+                    <h1>Order History<span></span></h1>
+                    <h4>Search order history or customers order status</h4>
+                </div>
+                <div class="header-profile">
+                    <div class="notification">
+                        <i class="fa-solid fa-bell notification-bell">
+                            <i class="fa-solid fa-circle"></i>
+                        </i>
+                        <div class="notification-content-container">
+                            <h1 class="notification-title">Notifications</h1>
+                           <div class="notification-card-container">
+                                <div class="notification-content">
+                                    <div class="notification-img">
+                                        <img src="../assets/mark.png" alt="">
+                                    </div>
+                                    <div class="notification-details">
+                                        <h1 class="notification-details-title">coke</h1>
+                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span>20</span> available.</p>
+                                    </div>
+                                </div>
+                                <div class="notification-content">
+                                    <div class="notification-img">
+                                        <img src="../assets/mark.png" alt="">
+                                    </div>
+                                    <div class="notification-details">
+                                        <h1 class="notification-details-title">shrimp</h1>
+                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span>20</span> kg available.</p>
+                                    </div>
+                                </div>
+                           </div>
+                        </div>
+                    </div>
+                    <div class="profile">
+                        <img src="../assets/me.jpg">
+                    </div>
+                    <i class="fa-solid fa-bars nav-bar"></i>
+                </div>
+            </div>
+            <div class="menu-section-container">
+                <div class="first-panel-section">
+                        <div class="first-panel-header">
+                            <input type="text" placeholder="search customer" id="search_customer" name="search_customer">
+                            <input type="date" name="search_date" id="search_date">
+                        </div>
+                        <div class="bottom-card-content customer-card-container">
+                            <div class="bottom-cards customers-cards">
+                                <div class="bottom-cards-group customer-details">
+                                    <h1 class="bottom-cards-customer">christian campbell</h1>
+                                    <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p>
+                                </div>
+                                <div class="bottom-cards-group settlement">
+                                    <h3>order date & time</h3>
+                                    <span class="date-time">08/8/2024 12:12 PM</span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    
+                </div>
+                <div class="second-panel-section">
+                    <div class="second-panel-header">
+                        <h1 class="header-title customer-name">John Doe</h1>
+                        <h1 class="header-title customer-order-datetime">
+                            order date & time:
+                            <span class="order-date">08/10/2024</span>
+                            <span class="order-time">11:24 AM</span>
+                        </h1>
+                        <h1 class="header-title customer-location">Location: Purok 1, barangay san jose, talisayan, misamis oriental</h1>
+                    </div>
+                    <div class="second-panel-card-container order-summary-section">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="order-header">order</th>
+                                        <th class="quantity-header">quantity</th>
+                                        <th class="subtotal-header">sub-total</th>
+                                        <!-- <th class="action-header"></th> -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Lambing</td>
+                                        <td>5 Kilo (s)</td>
+                                        <td>&#8369;800.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lambing</td>
+                                        <td>5 Kilo (s)</td>
+                                        <td>&#8369;800.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lambing</td>
+                                        <td>5 Kilo (s)</td>
+                                        <td>&#8369;800.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lambing</td>
+                                        <td>5 Kilo (s)</td>
+                                        <td>&#8369;800.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lambing</td>
+                                        <td>5 Kilo (s)</td>
+                                        <td>&#8369;800.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lambing</td>
+                                        <td>5 Kilo (s)</td>
+                                        <td>&#8369;800.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lambing</td>
+                                        <td>5 Kilo (s)</td>
+                                        <td>&#8369;800.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-bottom-container total-section">
+                            <div class="card-bottom-groups">
+                                <div class="card-bottom-group total-field">
+                                    <h3>order status</h3>
+                                    <span>credit</span>
+                                </div>
+                                <div class="card-bottom-group total-field">
+                                    <h3>total</h3>
+                                    <span>&#8369; 1000.00</span>
+                                </div>
+                            </div>
+                            <div class="card-bottom-groups">
+                                <div class="card-bottom-group note-field">
+                                    <h3>note</h3>
+                                    <textarea name="" id=""></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- <div class="button-section">
+                            <button>
+                                <span>proceed to kitchen</span>
+                                <i class="fa-solid fa-arrow-right-long"></i>
+                            </button>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="popup-overlay"></div>
+
+            <!-- <div class="popup-overlay"></div>
+            <div class="popup-form-container">
+                <div class="popup-form-header">
+                    <h1>update item / add new stock</h1>
+                    <i class="fa-regular fa-circle-xmark btn-close"></i>
+                </div>
+                <div class="popup-content">
+                    <form action="" class="popup-form">
+                        <div class="form-groups popup-form-groups">
+                            <div class="form-group">
+                                <label for="">item name</label>
+                                <input type="text" id="item_name" name="item_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="">stocks quantity</label>
+                                <input type="number" id="stock_quantity" name="stock_quantity" step="1" min="0">
+                            </div>
+                        </div>
+                        <div class="menu-category item-category">
+                            <select name="item_category" id="">
+                                <option value="" hidden>select menu category</option>
+                                <option value="Main Course">main course</option>
+                                <option value="Dessert">Dessert</option>
+                                <option value="Beverages">beverages</option>
+                            </select>
+                        </div>
+                        <div class="form-groups button-group">
+                            <button class="btn-save">
+                                <i class="fa-regular fa-floppy-disk"></i>
+                                <span>save menu</span>
+                            </button>
+                        </div>
+                    </form> 
+                </div>
+            </div> -->
+        <div class="delete-confirmation-overlay"></div>
+        <div class="delete-confirmation-container">
+            <div class="delete-confirmation-content">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h1>Are you sure you want?</h1>
+                <p>Removing this item in the inventory will cause inactivity of the product on the menu.</p>
+                <div class="form-groups button-group confirmation-button">
+                    <button class="confirm-delete">remove</button>
+                    <button class="confirm-cancel">cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../js/sidenav.js"></script>
+<!-- <script src="../js/menu_entry_panel.js"></script>
+<script src="../js/popup_forms.js"></script>
+<script src="../js/order_entry_panel.js"></script> -->
+</body>
+</html>

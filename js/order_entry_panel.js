@@ -42,23 +42,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
+// POPUP QUANTITY
 
 
 document.addEventListener('DOMContentLoaded', function () {
     const menu_items = document.querySelectorAll('.menu-item-card');
     const maincourse_quantity = document.querySelector('.maincourse-quantity');
     const btnProceeds = document.querySelector('.btn-proceed');
+    const popupOverlay = document.querySelector('.popup-overlay')
 
     menu_items.forEach(function(menu_item){
         menu_item.addEventListener('click', function(){
             maincourse_quantity.style.display = "block";
+            popupOverlay.style.display = "block";
         });
     });
 
     btnProceeds.forEach(function(btnProceed){
         btnProceed.addEventListener('click', function(){
             maincourse_quantity.style.display = "none";
+            popupOverlay.style.display = "none";
         });
     });
 });

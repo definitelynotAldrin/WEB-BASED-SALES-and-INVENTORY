@@ -389,7 +389,8 @@
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 6px;
     padding: 30px;
-   display: none;
+    display: none;
+    z-index: 2;
 }
 
 .popup-header{
@@ -636,7 +637,7 @@ td{
     height: 100vh;
     top: 0;
     object-fit: cover;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(26, 26, 26, 0.5);
     z-index: 1;
     display: none;
 }

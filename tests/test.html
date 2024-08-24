@@ -3,143 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Navbar Example</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Price Calculation</title>
+    <style>
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .price-box {
+            margin-bottom: 10px;
+        }
+        .price-box input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
-    <header class="navbar">
-        <div class="navbar-brand">Brand</div>
-        <button class="navbar-toggle" aria-label="Toggle navigation">
-            &#9776;
-        </button>
-        <nav class="navbar-menu">
-            <ul>
-                <li><a href="#dashboard">Dashboard</a></li>
-                <li><a href="#settings">Settings</a></li>
-                <li><a href="#profile">Profile</a></li>
-                <li><a href="#logout">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main class="content">
-        <!-- Main content here -->
-    </main>
-    <div class="input-container">
-        <input type="text" id="weight" placeholder="Enter weight" />
-        <span class="unit">kg</span>
+    <div class="container">
+        <h2>Dish Price Calculation</h2>
+        <div class="price-box">
+            <label for="kilo_price">Price for 1 Kilo:</label>
+            <input type="number" id="kilo_price" placeholder="Enter price for 1 kilo" oninput="calculatePrices()">
+        </div>
+        <div class="price-box">
+            <label for="quantity">Quantity (in Kilos):</label>
+            <input type="number" id="quantity" placeholder="Enter quantity" oninput="calculatePrices()" min="1" value="1">
+        </div>
+        <div class="price-box">
+            <label for="quarter_price">Price for 1/4 Kilo:</label>
+            <input type="text" id="quarter_price" readonly>
+        </div>
+        <div class="price-box">
+            <label for="half_price">Price for 1/2 Kilo:</label>
+            <input type="text" id="half_price" readonly>
+        </div>
+        <div class="price-box">
+            <label for="three_quarter_price">Price for 3/4 Kilo:</label>
+            <input type="text" id="three_quarter_price" readonly>
+        </div>
+        <div class="price-box">
+            <label for="full_price">Price for 1 Kilo:</label>
+            <input type="text" id="full_price" readonly>
+        </div>
     </div>
-    
-   
+
+    <script>
+        function calculatePrices() {
+            const kiloPrice = parseFloat(document.getElementById('kilo_price').value);
+            const quantity = parseFloat(document.getElementById('quantity').value);
+
+            if (!isNaN(kiloPrice) && !isNaN(quantity)) {
+                document.getElementById('quarter_price').value = (kiloPrice * 0.25 * quantity).toFixed(2);
+                document.getElementById('half_price').value = (kiloPrice * 0.5 * quantity).toFixed(2);
+                document.getElementById('three_quarter_price').value = (kiloPrice * 0.75 * quantity).toFixed(2);
+                document.getElementById('full_price').value = (kiloPrice * quantity).toFixed(2);
+            } else {
+                document.getElementById('quarter_price').value = '';
+                document.getElementById('half_price').value = '';
+                document.getElementById('three_quarter_price').value = '';
+                document.getElementById('full_price').value = '';
+            }
+        }
+    </script>
 </body>
-<style>
-    body, html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-.navbar {
-    display: flex;
-    align-items: center;
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    justify-content: space-between;
-}
-
-.navbar-brand {
-    font-size: 1.5em;
-}
-
-.navbar-toggle {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    display: none; /* Initially hidden */
-}
-
-.navbar-menu {
-    display: flex;
-    align-items: center;
-}
-
-.navbar-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-}
-
-.navbar-menu ul li {
-    margin-right: 20px;
-}
-
-.navbar-menu ul li a {
-    color: white;
-    text-decoration: none;
-}
-
-.input-container {
-    position: relative;
-    display: inline-block;
-}
-
-.input-container input {
-    padding-right: 40px; /* Adjust this value based on the width of the unit label */
-    box-sizing: border-box;
-}
-
-.input-container .unit {
-    position: absolute;
-    right: 10px; /* Adjust this value for proper spacing */
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: #999; /* Optional: Adjust the color as needed */
-}
-
-@media (max-width: 768px) {
-    .navbar-toggle {
-        display: block; /* Show toggle button on mobile */
-    }
-
-    .navbar-menu {
-        display: none; /* Hide menu initially */
-        flex-direction: column;
-        background-color: #333;
-        width: 100%;
-        position: absolute;
-        top: 100%;
-        left: 0;
-    }
-
-    .navbar-menu ul {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .navbar-menu ul li {
-        margin: 0;
-        padding: 10px;
-    }
-
-    .navbar-menu.show {
-        display: flex; /* Show menu when toggle is clicked */
-    }
-}
-
-</style>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const navbarToggle = document.querySelector('.navbar-toggle');
-    const navbarMenu = document.querySelector('.navbar-menu');
-
-    navbarToggle.addEventListener('click', function() {
-        navbarMenu.classList.toggle('show');
-    });
-});
-
-</script>
 </html>
