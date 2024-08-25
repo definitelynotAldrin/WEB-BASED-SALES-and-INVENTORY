@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const collectibles = document.querySelector('.collectibles-card');
+    const collectibles = document.querySelector('.collectibles-link');
     
     // Add click event listener to the button
     collectibles.addEventListener('click', function(){
