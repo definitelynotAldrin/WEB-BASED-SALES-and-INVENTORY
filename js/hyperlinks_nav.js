@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add click event listener to the button
     collectibles.addEventListener('click', function(){
-        window.location.href = '../public/collectibles.html';
+        window.location.href = '../public/collectibles.php';
     });
  
 

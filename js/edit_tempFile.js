@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add click event listener to the button
     btnEdits.forEach(function(btnEdit){
         btnEdit.addEventListener('click', function(){
-            window.location.href = '../public/edit_menu_entry.html';
+            window.location.href = '../public/edit_menu_entry.php';
         });
     });
 

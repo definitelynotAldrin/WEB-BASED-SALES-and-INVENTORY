@@ -116,6 +116,12 @@
     cursor: pointer;
 }
 
+.nav-lists li.disabled-nav{
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: none;
+}
+
 .nav-lists li .active{
     background-color: var(--light-green);
 }

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kan-anan by the Sea</title>
     <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../fontawesome-free-6.6.0-web/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,31 +19,31 @@
 
 <body>
     <div class="container">
-        <a href="../public/login_panel.html" class="btnBack">
+        <a href="../public/login_panel.php" class="btnBack">
             <i class="fa-solid fa-arrow-right"></i>
         </a>
         <div class="image-container">
-            <img src="../assets/service.jpg" alt="">
+            <img src="../assets/admin.jpg" alt="">
         </div>
         <div class="form-container">
             <h1 class="logo-title">Kan-anan by the sea</h1>
-            <form action="">
+            <form action="../php/admin_login.php" method="POST">
                 <div class="form-group">
-                    <label for="">username</label>
-                    <input type="email" name="service_username" id="">
+                    <label for="email">email</label>
+                    <input type="email" name="email">
                 </div>
                 <div class="form-group">
-                    <label for="">password</label>
-                    <input type="password" name="service_password" id="passwordInput">
+                    <label for="password">password</label>
+                    <input type="password" name="password" id="passwordInput">
                     <i class="fas fa-eye" id="showPassword"></i>
                     <i class="fas fa-eye-slash" id="hidePassword"></i>
                 </div>
                 <div class="button-group">
-                    <button type="button">service login</button>
+                    <button type="submit">admin login</button>
                 </div>
             </form>
         </div>
     </div>
-    <script src="../js/showPass.js"></script>
+<script src="../js/showPass.js"></script>
 </body>
 </html>

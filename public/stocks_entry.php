@@ -1,3 +1,64 @@
+<?php
+session_start();
+
+
+$account_id = $_SESSION['account_id'];
+$user_role = $_SESSION['user_role'];
+
+if(!isset($account_id)){
+   header('location: ../public/login_panel.php');
+}
+
+?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var userRole = "<?php echo $user_role; ?>";
+
+    if (userRole === 'user_admin') {
+        // If the user is an admin, all navigation items are accessible
+        var allNavItems = document.querySelectorAll('.navbar-item');
+        allNavItems.forEach(function(navItem) {
+            navItem.classList.remove('disabled-nav'); // Remove disabled class if it exists
+            navItem.style.opacity = '1'; 
+            navItem.style.pointerEvents = 'auto';
+            navItem.style.cursor = 'pointer';
+        });
+    } 
+    else if (userRole === 'user_service') {
+        // Disable all navigation except order entry and order log
+        var allNavItems = document.querySelectorAll('.navbar-item');
+        var allowedNavs = ['order_entry', 'order_log'];
+
+        allNavItems.forEach(function(navItem) {
+            var navId = navItem.id; // Assuming each nav item has a unique ID
+
+            if (!allowedNavs.includes(navId)) {
+                navItem.classList.add('disabled-nav');
+            } else {
+                navItem.classList.remove('disabled-nav');
+            }
+        });
+    }
+    else if (userRole === 'user_kitchen') {
+        // Disable all navigation except order entry and order log
+        var allNavItems = document.querySelectorAll('.navbar-item');
+        var allowedNavs = ['kitchen', 'settlement'];
+
+        allNavItems.forEach(function(navItem) {
+            var navId = navItem.id; // Assuming each nav item has a unique ID
+
+            if (!allowedNavs.includes(navId)) {
+                navItem.classList.add('disabled-nav');
+            } else {
+                navItem.classList.remove('disabled-nav');
+            }
+        });
+    }
+    // You can add more conditions for other roles as needed
+});
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +67,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kan-anan by the Sea</title>
     <link rel="stylesheet" href="../css/stocks_entry.css">
+    <link rel="stylesheet" href="../fontawesome-free-6.6.0-web/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -26,44 +88,44 @@
             <nav class="side-navigation">
                 <div class="menu">
                     <ul class="nav-lists">
-                        <li>
-                            <a href="../public/index.html">
+                    <li id="dashboard" class="navbar-item">
+                            <a href="../public/index.php">
                                 <i class="fa-solid fa-border-all"></i>
                                 <span class="link-text">dashboard</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/menu_entry.html">
+                        <li id="menu_entry" class="navbar-item">
+                            <a href="../public/menu_entry.php">
                                 <i class="fa-solid fa-shrimp"></i>
                                 <span class="link-text">Menu data entry</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/stocks_entry.html" class="active">
+                        <li id="stocks_entry" class="navbar-item">
+                            <a href="../public/stocks_entry.php" class="active">
                                 <i class="fa-solid fa-cubes"></i>
                                 <span class="link-text">stocks data entry</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/order_entry.html">
+                        <li id="order_entry" class="navbar-item">
+                            <a href="../public/order_entry.php">
                                 <i class="fa-solid fa-rectangle-list"></i>
                                 <span class="link-text">order data entry</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/order_log.html">
+                        <li id="order_log" class="navbar-item">
+                            <a href="../public/order_log.php">
                                 <i class="fa-solid fa-box-archive"></i>
                                 <span class="link-text">order log</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/kitchen_dashboard.html">
+                        <li id="kitchen" class="navbar-item">
+                            <a href="../public/kitchen_dashboard.php">
                                 <i class="fa-solid fa-kitchen-set"></i>
                                 <span class="link-text">kitchen dashboard</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/settlement_panel.html">
+                        <li id="settlement" class="navbar-item">
+                            <a href="../public/settlement_panel.php">
                                 <i class="fa-solid fa-credit-card"></i>
                                 <span class="link-text">settlement</span>
                             </a>
@@ -73,7 +135,7 @@
                 <div class="bottom-menu">
                     <ul class="nav-lists">
                         <li>
-                            <a href="#">
+                            <a href="../public/logout.php">
                                 <i class="fa-solid fa-right-from-bracket"></i>
                                 <span class="link-text">logout</span>
                             </a>

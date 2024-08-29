@@ -1,3 +1,63 @@
+<?php
+session_start();
+
+
+$account_id = $_SESSION['account_id'];
+$user_role = $_SESSION['user_role'];
+
+if(!isset($account_id)){
+   header('location: ../public/login_panel.php');
+}
+
+?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var userRole = "<?php echo $user_role; ?>";
+
+    if (userRole === 'user_admin') {
+        // If the user is an admin, all navigation items are accessible
+        var allNavItems = document.querySelectorAll('.navbar-item');
+        allNavItems.forEach(function(navItem) {
+            navItem.classList.remove('disabled-nav'); // Remove disabled class if it exists
+            navItem.style.opacity = '1'; 
+            navItem.style.pointerEvents = 'auto';
+            navItem.style.cursor = 'pointer';
+        });
+    } 
+    else if (userRole === 'user_service') {
+        // Disable all navigation except order entry and order log
+        var allNavItems = document.querySelectorAll('.navbar-item');
+        var allowedNavs = ['order_entry', 'order_log'];
+
+        allNavItems.forEach(function(navItem) {
+            var navId = navItem.id; // Assuming each nav item has a unique ID
+
+            if (!allowedNavs.includes(navId)) {
+                navItem.classList.add('disabled-nav');
+            } else {
+                navItem.classList.remove('disabled-nav');
+            }
+        });
+    }
+    else if (userRole === 'user_kitchen') {
+        // Disable all navigation except order entry and order log
+        var allNavItems = document.querySelectorAll('.navbar-item');
+        var allowedNavs = ['kitchen', 'settlement'];
+
+        allNavItems.forEach(function(navItem) {
+            var navId = navItem.id; // Assuming each nav item has a unique ID
+
+            if (!allowedNavs.includes(navId)) {
+                navItem.classList.add('disabled-nav');
+            } else {
+                navItem.classList.remove('disabled-nav');
+            }
+        });
+    }
+    // You can add more conditions for other roles as needed
+});
+</script>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +66,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kan-anan by the Sea</title>
     <link rel="stylesheet" href="../css/menu_entry.css">
+    <link rel="stylesheet" href="../fontawesome-free-6.6.0-web/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -26,44 +87,44 @@
             <nav class="side-navigation">
                 <div class="menu">
                     <ul class="nav-lists">
-                        <li>
-                            <a href="../public/index.html">
+                        <li id="dashboard" class="navbar-item">
+                            <a href="../public/index.php">
                                 <i class="fa-solid fa-border-all"></i>
                                 <span class="link-text">dashboard</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/menu_entry.html" class="active">
+                        <li id="menu_entry" class="navbar-item">
+                            <a href="../public/menu_entry.php" class="active">
                                 <i class="fa-solid fa-shrimp"></i>
                                 <span class="link-text">Menu data entry</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/stocks_entry.html">
+                        <li id="stocks_entry" class="navbar-item">
+                            <a href="../public/stocks_entry.php">
                                 <i class="fa-solid fa-cubes"></i>
                                 <span class="link-text">stocks data entry</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/order_entry.html">
+                        <li id="order_entry" class="navbar-item">
+                            <a href="../public/order_entry.php">
                                 <i class="fa-solid fa-rectangle-list"></i>
                                 <span class="link-text">order data entry</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/order_log.html">
+                        <li id="order_log" class="navbar-item">
+                            <a href="../public/order_log.php">
                                 <i class="fa-solid fa-box-archive"></i>
                                 <span class="link-text">order log</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/kitchen_dashboard.html">
+                        <li id="kitchen" class="navbar-item">
+                            <a href="../public/kitchen_dashboard.php">
                                 <i class="fa-solid fa-kitchen-set"></i>
                                 <span class="link-text">kitchen dashboard</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../public/settlement_panel.html">
+                        <li id="settlement" class="navbar-item">
+                            <a href="../public/settlement_panel.php">
                                 <i class="fa-solid fa-credit-card"></i>
                                 <span class="link-text">settlement</span>
                             </a>
@@ -73,7 +134,7 @@
                 <div class="bottom-menu">
                     <ul class="nav-lists">
                         <li>
-                            <a href="#">
+                            <a href="../public/logout.php">
                                 <i class="fa-solid fa-right-from-bracket"></i>
                                 <span class="link-text">logout</span>
                             </a>
@@ -126,7 +187,7 @@
             <div class="menu-section-container">
                 <div class="inserting-section">
                     <div class="menu-header">
-                        <h1 class="menu-header-title">add new menu</h1>
+                        <h1 class="menu-header-title">edit menu</h1>
                         <!-- <div class="menu-category">
                             <select name="menu_insert_category" class="menu-insert-category" id="menu_insert_category">
                                 <option value="main-course">main course</option>
@@ -137,14 +198,15 @@
                     </div>
                     <div class="inserting-form-container">
                         <form action="" class="inserting-dish-form">
+                            <!-- <input type="text" hidden name="product_category" id="product_category"> -->
                             <div class="form-groups">
                                 <div class="form-group">
                                     <label for="">item name</label>
-                                    <input type="text" placeholder="sinugbang grabas">
+                                    <input type="text">
                                 </div>
                                 <div class="form-group">
-                                    <label for="">price kilo/quantity</label>
-                                    <input type="number" step="1" min="0" name="product_price">
+                                    <label for="">price</label>
+                                    <input type="number" step="1" min="0">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -176,83 +238,11 @@
                         
 <!-- ------------------------------------Dessert------------------------------ -->
 
-                        <form action="" class="inserting-dessert-form">
-                            <div class="form-groups">
-                                <div class="form-group">
-                                    <label for="">dessert name</label>
-                                    <input type="text" placeholder="halo halong ampalaya">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">price per serve</label>
-                                    <input type="number" step="1" min="0" name="product_price">
-                                </div>
-                            </div>
-                            <!-- <div class="form-group">
-                                <select name="" id="">
-                                    <option value="Main Course">main course</option>
-                                    <option value="Dessert">Dessert</option>
-                                    <option value="Beverages">beverages</option>
-                                </select>
-                            </div> -->
-                            <div class="form-group image-form" id="image-form">
-                                <label for="product-photo">Photo Product</label>
-                                <div class="form-image-container" id="form-image-container">
-                                    <img src="../assets/no-thumbnail-image-placeholder-forums-blogs-websites-148010362.webp" id="product-image">
-                                </div>
-                                <label for="input-image" class="input-image">upload image</label>
-                                <input required type="file" id="input-image" name="product_photo" accept="image/*">
-                            </div>
-                            <div class="form-groups button-group">
-                                <button class="btn-cancel">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                    <span>reset field</span>
-                                </button>
-                                <button class="btn-save">
-                                    <i class="fa-regular fa-floppy-disk"></i>
-                                    <span>save menu</span>
-                                </button>
-                            </div>
-                        </form>
+                        
 
 <!-- ------------------------------------Beverages------------------------------ -->
 
-                        <form action="" class="inserting-beverages-form">
-                            <div class="form-groups">
-                                <div class="form-group">
-                                    <label for="">beverage name</label>
-                                    <input type="text" placeholder="sinugbang grabas">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">price</label>
-                                    <input type="number" step="1" min="0" name="product_price">
-                                </div>
-                            </div>
-                            <!-- <div class="form-group">
-                                <select name="" id="">
-                                    <option value="Main Course">main course</option>
-                                    <option value="Dessert">Dessert</option>
-                                    <option value="Beverages">beverages</option>
-                                </select>
-                            </div> -->
-                            <div class="form-group image-form" id="image-form">
-                                <label for="product-photo">Photo Product</label>
-                                <div class="form-image-container" id="form-image-container">
-                                    <img src="../assets/no-thumbnail-image-placeholder-forums-blogs-websites-148010362.webp" id="product-image">
-                                </div>
-                                <label for="input-image" class="input-image">upload image</label>
-                                <input required type="file" id="input-image" name="product_photo" accept="image/*">
-                            </div>
-                            <div class="form-groups button-group">
-                                <button class="btn-cancel">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                    <span>reset field</span>
-                                </button>
-                                <button class="btn-save">
-                                    <i class="fa-regular fa-floppy-disk"></i>
-                                    <span>save menu</span>
-                                </button>
-                            </div>
-                        </form>
+                        
                     </div>
                 </div>
                 <div class="registered-menu-section">
@@ -267,71 +257,74 @@
                         </div>
                     </div>
                     <div class="menu-card-content">
-                        <div class="menu-cards menu-item">
+                        <div class="menu-cards">
                             <div class="menu-card-img">
                                 <img src="../assets/shrimp.jpg" alt="">
                             </div>
                             <div class="menu-cards-group menu-details">
                                 <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
+                                <p class="menu-cards-menu-desc">Main Course</p>
                             </div>
                             <div class="menu-cards-buttons">
                                 <i class="fa-regular fa-pen-to-square btn-edit"></i>
                                 <i class="fa-regular fa-trash-can btn-delete"></i>
                             </div>
                         </div>
-                        <div class="menu-cards menu-item">
+                        <div class="menu-cards">
                             <div class="menu-card-img">
                                 <img src="../assets/shrimp.jpg" alt="">
                             </div>
                             <div class="menu-cards-group menu-details">
                                 <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
+                                <p class="menu-cards-menu-desc">Main Course</p>
+                            </div>
+                            <div class="menu-cards-buttons">
+                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
+                                <i class="fa-regular fa-trash-can btn-delete"></i>
+                            </div>
+                            <!-- <div class="menu-cards-inactive inactive-item">
+                                <span>inactive item</span>
+                            </div> -->
+                        </div>
+                        <div class="menu-cards">
+                            <div class="menu-card-img">
+                                <img src="../assets/shrimp.jpg" alt="">
+                            </div>
+                            <div class="menu-cards-group menu-details">
+                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
+                                <p class="menu-cards-menu-desc">Main Course</p>
                             </div>
                             <div class="menu-cards-buttons">
                                 <i class="fa-regular fa-pen-to-square btn-edit"></i>
                                 <i class="fa-regular fa-trash-can btn-delete"></i>
                             </div>
                         </div>
-                        <div class="menu-cards menu-item">
+                        <div class="menu-cards">
                             <div class="menu-card-img">
                                 <img src="../assets/shrimp.jpg" alt="">
                             </div>
                             <div class="menu-cards-group menu-details">
                                 <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
+                                <p class="menu-cards-menu-desc">Main Course</p>
                             </div>
                             <div class="menu-cards-buttons">
                                 <i class="fa-regular fa-pen-to-square btn-edit"></i>
                                 <i class="fa-regular fa-trash-can btn-delete"></i>
                             </div>
                         </div>
-                        <div class="menu-cards menu-item">
+                        <div class="menu-cards">
                             <div class="menu-card-img">
                                 <img src="../assets/shrimp.jpg" alt="">
                             </div>
                             <div class="menu-cards-group menu-details">
                                 <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
+                                <p class="menu-cards-menu-desc">Main Course</p>
                             </div>
                             <div class="menu-cards-buttons">
                                 <i class="fa-regular fa-pen-to-square btn-edit"></i>
                                 <i class="fa-regular fa-trash-can btn-delete"></i>
                             </div>
                         </div>
-                        <div class="menu-cards menu-item">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>           
                     </div>
                     <!-- <a href="#" class="btn-view">
                         <span>view more</span>
@@ -339,24 +332,11 @@
                     </a> -->
                 </div>
             </div>
-            <div class="delete-confirmation-overlay"></div>
-                <div class="delete-confirmation-container">
-                    <div class="delete-confirmation-content">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <h1>Are you sure?</h1>
-                        <p>Setting this item as an inactive will cause not showing in the order menu.</p>
-                        <div class="form-groups button-group confirmation-button">
-                            <button class="confirm-delete">remove</button>
-                            <button class="confirm-cancel">cancel</button>
-                        </div>
-                    </div>
-                </div>
         </div>
     </div>
 <script src="../js/sidenav.js"></script>
 <script src="../js/menu_entry_panel.js"></script>
 <script src="../js/edit_tempFile.js"></script>
-<script src="../js/popup_forms.js"></script>
 </body>
 
 </html>
