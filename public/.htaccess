@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteBase /WEB-BASED%20SALES%20and%20INVENTORY/
+
+# Redirect requests with .php extension to the URL without the .php extension
+RewriteCond %{THE_REQUEST} \s/+([a-zA-Z0-9_-]+)\.php[\s?] [NC]
+RewriteRule ^ %1 [R=301,L]
+
+# Rewrite URLs without .php extension to the actual .php files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1.php [L]

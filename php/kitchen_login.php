@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Redirect to index page or any desired page
         // $_SESSION['success_message'] = "";
-        header("Location: ../public/kitchen_dashboard.php");
+        header("Location: ../public/kitchen_dashboard");
         exit();
     } else {
         // Invalid email or password, display an error message

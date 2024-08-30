@@ -9,6 +9,13 @@ if(!isset($account_id)){
    header('location: ../public/login_panel.php');
 }
 
+if ($user_role !== 'user_admin') {
+    // Redirect to login or error page if user does not have the right role
+    header('Location: ../public/login_panel');
+    exit();
+}
+
+
 ?>
 
 <script>
@@ -67,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kan-anan by the Sea</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="shortcut icon" href="../assets/Sea Sede (200 x 200 px).png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="../fontawesome-free-6.6.0-web/css/all.min.css">
@@ -89,53 +97,54 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="menu">
                     <ul class="nav-lists">
                         <li id="dashboard" class="navbar-item">
-                            <a href="../public/index.php" class="active">
+                            <a href="../public/index" class="active">
                                 <i class="fa-solid fa-border-all"></i>
                                 <span class="link-text">dashboard</span>
                             </a>
                         </li>
                         <li id="menu_entry" class="navbar-item">
-                            <a href="../public/menu_entry.php">
+                            <a href="../public/menu_entry">
                                 <i class="fa-solid fa-shrimp"></i>
                                 <span class="link-text">Menu data entry</span>
                             </a>
                         </li>
                         <li id="stocks_entry" class="navbar-item">
-                            <a href="../public/stocks_entry.php">
+                            <a href="../public/stocks_entry">
                                 <i class="fa-solid fa-cubes"></i>
                                 <span class="link-text">stocks data entry</span>
                             </a>
                         </li>
                         <li id="order_entry" class="navbar-item">
-                            <a href="../public/order_entry.php">
+                            <a href="../public/order_entry">
                                 <i class="fa-solid fa-rectangle-list"></i>
                                 <span class="link-text">order data entry</span>
                             </a>
                         </li>
                         <li id="order_log" class="navbar-item">
-                            <a href="../public/order_log.php">
+                            <a href="../public/order_log">
                                 <i class="fa-solid fa-box-archive"></i>
                                 <span class="link-text">order log</span>
                             </a>
                         </li>
                         <li id="kitchen" class="navbar-item">
-                            <a href="../public/kitchen_dashboard.php">
+                            <a href="../public/kitchen_dashboard">
                                 <i class="fa-solid fa-kitchen-set"></i>
                                 <span class="link-text">kitchen dashboard</span>
                             </a>
                         </li>
                         <li id="settlement" class="navbar-item">
-                            <a href="../public/settlement_panel.php">
+                            <a href="../public/settlement_panel">
                                 <i class="fa-solid fa-credit-card"></i>
                                 <span class="link-text">settlement</span>
                             </a>
                         </li>
                     </ul>
+
                 </div>
                 <div class="bottom-menu">
                     <ul class="nav-lists">
                         <li>
-                            <a href="../public/logout.php">
+                            <a href="#" class="btn-logout">
                                 <i class="fa-solid fa-right-from-bracket"></i>
                                 <span class="link-text">logout</span>
                             </a>
@@ -336,6 +345,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 <canvas id="sales_chart"></canvas>
             </div>
         </div>
+        <div class="pop-up-overlay logout-confirmation-overlay"></div>
+        <div class="pop-up-container logout-confirmation-container">
+            <div class="pop-up-content logout-confirmation-content">
+                <i class="fa-solid fa-question"></i>
+                <h1>Are you sure you want log out?</h1>
+                <div class="pop-up-buttons logout-buttons">
+                    <a href="../public/logout.php" class="btn-first btn-yes">yes</a>
+                    <a href="#" class="btn-second btn-no">no</a>
+                </div>
+            </div>
+        </div>
     </div>
 
    
@@ -343,6 +363,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="../js/chartJS.js"></script>
 <script src="../js/hyperlinks_nav.js"></script>
+<script src="../js/logout.js"></script>
 </body>
 
 </html>

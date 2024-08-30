@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Redirect to index page or any desired page
         // $_SESSION['success_message'] = "";
-        header("Location: ../public/index.php");
+        header("Location: ../public/index");
         exit();
     } else {
         // Invalid email or password, display an error message
