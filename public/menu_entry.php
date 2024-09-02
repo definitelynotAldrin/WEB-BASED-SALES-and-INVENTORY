@@ -82,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function() {
         rel="stylesheet">
     <script src="https://kit.fontawesome.com/39d1af4576.js" crossorigin="anonymous"></script>
 </head>
-
 <body>
     <div class="main-container">
         <div class="side-overlay"></div>
@@ -205,130 +204,72 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div> -->
                     </div>
                     <div class="inserting-form-container">
-                        <form action="" class="inserting-dish-form">
+                        <form action="../php/menu_entry.php" class="inserting-dish-form" method="POST" enctype="multipart/form-data">
+                            <?php if(isset($_GET['error'])){ ?>
+                                <div class="alert alert-danger" role="alert">
+                                <?php echo $_GET['error']; ?>
+                                </div>
+                            <?php } ?>
+                            <?php if(isset($_GET['success'])){ ?>
+                                <div class="success alert-success" role="success">
+                                <?php echo $_GET['success']; ?>
+                                </div>
+                            <?php } ?>
                             <div class="form-groups">
                                 <div class="form-group">
                                     <label for="">item name</label>
-                                    <input type="text" placeholder="sinugbang grabas">
+                                    <input type="text" name="item_name" value="<?php echo (isset($_GET['item_name']))?$_GET['item_name']:"" ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="">price</label>
-                                    <input type="number" step="1" min="0" name="product_price">
+                                    <input type="number" step="1" min="0" name="item_price" value="<?php echo (isset($_GET['item_price']))?$_GET['item_price']:"" ?>">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <select name="" id="">
-                                    <option value="Main Course">main course</option>
-                                    <option value="Dessert">Dessert</option>
-                                    <option value="Beverages">beverages</option>
+                                <select name="item_categories" id="item_categories">
+                                    <option value="" hidden>select category</option>
+                                    <option value="Main Course" <?php echo (isset($_GET['item_categories']) && $_GET['item_categories'] == 'Main Course') ? 'selected' : ''; ?>>main course</option>
+                                    <option value="Dessert" <?php echo (isset($_GET['item_categories']) && $_GET['item_categories'] == 'Dessert') ? 'selected' : ''; ?>>Dessert</option>
+                                    <option value="Beverages" <?php echo (isset($_GET['item_categories']) && $_GET['item_categories'] == 'Beverages') ? 'selected' : ''; ?>>beverages</option>
                                 </select>
                             </div>
                             <div class="form-group image-form" id="image-form">
-                                <label for="product-photo">Photo Product</label>
-                                <div class="form-image-container" id="form-image-container">
-                                    <img src="../assets/no-thumbnail-image-placeholder-forums-blogs-websites-148010362.webp" id="product-image">
+                                <label for="">Menu Image</label>
+                                <div class="form-image-container" id="form_image_container">
+                                    <img src="../assets/thumbnail.webp" id="item_image">
                                 </div>
                                 <label for="input-image" class="input-image">upload image</label>
-                                <input required type="file" id="input-image" name="product_photo" accept="image/*">
-                            </div>
+                                <input type="file" id="input-image" name="item_photo" accept="image/*" value="<?php echo (isset($_GET['item_photo']))?$_GET['item_photo']:"" ?>">
+                            </div> 
                             <div class="form-groups button-group">
-                                <button class="btn-cancel">
+                                <button class="btn-cancel" type="reset">
                                     <i class="fa-solid fa-rotate-left"></i>
                                     <span>reset field</span>
                                 </button>
-                                <button class="btn-save">
+                                <button class="btn-save" type="submit">
                                     <i class="fa-regular fa-floppy-disk"></i>
                                     <span>save menu</span>
                                 </button>
                             </div>
-                        </form>
-                        
-<!-- ------------------------------------Dessert------------------------------ -->
-
-                        <form action="" class="inserting-dessert-form">
-                            <div class="form-groups">
-                                <div class="form-group">
-                                    <label for="">dessert name</label>
-                                    <input type="text" placeholder="halo halong ampalaya">
+                            <!-- <div class="pop-up-overlay inserting-confirmation-overlay"></div>
+                            <div class="pop-up-container inserting-confirmation-container">
+                                <div class="pop-up-content inserting-confirmation-content">
+                                    <i class="fa-solid fa-question"></i>
+                                    <h1>Are you sure you want register this item?</h1>
+                                    <div class="pop-up-buttons logout-buttons">
+                                        <button type="button" class="btn-second btnCancel">no</button>
+                                        <button type="submit" class="btn-first btnSave">yes</button>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="">price per serve</label>
-                                    <input type="number" step="1" min="0" name="product_price">
-                                </div>
-                            </div>
-                            <!-- <div class="form-group">
-                                <select name="" id="">
-                                    <option value="Main Course">main course</option>
-                                    <option value="Dessert">Dessert</option>
-                                    <option value="Beverages">beverages</option>
-                                </select>
                             </div> -->
-                            <div class="form-group image-form" id="image-form">
-                                <label for="product-photo">Photo Product</label>
-                                <div class="form-image-container" id="form-image-container">
-                                    <img src="../assets/no-thumbnail-image-placeholder-forums-blogs-websites-148010362.webp" id="product-image">
-                                </div>
-                                <label for="input-image" class="input-image">upload image</label>
-                                <input required type="file" id="input-image" name="product_photo" accept="image/*">
-                            </div>
-                            <div class="form-groups button-group">
-                                <button class="btn-cancel">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                    <span>reset field</span>
-                                </button>
-                                <button class="btn-save">
-                                    <i class="fa-regular fa-floppy-disk"></i>
-                                    <span>save menu</span>
-                                </button>
-                            </div>
-                        </form>
-
-<!-- ------------------------------------Beverages------------------------------ -->
-
-                        <form action="" class="inserting-beverages-form">
-                            <div class="form-groups">
-                                <div class="form-group">
-                                    <label for="">beverage name</label>
-                                    <input type="text" placeholder="sinugbang grabas">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">price</label>
-                                    <input type="number" step="1" min="0" name="product_price">
-                                </div>
-                            </div>
-                            <!-- <div class="form-group">
-                                <select name="" id="">
-                                    <option value="Main Course">main course</option>
-                                    <option value="Dessert">Dessert</option>
-                                    <option value="Beverages">beverages</option>
-                                </select>
-                            </div> -->
-                            <div class="form-group image-form" id="image-form">
-                                <label for="product-photo">Photo Product</label>
-                                <div class="form-image-container" id="form-image-container">
-                                    <img src="../assets/no-thumbnail-image-placeholder-forums-blogs-websites-148010362.webp" id="product-image">
-                                </div>
-                                <label for="input-image" class="input-image">upload image</label>
-                                <input required type="file" id="input-image" name="product_photo" accept="image/*">
-                            </div>
-                            <div class="form-groups button-group">
-                                <button class="btn-cancel">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                    <span>reset field</span>
-                                </button>
-                                <button class="btn-save">
-                                    <i class="fa-regular fa-floppy-disk"></i>
-                                    <span>save menu</span>
-                                </button>
-                            </div>
-                        </form>
+                        </form>                      
                     </div>
                 </div>
                 <div class="registered-menu-section">
                     <div class="menu-header">
                         <h1 class="menu-header-title">registered menu</h1>
                         <div class="menu-category">
-                            <select name="menu_category" id="">
+                            <select name="menu_categories" id="menu_categories">
                                 <option value="Main Course">main course</option>
                                 <option value="Dessert">Dessert</option>
                                 <option value="Beverages">beverages</option>
@@ -345,75 +286,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <p class="menu-cards-menu-desc">Main Course</p>               
                             </div>
                             <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
+                                <a href="#"><i class="fa-regular fa-pen-to-square btn-edit"></i></a>
+                                <a href="#"><i class="fa-regular fa-trash-can btn-delete"></i></a>
                             </div>
                         </div>
-                        <div class="menu-cards menu-item">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards menu-item">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards menu-item">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards menu-item">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards menu-item">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>           
                     </div>
                     <!-- <a href="#" class="btn-view">
                         <span>view more</span>
@@ -446,11 +322,22 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         </div>
     </div>
+<script>
+    const imageProduct = document.getElementById("item_image");
+    const inputImage = document.getElementById("input-image");
+
+    inputImage.onchange = function(){
+        imageProduct.src = URL.createObjectURL(inputImage.files[0]);
+    }
+
+</script>
 <script src="../js/sidenav.js"></script>
 <script src="../js/menu_entry_panel.js"></script>
 <script src="../js/edit_tempFile.js"></script>
 <script src="../js/popup_forms.js"></script>
 <script src="../js/logout.js"></script>
+<script src="../js/alert_disappear.js"></script>
+<!-- <script src="../js/popup_confirmations.js"></script> -->
 </body>
 
 </html>

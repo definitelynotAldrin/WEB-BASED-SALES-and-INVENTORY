@@ -28,7 +28,7 @@
         <div class="card-container">
             <div class="card">
                 <div class="card-image-container">
-                    <img src="../assets/admin.jpg" alt="" class="card-image">
+                    <img src="../assets/img_bg.jpg" alt="" class="card-image">
                 </div>
                 <div class="card-content">
                     <a href="../public/login_admin" class="card-link">

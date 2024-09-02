@@ -672,6 +672,7 @@ select{
     width: 100%;
     height: 100vh;
     top: 0;
+    left: 0;
     object-fit: cover;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 3;
@@ -716,6 +717,7 @@ select{
 .pop-up-content h1{
     font-size: 1rem;
     color: var(--darker);
+    text-align: center;
 }
 
 
@@ -725,13 +727,15 @@ select{
     gap: 0.5rem;
 }
 
-.pop-up-buttons a{
+.pop-up-buttons a,
+.pop-up-buttons button{
     font-size: 0.9rem;
     text-transform: capitalize;
     text-decoration: none;
     padding: 5px 25px;
     border-radius: 4px;
 }
+
 
 .btn-first{
     background-color: var(--red);
@@ -755,6 +759,50 @@ select{
     border: 1px solid var(--dark-green);
 }
 
+
+.btnSave{
+    color: var(--white);
+    background-color: var(--dark-green);
+    border: 1px solid var(--dark-green);
+}
+
+.btnCancel{
+    color: var(--darker);
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    background: transparent;
+}
+
+.alert{
+    color: var(--red);
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid rgba(215, 1, 1, 0.5);
+    background-color: rgba(250, 0, 0, 0.2);
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.5s ease;
+}
+
+.success{
+    color: var(--dark-green);
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid rgb(108, 188, 76, 1);
+    background-color: rgb(108, 188, 76, 0.3);
+    text-align: center;
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.5s ease;
+}
 
 
 @media (max-width: 480px){

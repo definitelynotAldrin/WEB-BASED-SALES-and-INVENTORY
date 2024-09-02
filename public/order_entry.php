@@ -309,6 +309,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                             </div>
                             <div class="card-button-group">
+                                <button class="btn-cancel" type="button">
+                                    <span>cancel</span>
+                                </button>
                                 <button class="btn-proceed" type="submit">
                                     <span>proceed</span>
                                     <i class="fa-solid fa-arrow-right"></i>
@@ -405,32 +408,23 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <h3>total</h3>
                                 <span>&#8369; 1000.00</span>
                             </div>
+                            <div class="card-bottom-group note-field">
+                                    <h3>note</h3>
+                                    <input type="text" placeholder="Optional" name="customer_note">
+                                </div>
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group customer-field">
                                     <h3>customer name</h3>
-                                    <input type="text">
+                                    <input type="text" name="customer_name">
                                 </div>
                                 <div class="card-bottom-group note-field">
-                                    <h3>note</h3>
-                                    <input type="text" placeholder="Optional">
+                                    <h3>customer location</h3>
+                                    <input type="text" name="customer_location">
                                 </div>
                             </div>
-
-                            <!-- <div class="card-bottom-group total-field">
-                                <h3>total</h3>
-                                <span>&#8369; 1000.00</span>
-                            </div>
-                            <div class="card-bottom-group customer-field">
-                                <h3>customer name</h3>
-                                <input type="text">
-                            </div>
-                            <div class="card-bottom-group note-field">
-                                <h3>note</h3>
-                                <input type="text">
-                            </div> -->
                         </div>
                         <div class="button-section">
-                            <button>
+                            <button type="submit">
                                 <span>proceed to kitchen</span>
                                 <i class="fa-solid fa-arrow-right-long"></i>
                             </button>

@@ -24,14 +24,19 @@
             <i class="fa-solid fa-arrow-right"></i>
         </a>
         <div class="image-container">
-            <img src="../assets/admin.jpg" alt="">
+            <img src="../assets/img_bg.jpg" alt="">
         </div>
         <div class="form-container">
             <h1 class="logo-title">Kan-anan by the sea</h1>
             <form action="../php/admin_login.php" method="POST">
+                <?php if(isset($_GET['error'])){ ?>
+                    <div class="alert alert-danger" role="alert">
+                    <?php echo $_GET['error']; ?>
+                    </div>
+                <?php } ?>
                 <div class="form-group">
                     <label for="email">email</label>
-                    <input type="email" name="email">
+                    <input type="email" name="email" value="<?php echo (isset($_GET['email']))?$_GET['email']:"" ?>">
                 </div>
                 <div class="form-group">
                     <label for="password">password</label>
