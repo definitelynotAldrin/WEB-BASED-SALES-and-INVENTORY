@@ -27,3 +27,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+
+//-------------------------Registered Menu Category--------------------------------
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('menu_categories');
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    categorySelect.addEventListener('change', function() {
+        const selectedCategory = this.value;
+
+        menuItems.forEach(function(item) {
+            if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+});

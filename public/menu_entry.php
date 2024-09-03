@@ -225,13 +225,40 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <input type="number" step="1" min="0" name="item_price" value="<?php echo (isset($_GET['item_price']))?$_GET['item_price']:"" ?>">
                                 </div>
                             </div>
+                            <div class="form-groups">
                             <div class="form-group">
+                                <label for="item_categories">select category</label>
                                 <select name="item_categories" id="item_categories">
-                                    <option value="" hidden>select category</option>
+                                    <!-- <option value="" hidden>select category</option> -->
                                     <option value="Main Course" <?php echo (isset($_GET['item_categories']) && $_GET['item_categories'] == 'Main Course') ? 'selected' : ''; ?>>main course</option>
                                     <option value="Dessert" <?php echo (isset($_GET['item_categories']) && $_GET['item_categories'] == 'Dessert') ? 'selected' : ''; ?>>Dessert</option>
                                     <option value="Beverages" <?php echo (isset($_GET['item_categories']) && $_GET['item_categories'] == 'Beverages') ? 'selected' : ''; ?>>beverages</option>
                                 </select>
+                            </div>
+                                <div class="form-group">
+                                    <label for="stock_categories">Ingredient(Main Course)</label>
+                                    <select id="stock_categories" name="stock_categories">
+                                        <option value="" hidden>none</option>
+                                    <?php
+                                        include_once "../includes/connection.php";
+
+                                        // Fetch data from the 'representative' table
+                                        $query = "SELECT * FROM stocks ORDER BY stock_id DESC";
+                                        $result = mysqli_query($conn, $query);
+
+                                        // Loop through the result and create options for the select
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            echo "<option value='{$row['stock_name']}' " . 
+                                            ((isset($_GET['stock_categories']) && $_GET['stock_categories'] == $row['stock_name']) ? 'selected' : '') . 
+                                            ">{$row['stock_name']}</option>";
+                                        
+                                        }
+
+                                        // Close the database connection
+                                        
+                                    ?>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group image-form" id="image-form">
                                 <label for="">Menu Image</label>
@@ -265,37 +292,93 @@ document.addEventListener("DOMContentLoaded", function() {
                         </form>                      
                     </div>
                 </div>
-                <div class="registered-menu-section">
-                    <div class="menu-header">
-                        <h1 class="menu-header-title">registered menu</h1>
-                        <div class="menu-category">
-                            <select name="menu_categories" id="menu_categories">
-                                <option value="Main Course">main course</option>
-                                <option value="Dessert">Dessert</option>
-                                <option value="Beverages">beverages</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="menu-card-content">
-                        <div class="menu-cards menu-item">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>               
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <a href="#"><i class="fa-regular fa-pen-to-square btn-edit"></i></a>
-                                <a href="#"><i class="fa-regular fa-trash-can btn-delete"></i></a>
+                <?php
+                    include_once "../includes/connection.php";
+
+                    // Fetch all registered menu items
+                    $sql = "SELECT * FROM menu_items";
+                    $result = $conn->query($sql);
+
+                    ?>
+
+                    <div class="registered-menu-section">
+                        <div class="menu-header">
+                            <h1 class="menu-header-title">registered menu</h1>
+                            <div class="menu-category">
+                                <select name="menu_categories" id="menu_categories">
+                                    <option value="all">All Categories</option>
+                                    <option value="Main Course">Main Course</option>
+                                    <option value="Dessert">Dessert</option>
+                                    <option value="Beverages">Beverages</option>
+                                </select>
                             </div>
                         </div>
+                        <div class="menu-card-content">
+                            <?php
+                            if ($result->num_rows > 0) {
+                                while($row = $result->fetch_assoc()) {
+                                    ?>
+                                    <input type="hidden" name="hidden_id" value="<?php echo $row['item_id']; ?>">
+                                    <div class="menu-cards menu-item" data-category="<?php echo $row['item_category']; ?>">
+                                        <div class="menu-card-img">
+                                            <img src="<?php echo $row['item_image']; ?>" alt="<?php echo $row['item_name']; ?>">
+                                        </div>
+                                        <div class="menu-cards-group menu-details">
+                                            <h1 class="menu-cards-menu-title"><?php echo $row['item_name']; ?></h1>
+                                            <p class="menu-cards-menu-desc"><?php echo $row['item_category']; ?></p>
+                                        </div>
+                                        <div class="menu-cards-buttons">
+                                            <a href="edit_menu_entry.php?item_id=<?php echo $row['item_id']; ?>">
+                                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
+                                            </a>
+                                            <a href="#">
+                                                <i class="fa-regular fa-trash-can btn-delete"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <?php
+                                }
+                            } else {
+                                echo "<p>No menu items found.</p>";
+                            }
+                            ?>
+                        </div>
                     </div>
-                    <!-- <a href="#" class="btn-view">
-                        <span>view more</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a> -->
-                </div>
+
+                    <?php
+                    $conn->close();
+                    ?>
+
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const categorySelect = document.getElementById('menu_categories');
+                        const menuItems = document.querySelectorAll('.menu-item');
+
+                        categorySelect.addEventListener('change', function() {
+                            const selectedCategory = this.value;
+
+                            menuItems.forEach(function(item) {
+                                if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
+                                    item.style.display = 'flex';
+                                } else {
+                                    item.style.display = 'none';
+                                }
+                            });
+                        });
+                    });
+
+
+                    function capitalizeFirstLetter(str) {
+                            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+                        }
+
+                        const elements = document.querySelectorAll('.menu-cards-menu-title');
+                        elements.forEach(el => {
+                            el.textContent = capitalizeFirstLetter(el.textContent);
+                        });
+
+                    </script>
+
             </div>
             <div class="delete-confirmation-overlay"></div>
                 <div class="delete-confirmation-container">

@@ -196,168 +196,154 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="inserting-section">
                     <div class="menu-header">
                         <h1 class="menu-header-title">add new product</h1>
-                        <div class="menu-category">
-                            <select name="menu_insert_category" class="menu-insert-category" id="menu_insert_category">
-                                <option value="main-course">main course</option>
-                                <option value="dessert">Dessert</option>
-                                <option value="beverages">beverages</option>
-                            </select>
-                        </div>
                     </div>
                     <div class="inserting-form-container">
-                        <form action="" class="inserting-dish-form">
+                        <form action="../php/stocks_entry.php" class="inserting-dish-form" method="POST" enctype="multipart/form-data">
+                            <?php if(isset($_GET['error'])){ ?>
+                                <div class="alert alert-danger" role="alert">
+                                <?php echo $_GET['error']; ?>
+                                </div>
+                            <?php } ?>
+                            <?php if(isset($_GET['success'])){ ?>
+                                <div class="success alert-success" role="success">
+                                <?php echo $_GET['success']; ?>
+                                </div>
+                            <?php } ?>
+                            <input type="hidden" name="submission_time" value="<?php echo date('Y-m-d H:i:s'); ?>">
                             <div class="form-groups">
                                 <div class="form-group">
                                     <label for="">item name</label>
-                                    <input type="text">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">stocks quantity (per/kilo)</label>
-                                    <input type="number" id="stock_quantity" name="stock_quantity" step="0.1" min="0">
-                                </div>
-                            </div>
-                            <div class="form-groups button-group">
-                                <button class="btn-cancel">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                    <span>reset field</span>
-                                </button>
-                                <button class="btn-save">
-                                    <i class="fa-regular fa-floppy-disk"></i>
-                                    <span>save menu</span>
-                                </button>
-                            </div>
-                        </form>
-                        
-<!-- ------------------------------------Dessert------------------------------ -->
-
-                        <form action="" class="inserting-dessert-form">
-                            <div class="form-groups">
-                                <div class="form-group">
-                                    <label for="">item name</label>
-                                    <input type="text">
+                                    <input type="text" name="stock_name" value="<?php echo (isset($_GET['stock_name']))?$_GET['stock_name']:"" ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="">stocks quantity</label>
-                                    <input type="number" id="stock_quantity" name="stock_quantity" step="1" min="0">
+                                    <input type="number" id="stock_quantity" name="stock_quantity" min="0" value="<?php echo (isset($_GET['stock_quantity']))?$_GET['stock_quantity']:"" ?>">
                                 </div>
                             </div>
+                            <div class="form-group">
+                            <select name="stock_units" id="stock_units">
+                                <option value="" hidden>Select stock unit</option> <!-- Default option -->
+                                <option value="KG" <?php echo (isset($_GET['stock_units']) && $_GET['stock_units'] == 'KG') ? 'selected' : ''; ?>>KG</option>
+                                <option value="Pieces" <?php echo (isset($_GET['stock_units']) && $_GET['stock_units'] == 'Pieces') ? 'selected' : ''; ?>>Pieces</option>
+                            </select>
 
+                            </div>
                             <div class="form-groups button-group">
-                                <button class="btn-cancel">
+                                <button class="btn-cancel" type="reset">
                                     <i class="fa-solid fa-rotate-left"></i>
                                     <span>reset field</span>
                                 </button>
-                                <button class="btn-save">
+                                <button class="btn-save" type="submit">
                                     <i class="fa-regular fa-floppy-disk"></i>
-                                    <span>save menu</span>
-                                </button>
-                            </div>
-                        </form>
-
-<!-- ------------------------------------Beverages------------------------------ -->
-
-                        <form action="" class="inserting-beverages-form">
-                            <div class="form-groups">
-                                <div class="form-group">
-                                    <label for="">item name</label>
-                                    <input type="text">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">stocks quantity</label>
-                                    <input type="number" id="stock_quantity" name="stock_quantity" step="1" min="0">
-                                </div>
-                            </div>
-
-                            <div class="form-groups button-group">
-                                <button class="btn-cancel">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                    <span>reset field</span>
-                                </button>
-                                <button class="btn-save">
-                                    <i class="fa-regular fa-floppy-disk"></i>
-                                    <span>save menu</span>
+                                    <span>save item</span>
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="registered-menu-section">
-                    <div class="menu-header">
-                        <h1 class="menu-header-title">registered item</h1>
-                        <div class="menu-category">
-                            <select name="menu_category" id="">
-                                <option value="Main Course">main course</option>
-                                <option value="Dessert">Dessert</option>s
-                                <option value="Beverages">beverages</option>
-                            </select>
+                    <div class="registered-menu-container">
+                        <div class="menu-header">
+                            <h1 class="menu-header-title">Registered Items</h1>
+                            <div class="menu-category">
+                                <select name="stock_categories" id="stock_categories">
+                                    <option value="all">All Items</option>
+                                    <option value="KG">Kilogram Items</option>
+                                    <option value="Pieces">Pieces item</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="menu-card-content">
+                            <?php
+                            include_once "../includes/connection.php";
+                            // Fetch all registered stocks
+                            $sql = "SELECT * FROM stocks";
+                            $result = $conn->query($sql);
+
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    ?>
+                                    <div class="menu-cards" data-category="<?php echo $row['stock_unit']; ?>">
+                                        <div class="menu-cards-group menu-details">
+                                            <h1 class="menu-cards-menu-title"><?php echo $row['stock_name']; ?></h1>
+                                            <p class="menu-cards-menu-stock">Stocks: <span><?php echo $row['stock_quantity']; ?></span> <?php echo $row['stock_unit']; ?></p>
+                                        </div>
+                                        <div class="menu-cards-button">
+                                            <i class="fa-regular fa-pen-to-square btn-edit" data-product-id="<?php echo $row['stock_id']; ?>"></i>
+                                            <i class="fa-regular fa-trash-can btn-delete"></i>
+                                        </div>
+                                    </div>
+                                    <?php
+                                }
+                            } else {
+                                echo "<p>No stock items found.</p>";
+                            }
+                            $conn->close();
+                            ?>
                         </div>
                     </div>
-                    <div class="menu-card-content">
-                        <div class="menu-cards">
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimps</h1>
-                                <p class="menu-cards-menu-stock">Stocks: <span>20</span>Kilo (s)</p>
-                            </div>
-                            <div class="menu-cards-button">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards">
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimps</h1>
-                                <p class="menu-cards-menu-stock">Stocks: <span>20</span>Kilo (s)</p>
-                            </div>
-                            <div class="menu-cards-button">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards">
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimps</h1>
-                                <p class="menu-cards-menu-stock">Stocks: <span>20</span>Kilo (s)</p>
-                            </div>
-                            <div class="menu-cards-button">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards">
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Coke</h1>
-                                <p class="menu-cards-menu-stock">Stocks: <span>100</span></p>
-                            </div>
-                            <div class="menu-cards-button">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards">
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Oysters</h1>
-                                <p class="menu-cards-menu-stock">Stock: <span>50</span>Kilo (s)</p>
-                            </div>
-                            <div class="menu-cards-button">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards">
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Leche plan</h1>
-                                <p class="menu-cards-menu-stock">Stocks: <span>100</span></p>
-                            </div>
-                            <div class="menu-cards-button">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- <a href="#" class="btn-view">
-                        <span>view more</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a> -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const categorySelect = document.getElementById('stock_categories');
+                            const stockItems = document.querySelectorAll('.menu-cards');
+
+                            categorySelect.addEventListener('change', function() {
+                                const selectedCategory = this.value;
+
+                                stockItems.forEach(function(item) {
+                                    if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
+                                        item.style.display = 'flex';
+                                    } else {
+                                        item.style.display = 'none';
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Get all the edit buttons
+                        const editButtons = document.querySelectorAll('.btn-edit');
+
+                        // Add click event listeners to each edit button
+                        editButtons.forEach(function(button) {
+                            button.addEventListener('click', function() {
+                                const stockID = this.getAttribute('data-product-id');
+
+                                // Perform AJAX request to fetch data
+                                fetch(`../php/get_stock.php?stock_id=${stockID}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Populate the form with the fetched data
+                                            document.getElementById('item_id').value = data.stock_id;
+                                            document.getElementById('item_name').value = data.stock_name;
+                                            document.getElementById('item_quantity').value = data.stock_quantity;
+                                            document.getElementById('stock_unit').value = data.stock_unit;
+
+                                            // Open the popup (you may need to adjust this depending on how your popup works)
+                                            document.querySelector('.popup-form-container').style.display = 'block';
+                                        } else {
+                                            alert('Failed to retrieve data. Please try again.');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching stock details:', error);
+                                        alert('An error occurred. Please try again later.');
+                                    });
+                            });
+                        });
+
+                        // Close the popup when the close button or outside of the popup is clicked
+                        document.querySelector('.popup-form-container').addEventListener('click', function(event) {
+                            if (event.target.classList.contains('popup-form-container')) {
+                                this.style.display = 'none';
+                            }
+                        });
+                    });
+
+                    </script>
                 </div>
             </div>
 
@@ -368,7 +354,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     <i class="fa-regular fa-circle-xmark btn-close"></i>
                 </div>
                 <div class="popup-content">
-                    <form action="" class="popup-form">
+                    <form action="../php/stocks_update.php" class="popup-form" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="item_id" id="item_id">
+                        <input type="hidden" name="submission_time" value="<?php echo date('Y-m-d H:i:s'); ?>">
                         <div class="form-groups popup-form-groups">
                             <div class="form-group">
                                 <label for="">item name</label>
@@ -376,24 +364,24 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                             <div class="form-group">
                                 <label for="">stocks quantity</label>
-                                <input type="number" id="stock_quantity" name="stock_quantity" step="1" min="0">
+                                <input type="number" id="item_quantity" name="item_quantity" min="0">
                             </div>
                         </div>
                         <div class="menu-category item-category">
-                            <select name="item_category" id="">
-                                <option value="Main Course">main course</option>
-                                <option value="Dessert">Dessert</option>
-                                <option value="Beverages">beverages</option>
+                            <select name="stock_unit" id="stock_unit">
+                                <option value="KG">KG</option>
+                                <option value="Pieces">Pieces</option>
                             </select>
                         </div>
                         <div class="form-groups button-group">
-                            <button class="btn-save">
+                            <button class="btn-save" type="submit">
                                 <i class="fa-regular fa-floppy-disk"></i>
-                                <span>save menu</span>
+                                <span>Update Item</span>
                             </button>
                         </div>
                     </form> 
                 </div>
+
             </div>
             <div class="delete-confirmation-overlay"></div>
             <div class="delete-confirmation-container">
@@ -424,6 +412,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/menu_entry_panel.js"></script>
 <script src="../js/popup_forms.js"></script>
 <script src="../js/logout.js"></script>
+<script src="../js/alert_disappear.js"></script>
 </body>
 
 </html>

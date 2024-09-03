@@ -7,13 +7,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const popupForm = document.querySelector('.popup-form-container');
     const popupOverlay = document.querySelector('.popup-overlay');
 
-    editbtns.forEach(function(editBtn) {
-        editBtn.addEventListener('click', function () {
-            // Show the popup form and overlay
-            popupForm.style.display = "block";
-            popupOverlay.style.display = "block";
-        });
-    });
+    // editbtns.forEach(function(editBtn) {
+    //     editBtn.addEventListener('click', function () {
+    //         // Show the popup form and overlay
+    //         popupForm.style.display = "block";
+    //         popupOverlay.style.display = "block";
+    //     });
+    // });
 
     closeBtns.forEach(function(closeBtn) {
         closeBtn.addEventListener('click', function () {

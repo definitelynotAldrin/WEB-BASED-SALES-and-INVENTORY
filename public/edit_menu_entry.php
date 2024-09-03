@@ -16,7 +16,40 @@ if ($user_role !== 'user_admin') {
 }
 
 
+include_once "../includes/connection.php";
+
+if (!isset($_GET['item_id'])) {
+    // Redirect to an error page or handle accordingly
+    $errorMsg = 'Error';
+    header("Location: ../public/menu_entry.php?error=$errorMsg");
+    exit();
+}
+
+$itemID = $_GET['item_id'];
+
+// Fetch the deceased data based on 'deceased_id'
+$sql = "SELECT * FROM menu_items WHERE item_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $itemID);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Check if there is a matching record
+if ($result->num_rows == 0) {
+    // Redirect to an error page or handle accordingly
+    $errorMsg = 'Something went wrong!';
+    header("Location: ../public/menu_entry.php?error=$errorMsg");
+    exit();
+}
+
+// Fetch the data from the result
+$row = $result->fetch_assoc();
+$stmt->close();
+
+// Close the database connection
+
 ?>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -205,32 +238,40 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div> -->
                     </div>
                     <div class="inserting-form-container">
-                        <form action="" class="inserting-dish-form">
+                        <form action="../php/edit_menu_entry.php" method="POST" class="inserting-dish-form" enctype="multipart/form-data">
+                        <input type="hidden" value="<?php echo $itemID ?>" name="item_id">  
                             <!-- <input type="text" hidden name="product_category" id="product_category"> -->
                             <div class="form-groups">
                                 <div class="form-group">
                                     <label for="">item name</label>
-                                    <input type="text">
+                                    <input type="text" name="item_name" value="<?php echo $row['item_name']; ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="">price</label>
-                                    <input type="number" step="1" min="0">
+                                    <input type="number" step="1" min="0" value="<?php echo $row['item_price']; ?>">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <select name="" id="">
-                                    <option value="Main Course">main course</option>
-                                    <option value="Dessert">Dessert</option>
-                                    <option value="Beverages">beverages</option>
+                                <select name="item_categories" id="item_categories">
+                                    <option value="Main Course" <?php echo ($row['item_category'] == 'Main Course') ? 'selected' : ''; ?>>main course</option>
+                                    <option value="Dessert" <?php echo ($row['item_category'] == 'Dessert') ? 'selected' : ''; ?>>Dessert</option>
+                                    <option value="Beverages" <?php echo ($row['item_category'] == 'Beverages') ? 'selected' : ''; ?>>beverages</option>
                                 </select>
                             </div>
+                           
                             <div class="form-group image-form" id="image-form">
-                                <label for="product-photo">Photo Product</label>
-                                <div class="form-image-container" id="form-image-container">
-                                    <img src="../assets/no-thumbnail-image-placeholder-forums-blogs-websites-148010362.webp" id="product-image">
+                                <label for="">Menu Image</label>
+                                <div class="form-image-container" id="form_image_container">
+                                <?php
+                                    if (!empty($row['item_image'])) {
+                                        echo "<img src='../uploads/" . $row['item_image'] . "' id='item_image'>";
+                                    } else {
+                                        echo "<img src='../assets/thumbnail.webp' id='item_image'>";
+                                    }
+                                    ?>
                                 </div>
                                 <label for="input-image" class="input-image">upload image</label>
-                                <input required type="file" id="input-image" name="product_photo" accept="image/*">
+                                <input type="file" id="input-image" name="item_photo" accept="image/*">
                             </div>
                             <div class="form-groups button-group">
                                 <button class="btn-cancel">
@@ -243,102 +284,83 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </button>
                             </div>
                         </form>
-                        
-<!-- ------------------------------------Dessert------------------------------ -->
-
-                        
-
-<!-- ------------------------------------Beverages------------------------------ -->
-
-                        
                     </div>
                 </div>
-                <div class="registered-menu-section">
-                    <div class="menu-header">
-                        <h1 class="menu-header-title">registered menu</h1>
-                        <div class="menu-category">
-                            <select name="menu_category" id="">
-                                <option value="Main Course">main course</option>
-                                <option value="Dessert">Dessert</option>
-                                <option value="Beverages">beverages</option>
-                            </select>
+                <?php
+                    include_once "../includes/connection.php";
+
+                    // Fetch all registered menu items
+                    $sql = "SELECT * FROM menu_items";
+                    $result = $conn->query($sql);
+
+                    ?>
+
+                    <div class="registered-menu-section">
+                        <div class="menu-header">
+                            <h1 class="menu-header-title">registered menu</h1>
+                            <div class="menu-category">
+                                <select name="menu_categories" id="menu_categories">
+                                    <option value="all">All Categories</option>
+                                    <option value="Main Course">Main Course</option>
+                                    <option value="Dessert">Dessert</option>
+                                    <option value="Beverages">Beverages</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="menu-card-content">
+                            <?php
+                            if ($result->num_rows > 0) {
+                                while($row = $result->fetch_assoc()) {
+                                    ?>
+                                    <input type="hidden" name="hidden_id" value="<?php echo $row['item_id']; ?>">
+                                    <div class="menu-cards menu-item" data-category="<?php echo $row['item_category']; ?>">
+                                        <div class="menu-card-img">
+                                            <img src="<?php echo $row['item_image']; ?>" alt="<?php echo $row['item_name']; ?>">
+                                        </div>
+                                        <div class="menu-cards-group menu-details">
+                                            <h1 class="menu-cards-menu-title"><?php echo $row['item_name']; ?></h1>
+                                            <p class="menu-cards-menu-desc"><?php echo $row['item_category']; ?></p>
+                                        </div>
+                                        <div class="menu-cards-buttons">
+                                            <a href="edit_menu_entry.php?item_id=<?php echo $row['item_id']; ?>">
+                                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
+                                            </a>
+                                            <a href="#">
+                                                <i class="fa-regular fa-trash-can btn-delete"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <?php
+                                }
+                            } else {
+                                echo "<p>No menu items found.</p>";
+                            }
+                            ?>
                         </div>
                     </div>
-                    <div class="menu-card-content">
-                        <div class="menu-cards">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                            <!-- <div class="menu-cards-inactive inactive-item">
-                                <span>inactive item</span>
-                            </div> -->
-                        </div>
-                        <div class="menu-cards">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                        <div class="menu-cards">
-                            <div class="menu-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="menu-cards-group menu-details">
-                                <h1 class="menu-cards-menu-title">Shrimp hahah</h1>
-                                <p class="menu-cards-menu-desc">Main Course</p>
-                            </div>
-                            <div class="menu-cards-buttons">
-                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                <i class="fa-regular fa-trash-can btn-delete"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- <a href="#" class="btn-view">
-                        <span>view more</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a> -->
-                </div>
+
+                    <?php
+                    $conn->close();
+                    ?>
+
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const categorySelect = document.getElementById('menu_categories');
+                        const menuItems = document.querySelectorAll('.menu-item');
+
+                        categorySelect.addEventListener('change', function() {
+                            const selectedCategory = this.value;
+
+                            menuItems.forEach(function(item) {
+                                if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
+                                    item.style.display = 'flex';
+                                } else {
+                                    item.style.display = 'none';
+                                }
+                            });
+                        });
+                    });
+                    </script>
             </div>
         </div>
         <div class="pop-up-overlay logout-confirmation-overlay"></div>
@@ -353,6 +375,15 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         </div>
     </div>
+    <script>
+        const imageProduct = document.getElementById("item_image");
+        const inputImage = document.getElementById("input-image");
+
+        inputImage.onchange = function(){
+            imageProduct.src = URL.createObjectURL(inputImage.files[0]);
+        }
+
+    </script>
 <script src="../js/sidenav.js"></script>
 <script src="../js/menu_entry_panel.js"></script>
 <script src="../js/edit_tempFile.js"></script>

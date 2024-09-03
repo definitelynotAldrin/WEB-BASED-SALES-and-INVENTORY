@@ -1,18 +1,18 @@
 <?php
 ob_start();
-session_start();
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST['item_name']) && isset($_POST['item_price']) && isset($_POST['item_categories'])) {
         include_once "../includes/connection.php";
 
+        $itemID = $_POST["item_id"];
         $itemName = $_POST['item_name'];
         $itemPrice = $_POST['item_price'];
         $itemCat = $_POST['item_categories'];
-        $stockName = $_POST['stock_categories'];
 
-        $data = "item_name=" . $itemName . "&item_price=" . $itemPrice . "&item_categories=" . $itemCat . "&stock_categories" . $stockName;
+        $data = "item_name=" . $itemName . "&item_price=" . $itemPrice . "&item_categories=" . $itemCat;
 
         if (empty($itemName) && empty($itemPrice)) {
             $errorMsg = "All fields are required";
@@ -30,10 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errorMsg = "Menu category is required";
             header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
             exit;
-        } else if (empty($stockName)) {
-            $errorMsg = "stock category is required";
-            header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
-            exit;
         } else if (!isset($_FILES["item_photo"]) || $_FILES["item_photo"]["error"] != UPLOAD_ERR_OK) {
             $errorMsg = "Menu image is required";
             header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
@@ -44,13 +40,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $filePath = "../uploads/" . $fileName;
             move_uploaded_file($tempName, $filePath);
 
-            $sql = "INSERT INTO menu_items (item_name, item_price, item_category, item_image, stock_category) VALUES (?, ?, ?, ?, ?)";
+            $sql = "UPDATE menu_items SET item_name = ?, item_price = ?, item_category = ?, item_image = ? WHERE item_id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssss", $itemName, $itemPrice, $itemCat, $filePath, $stockCat);
+            $stmt->bind_param("ssssi", $itemName, $itemPrice, $itemCat, $filePath, $itemID);
             $stmt->execute();
             $stmt->close();
 
-            header("Location: ../public/menu_entry.php?success=Menu item saved successfully");
+            header("Location: ../public/menu_entry.php?success=Menu updated successfully");
             exit;
         }
     } else {
@@ -60,8 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 } else {
-    // If the request method is not POST, redirect to the form
-    header("Location: ../public/menu_entry.php");
+    $errorMsg = "Something went wrong!";
+    header("Location: ../public/menu_entry.php?error=$errorMsg");
     exit;
 }
 
