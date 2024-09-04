@@ -324,6 +324,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                             // Open the popup (you may need to adjust this depending on how your popup works)
                                             document.querySelector('.popup-form-container').style.display = 'block';
+                                            document.querySelector('.popup-overlay').style.display = 'block';
                                         } else {
                                             alert('Failed to retrieve data. Please try again.');
                                         }

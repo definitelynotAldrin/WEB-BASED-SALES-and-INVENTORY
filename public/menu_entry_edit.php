@@ -15,6 +15,40 @@ if ($user_role !== 'user_admin') {
     exit();
 }
 
+
+include_once "../includes/connection.php";
+
+if (!isset($_GET['item_id'])) {
+    // Redirect to an error page or handle accordingly
+    $errorMsg = 'Error';
+    header("Location: ../public/menu_entry.php?error=$errorMsg");
+    exit();
+}
+
+$itemID = $_GET['item_id'];
+
+// Fetch the deceased data based on 'deceased_id'
+$sql = "SELECT * FROM menu_items WHERE item_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $itemID);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Check if there is a matching record
+if ($result->num_rows == 0) {
+    // Redirect to an error page or handle accordingly
+    $errorMsg = 'Something went wrong!';
+    header("Location: ../public/menu_entry.php?error=$errorMsg");
+    exit();
+}
+
+// Fetch the data from the result
+$row = $result->fetch_assoc();
+$stmt->close();
+
+
+$stocksQuery = "SELECT * FROM stocks ORDER BY stock_name ASC";
+$stocksResult = mysqli_query($conn, $stocksQuery);
 ?>
 
 <script>
@@ -204,7 +238,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div> -->
                     </div>
                     <div class="inserting-form-container">
-                        <form action="../php/menu_entry.php" class="inserting-dish-form" method="POST" enctype="multipart/form-data">
+                    <form action="../php/edit_menu_entry.php" method="POST" class="inserting-dish-form" enctype="multipart/form-data">
+                        <input type="hidden" value="<?php echo $itemID ?>" name="item_id"> 
                             <?php if(isset($_GET['error'])){ ?>
                                 <div class="alert alert-danger" role="alert">
                                 <?php echo $_GET['error']; ?>
@@ -218,37 +253,32 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="form-groups">
                                 <div class="form-group">
                                     <label for="">item name</label>
-                                    <input type="text" name="item_name" value="<?php echo (isset($_GET['item_name']))?$_GET['item_name']:"" ?>">
+                                    <input type="text" name="item_name" value="<?php echo $row['item_name']; ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="">price</label>
-                                    <input type="number" step="1" min="0" name="item_price" value="<?php echo (isset($_GET['item_price']))?$_GET['item_price']:"" ?>">
+                                    <input type="number" step="1" min="0" value="<?php echo $row['item_price']; ?>">
                                 </div>
                             </div>
                             <div class="form-groups">
                                 <div class="form-group">
-                                    <label for="item_categories">category</label>
+                                    <label for="category">Category</label>
                                     <select name="item_categories" id="item_categories">
-                                        <option value="" hidden>select category</option>
-                                        <option value="Main Course" <?php echo (isset($_GET['item_categories']) && $_GET['item_categories'] == 'Main Course') ? 'selected' : ''; ?>>main course</option>
-                                        <option value="Dessert" <?php echo (isset($_GET['item_categories']) && $_GET['item_categories'] == 'Dessert') ? 'selected' : ''; ?>>Dessert</option>
-                                        <option value="Beverages" <?php echo (isset($_GET['item_categories']) && $_GET['item_categories'] == 'Beverages') ? 'selected' : ''; ?>>beverages</option>
+                                        <option value="" hidden>Select a category</option>
+                                        <option value="Main Course" <?php echo ($row['item_category'] == 'Main Course') ? 'selected' : ''; ?>>main course</option>
+                                        <option value="Dessert" <?php echo ($row['item_category'] == 'Dessert') ? 'selected' : ''; ?>>Dessert</option>
+                                        <option value="Beverages" <?php echo ($row['item_category'] == 'Beverages') ? 'selected' : ''; ?>>beverages</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="stock_categories">Stock</label>
-                                    <select id="stock_categories" name="stock_id">
+                                    <select id="stock_categories" name="stock_id" required>
                                         <option value="" hidden>Select stock category</option>
                                         <?php
-                                            include_once "../includes/connection.php";
-
-                                            $query = "SELECT * FROM stocks ORDER BY stock_name ASC";
-                                            $result = mysqli_query($conn, $query);
-
-                                            while ($row = mysqli_fetch_assoc($result)) {
-                                                echo "<option value='{$row['stock_id']}' " . ((isset($_GET['stock_id']) && $_GET['stock_id'] == $row['stock_id']) ? 'selected' : '') . ">{$row['stock_name']}</option>";
-                                            }
-
+                                        while ($stock = mysqli_fetch_assoc($stocksResult)) {
+                                            $selected = ($itemData['stock_id'] == $stock['stock_id']) ? 'selected' : '';
+                                            echo "<option value='{$stock['stock_id']}' $selected>{$stock['stock_name']}</option>";
+                                        }
                                         ?>
                                     </select>
                                 </div>
@@ -256,10 +286,16 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="form-group image-form" id="image-form">
                                 <label for="">Menu Image</label>
                                 <div class="form-image-container" id="form_image_container">
-                                    <img src="../assets/thumbnail.webp" id="item_image">
+                                <?php
+                                    if (!empty($row['item_image'])) {
+                                        echo "<img src='../uploads/" . $row['item_image'] . "' id='item_image'>";
+                                    } else {
+                                        echo "<img src='../assets/thumbnail.webp' id='item_image'>";
+                                    }
+                                    ?>
                                 </div>
                                 <label for="input-image" class="input-image">upload image</label>
-                                <input type="file" id="input-image" name="item_photo" accept="image/*" value="<?php echo (isset($_GET['item_photo']))?$_GET['item_photo']:"" ?>">
+                                <input type="file" id="input-image" name="item_photo" accept="image/*">
                             </div> 
                             <div class="form-groups button-group">
                                 <button class="btn-cancel" type="reset">
@@ -321,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <p class="menu-cards-menu-desc"><?php echo $row['item_category']; ?></p>
                                         </div>
                                         <div class="menu-cards-buttons">
-                                            <a href="menu_entry_edit.php?item_id=<?php echo $row['item_id']; ?>">
+                                            <a href="edit_menu_entry.php?item_id=<?php echo $row['item_id']; ?>">
                                                 <i class="fa-regular fa-pen-to-square btn-edit"></i>
                                             </a>
                                             <a href="#">
