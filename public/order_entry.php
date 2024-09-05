@@ -408,18 +408,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <h3>total</h3>
                                 <span>&#8369; 1000.00</span>
                             </div>
-                            <div class="card-bottom-group note-field">
-                                    <h3>note</h3>
-                                    <input type="text" placeholder="Optional" name="customer_note">
-                                </div>
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group customer-field">
                                     <h3>customer name</h3>
                                     <input type="text" name="customer_name">
                                 </div>
                                 <div class="card-bottom-group note-field">
-                                    <h3>customer location</h3>
-                                    <input type="text" name="customer_location">
+                                    <h3>note</h3>
+                                    <input type="text" placeholder="Optional" name="customer_note">
                                 </div>
                             </div>
                         </div>

@@ -15,11 +15,16 @@ if ($user_role !== 'user_admin') {
     exit();
 }
 
+if (isset($_GET['edit']) && $_GET['edit'] === 'true') {
+    $inEditMode = true;
+} else {
+    $inEditMode = false;
+}
 
 include_once "../includes/connection.php";
 
+
 if (!isset($_GET['item_id'])) {
-    // Redirect to an error page or handle accordingly
     $errorMsg = 'Error';
     header("Location: ../public/menu_entry.php?error=$errorMsg");
     exit();
@@ -27,28 +32,36 @@ if (!isset($_GET['item_id'])) {
 
 $itemID = $_GET['item_id'];
 
-// Fetch the deceased data based on 'deceased_id'
+// Fetch the menu item data
 $sql = "SELECT * FROM menu_items WHERE item_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $itemID);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Check if there is a matching record
 if ($result->num_rows == 0) {
-    // Redirect to an error page or handle accordingly
     $errorMsg = 'Something went wrong!';
     header("Location: ../public/menu_entry.php?error=$errorMsg");
     exit();
 }
 
-// Fetch the data from the result
-$row = $result->fetch_assoc();
+$menuItem = $result->fetch_assoc();
 $stmt->close();
 
+// Fetch the associated stock_id from the menu_item_stocks table
+$stockQuery = "SELECT stock_id FROM menu_item_stocks WHERE menu_item_id = ?";
+$stockStmt = $conn->prepare($stockQuery);
+$stockStmt->bind_param("i", $itemID);
+$stockStmt->execute();
+$stockResult = $stockStmt->get_result();
 
-$stocksQuery = "SELECT * FROM stocks ORDER BY stock_name ASC";
-$stocksResult = mysqli_query($conn, $stocksQuery);
+$selectedStockID = null;
+if ($stockResult->num_rows > 0) {
+    $stockRow = $stockResult->fetch_assoc();
+    $selectedStockID = $stockRow['stock_id'];
+}
+
+$stockStmt->close();
 ?>
 
 <script>
@@ -228,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="menu-section-container">
                 <div class="inserting-section">
                     <div class="menu-header">
-                        <h1 class="menu-header-title">add new menu</h1>
+                        <h1 class="menu-header-title">update menu</h1>
                         <!-- <div class="menu-category">
                             <select name="menu_insert_category" class="menu-insert-category" id="menu_insert_category">
                                 <option value="main-course">main course</option>
@@ -238,87 +251,95 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div> -->
                     </div>
                     <div class="inserting-form-container">
-                    <form action="../php/edit_menu_entry.php" method="POST" class="inserting-dish-form" enctype="multipart/form-data">
-                        <input type="hidden" value="<?php echo $itemID ?>" name="item_id"> 
-                            <?php if(isset($_GET['error'])){ ?>
+                        <form action="../php/edit_menu_entry.php" method="POST" class="inserting-dish-form" enctype="multipart/form-data">
+                            <input type="hidden" value="<?php echo $itemID ?>" name="item_id"> 
+
+                            <?php if(isset($_GET['error'])) { ?>
                                 <div class="alert alert-danger" role="alert">
-                                <?php echo $_GET['error']; ?>
+                                    <?php echo $_GET['error']; ?>
                                 </div>
                             <?php } ?>
-                            <?php if(isset($_GET['success'])){ ?>
-                                <div class="success alert-success" role="success">
-                                <?php echo $_GET['success']; ?>
+
+                            <?php if(isset($_GET['success'])) { ?>
+                                <div class="success alert-success" role="alert">
+                                    <?php echo $_GET['success']; ?>
                                 </div>
                             <?php } ?>
+
                             <div class="form-groups">
                                 <div class="form-group">
-                                    <label for="">item name</label>
-                                    <input type="text" name="item_name" value="<?php echo $row['item_name']; ?>">
+                                    <label for="item_name">Item Name</label>
+                                    <input type="text" name="item_name" value="<?php echo htmlspecialchars($menuItem['item_name']); ?>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="">price</label>
-                                    <input type="number" step="1" min="0" value="<?php echo $row['item_price']; ?>">
+                                    <label for="item_price">Price</label>
+                                    <input type="number" name="item_price" step="0.01" min="0" value="<?php echo htmlspecialchars($menuItem['item_price']); ?>">
                                 </div>
                             </div>
+
                             <div class="form-groups">
                                 <div class="form-group">
-                                    <label for="category">Category</label>
+                                    <label for="item_categories">Category</label>
                                     <select name="item_categories" id="item_categories">
                                         <option value="" hidden>Select a category</option>
-                                        <option value="Main Course" <?php echo ($row['item_category'] == 'Main Course') ? 'selected' : ''; ?>>main course</option>
-                                        <option value="Dessert" <?php echo ($row['item_category'] == 'Dessert') ? 'selected' : ''; ?>>Dessert</option>
-                                        <option value="Beverages" <?php echo ($row['item_category'] == 'Beverages') ? 'selected' : ''; ?>>beverages</option>
+                                        <option value="Main Course" <?php echo ($menuItem['item_category'] == 'Main Course') ? 'selected' : ''; ?>>Main Course</option>
+                                        <option value="Dessert" <?php echo ($menuItem['item_category'] == 'Dessert') ? 'selected' : ''; ?>>Dessert</option>
+                                        <option value="Beverages" <?php echo ($menuItem['item_category'] == 'Beverages') ? 'selected' : ''; ?>>Beverages</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="stock_categories">Stock</label>
-                                    <select id="stock_categories" name="stock_id" required>
+                                    <select id="stock_categories" name="stock_id">
                                         <option value="" hidden>Select stock category</option>
                                         <?php
-                                        while ($stock = mysqli_fetch_assoc($stocksResult)) {
-                                            $selected = ($itemData['stock_id'] == $stock['stock_id']) ? 'selected' : '';
-                                            echo "<option value='{$stock['stock_id']}' $selected>{$stock['stock_name']}</option>";
+                                        $query = "SELECT * FROM stocks ORDER BY stock_name ASC";
+                                        $result = mysqli_query($conn, $query);
+
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            $selected = ($row['stock_id'] == $selectedStockID) ? 'selected' : '';
+                                            echo "<option value='{$row['stock_id']}' $selected>{$row['stock_name']}</option>";
                                         }
                                         ?>
                                     </select>
                                 </div>
                             </div>
+                            <?php
+                            // If the form is submitted, keep the image path in a hidden input field
+                            $itemImage = isset($menuItem['item_image']) ? htmlspecialchars($menuItem['item_image']) : '';
+
+                            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['current_image'])) {
+                                $itemImage = htmlspecialchars($_POST['current_image']);
+                            }
+
+                            ?>              
                             <div class="form-group image-form" id="image-form">
                                 <label for="">Menu Image</label>
                                 <div class="form-image-container" id="form_image_container">
-                                <?php
-                                    if (!empty($row['item_image'])) {
-                                        echo "<img src='../uploads/" . $row['item_image'] . "' id='item_image'>";
+                                    <?php
+                                    if (!empty($itemImage)) {
+                                        echo "<img src='../uploads/" . $itemImage . "' id='item_image'>";
                                     } else {
                                         echo "<img src='../assets/thumbnail.webp' id='item_image'>";
                                     }
                                     ?>
                                 </div>
-                                <label for="input-image" class="input-image">upload image</label>
+                                <label for="input-image" class="input-image">Upload Image</label>
                                 <input type="file" id="input-image" name="item_photo" accept="image/*">
+                                <!-- Store the current image path in a hidden input field -->
+                                <input type="hidden" name="current_image" value="<?php echo $itemImage; ?>">
                             </div> 
+
                             <div class="form-groups button-group">
                                 <button class="btn-cancel" type="reset">
                                     <i class="fa-solid fa-rotate-left"></i>
-                                    <span>reset field</span>
+                                    <span>Reset Fields</span>
                                 </button>
                                 <button class="btn-save" type="submit">
                                     <i class="fa-regular fa-floppy-disk"></i>
-                                    <span>save menu</span>
+                                    <span>Save Menu</span>
                                 </button>
                             </div>
-                            <!-- <div class="pop-up-overlay inserting-confirmation-overlay"></div>
-                            <div class="pop-up-container inserting-confirmation-container">
-                                <div class="pop-up-content inserting-confirmation-content">
-                                    <i class="fa-solid fa-question"></i>
-                                    <h1>Are you sure you want register this item?</h1>
-                                    <div class="pop-up-buttons logout-buttons">
-                                        <button type="button" class="btn-second btnCancel">no</button>
-                                        <button type="submit" class="btn-first btnSave">yes</button>
-                                    </div>
-                                </div>
-                            </div> -->
-                        </form>                      
+                        </form>
                     </div>
                 </div>
                 <?php
@@ -350,14 +371,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <input type="hidden" name="hidden_id" value="<?php echo $row['item_id']; ?>">
                                     <div class="menu-cards menu-item" data-category="<?php echo $row['item_category']; ?>">
                                         <div class="menu-card-img">
-                                            <img src="<?php echo $row['item_image']; ?>" alt="<?php echo $row['item_name']; ?>">
+                                            <img src="../uploads/<?php echo $row['item_image']; ?>" alt="<?php echo $row['item_name']; ?>">
                                         </div>
                                         <div class="menu-cards-group menu-details">
                                             <h1 class="menu-cards-menu-title"><?php echo $row['item_name']; ?></h1>
                                             <p class="menu-cards-menu-desc"><?php echo $row['item_category']; ?></p>
                                         </div>
                                         <div class="menu-cards-buttons">
-                                            <a href="edit_menu_entry.php?item_id=<?php echo $row['item_id']; ?>">
+                                            <a href="menu_entry_edit.php?item_id=<?php echo $row['item_id']; ?>&success=You're now in edit mode">
                                                 <i class="fa-regular fa-pen-to-square btn-edit"></i>
                                             </a>
                                             <a href="#">

@@ -260,6 +260,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                                 <label for="input-image" class="input-image">upload image</label>
                                 <input type="file" id="input-image" name="item_photo" accept="image/*" value="<?php echo (isset($_GET['item_photo']))?$_GET['item_photo']:"" ?>">
+                                <!-- <input type="file" accept="image/*" name="item_photo" value=""> -->
                             </div> 
                             <div class="form-groups button-group">
                                 <button class="btn-cancel" type="reset">
@@ -314,14 +315,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <input type="hidden" name="hidden_id" value="<?php echo $row['item_id']; ?>">
                                     <div class="menu-cards menu-item" data-category="<?php echo $row['item_category']; ?>">
                                         <div class="menu-card-img">
-                                            <img src="<?php echo $row['item_image']; ?>" alt="<?php echo $row['item_name']; ?>">
+                                            <img src="../uploads/<?php echo $row['item_image']; ?>" alt="<?php echo $row['item_name']; ?>">
                                         </div>
                                         <div class="menu-cards-group menu-details">
                                             <h1 class="menu-cards-menu-title"><?php echo $row['item_name']; ?></h1>
                                             <p class="menu-cards-menu-desc"><?php echo $row['item_category']; ?></p>
                                         </div>
                                         <div class="menu-cards-buttons">
-                                            <a href="menu_entry_edit.php?item_id=<?php echo $row['item_id']; ?>">
+                                            <a href="menu_entry_edit.php?item_id=<?php echo $row['item_id']; ?>&success=You're now in edit mode">
                                                 <i class="fa-regular fa-pen-to-square btn-edit"></i>
                                             </a>
                                             <a href="#">

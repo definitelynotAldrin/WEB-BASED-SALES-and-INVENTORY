@@ -14,6 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (alertSuccess) {
         setTimeout(function() {
             alertSuccess.style.opacity = '0';
-        }, 3000);
+        }, 4000);
     }
 });

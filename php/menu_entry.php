@@ -42,9 +42,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             move_uploaded_file($tempName, $filePath);
 
             // Insert into menu_items table
-            $sql = "INSERT INTO menu_items (item_name, item_price, item_category, item_image) VALUES (?, ?, ?, ?)";
+            $sql = "INSERT INTO menu_items (item_name, item_price, item_category, item_image, stock_id) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssss", $itemName, $itemPrice, $itemCat, $filePath);
+            $stmt->bind_param("ssssi", $itemName, $itemPrice, $itemCat, $filePath, $stockID);
             $stmt->execute();
 
             // Get the last inserted item_id

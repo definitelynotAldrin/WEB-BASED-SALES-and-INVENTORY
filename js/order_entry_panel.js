@@ -48,20 +48,23 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function () {
     const menu_items = document.querySelectorAll('.menu-item-card');
     const maincourse_quantity = document.querySelector('.maincourse-quantity');
-    const btnProceeds = document.querySelector('.btn-proceed');
+    const btnCancel = document.querySelectorAll('.btn-cancel');
     const popupOverlay = document.querySelector('.popup-overlay')
 
     menu_items.forEach(function(menu_item){
         menu_item.addEventListener('click', function(){
             maincourse_quantity.style.display = "block";
             popupOverlay.style.display = "block";
+            document.body.style.overflow = "hidden";
         });
     });
 
-    btnProceeds.forEach(function(btnProceed){
-        btnProceed.addEventListener('click', function(){
+    btnCancel.forEach(function(cancelBtn){
+        cancelBtn.addEventListener('click', function(){
             maincourse_quantity.style.display = "none";
             popupOverlay.style.display = "none";
+            document.body.style.overflow = "auto";
         });
     });
+    
 });
