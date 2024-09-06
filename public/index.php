@@ -154,6 +154,11 @@ document.addEventListener("DOMContentLoaded", function() {
             </nav>
         </div>
         <div class="content-container">
+            <?php if(isset($_GET['success'])){ ?>
+                <div class="success alert-success" role="success">
+                <?php echo $_GET['success']; ?>
+                </div>
+            <?php } ?>
             <div class="content-header">
                 <div class="header-text">
                     <h1>Good morning <span></span></h1>
@@ -364,6 +369,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/chartJS.js"></script>
 <script src="../js/hyperlinks_nav.js"></script>
 <script src="../js/logout.js"></script>
+<script src="../js/alert_disappear.js"></script>
 </body>
 
 </html>
