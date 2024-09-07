@@ -4,15 +4,16 @@ session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if (isset($_POST['item_name']) && isset($_POST['item_price']) && isset($_POST['item_categories']) && isset($_POST['stock_id'])) {
+    if (isset($_POST['item_name']) && isset($_POST['item_price']) && isset($_POST['item_categories']) && isset($_POST['stock_id']) && isset($_POST['quantities'])) {
         include_once "../includes/connection.php";
 
         $itemName = $_POST['item_name'];
         $itemPrice = $_POST['item_price'];
         $itemCat = $_POST['item_categories'];
-        $stockID = $_POST['stock_id'];
+        $stockIDs = $_POST['stock_id'];
+        $stockQuantities = $_POST['quantities'];
 
-        $data = "item_name=" . $itemName . "&item_price=" . $itemPrice . "&item_categories=" . $itemCat . "&stock_id=" . $stockID;
+        $data = "item_name=" . $itemName . "&item_price=" . $itemPrice . "&item_categories=" . $itemCat . "&stock_id=" . implode(',', $stockIDs) . "&quantities=" . implode(',', $stockQuantities);
 
         // Validation checks
         if (empty($itemName)) {
@@ -27,8 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errorMsg = "Menu category is required";
             header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
             exit;
-        } else if (empty($stockID)) {
-            $errorMsg = "Stock category is required";
+        } else if (empty($stockIDs) || empty($stockQuantities) || count($stockIDs) != count($stockQuantities)) {
+            $errorMsg = "Stock categories and quantities are required";
             header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
             exit;
         } else if (!isset($_FILES["item_photo"]) || $_FILES["item_photo"]["error"] != UPLOAD_ERR_OK) {
@@ -57,36 +58,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             move_uploaded_file($tempName, $filePath);
 
             // Insert into menu_items table
-            $sql = "INSERT INTO menu_items (item_name, item_price, item_category, item_image, stock_id) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO menu_items (item_name, item_price, item_category, item_image) VALUES (?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssi", $itemName, $itemPrice, $itemCat, $filePath, $stockID);
+            $stmt->bind_param("ssss", $itemName, $itemPrice, $itemCat, $filePath);
             $stmt->execute();
 
             // Get the last inserted item_id
             $menuItemId = $stmt->insert_id;
             $stmt->close();
 
-            // Fetch the corresponding stock_id
-            $stockSql = "SELECT * FROM stocks WHERE stock_id = ?";
-            $stockStmt = $conn->prepare($stockSql);
-            $stockStmt->bind_param("s", $stockID);
-            $stockStmt->execute();
-            $stockResult = $stockStmt->get_result();
+            // Insert into menu_item_stocks table with quantities
+            $menuStockSql = "INSERT INTO menu_item_stocks (menu_item_id, stock_id, quantity_required) VALUES (?, ?, ?)";
+            $menuStockStmt = $conn->prepare($menuStockSql);
 
-            if ($stockResult->num_rows > 0) {
-                $stockRow = $stockResult->fetch_assoc();
-                $stockId = $stockRow['stock_id'];
+            foreach ($stockIDs as $index => $stockID) {
+                $quantityRequired = $stockQuantities[$index];
 
-                // Insert into menu_item_stocks table with quantity 1
-                $quantityRequired = 1;
-                $menuStockSql = "INSERT INTO menu_item_stocks (menu_item_id, stock_id, quantity_required) VALUES (?, ?, ?)";
-                $menuStockStmt = $conn->prepare($menuStockSql);
-                $menuStockStmt->bind_param("iii", $menuItemId, $stockId, $quantityRequired);
+                // Insert stock entry for each stock ID and quantity
+                $menuStockStmt->bind_param("iii", $menuItemId, $stockID, $quantityRequired);
                 $menuStockStmt->execute();
-                $menuStockStmt->close();
             }
 
-            $stockStmt->close();
+            $menuStockStmt->close();
 
             header("Location: ../public/menu_entry.php?success=Menu item saved successfully");
             exit;
@@ -102,3 +95,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 ob_end_flush();
+?>

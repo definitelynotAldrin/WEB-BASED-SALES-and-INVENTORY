@@ -341,6 +341,11 @@
     display: none;
 }
 
+.inserting-form-container{
+    max-height: 500px;
+    overflow: auto;
+}
+
 .form-groups{
     width: 100%;
     display: flex;
@@ -453,21 +458,25 @@
     color: var(--white);
 }
 
-.btn-cancel{
+.btn-cancel, .button-remove{
     background-color: var(--orange);
 }
 
-.btn-cancel:active{
+.btn-cancel:active,
+.button-remove:active{
     background-color: #fb7208;
 }
 
-.btn-save{
+.btn-save, .button-add{
     background-color: var(--light-green);
 }
 
-.btn-save:active{
+.btn-save:active,
+.button-add:active{
     background-color: var(--dark-green);
 }
+
+
 
 select{
     cursor: pointer;

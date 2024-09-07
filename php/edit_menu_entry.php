@@ -19,19 +19,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Input validation
         if (empty($itemName)) {
             $errorMsg = "Menu name is required";
-            header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+            header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
             exit;
         } else if ($itemPrice <= 0) {
             $errorMsg = "Menu price is required and must be greater than zero";
-            header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+            header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
             exit;
         } else if (empty($itemCat)) {
             $errorMsg = "Menu category is required";
-            header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+            header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
             exit;
         } else if ($stockId <= 0) {
             $errorMsg = "Stock category is required";
-            header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+            header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
             exit;
         }
 
@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($checkResult->num_rows > 0) {
             // Menu item with the same name and category already exists
             $errorMsg = "Menu item already exists";
-            header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+            header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
             exit;
         }
         $checkStmt->close();
@@ -91,21 +91,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: ../public/menu_entry.php?success=Menu item updated successfully");
             } else {
                 $errorMsg = "Failed to update stock information.";
-                header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+                header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
             }
 
             $menuStockStmt->close();
         } else {
             $errorMsg = "Failed to update menu item.";
-            header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+            header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
         }
 
     } else {
         $errorMsg = "All fields are required";
-        header("Location: ../public/menu_entry.php?error=$errorMsg");
+        header("Location: ../public/menu_entry_edit.php?error=$errorMsg");
     }
 } else {
-    header("Location: ../public/menu_entry.php");
+    header("Location: ../public/menu_entry_edit.php");
 }
 
 ob_end_flush();

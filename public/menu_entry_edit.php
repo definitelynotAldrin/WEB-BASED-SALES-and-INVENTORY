@@ -15,14 +15,9 @@ if ($user_role !== 'user_admin') {
     exit();
 }
 
-if (isset($_GET['edit']) && $_GET['edit'] === 'true') {
-    $inEditMode = true;
-} else {
-    $inEditMode = false;
-}
+
 
 include_once "../includes/connection.php";
-
 
 if (!isset($_GET['item_id'])) {
     $errorMsg = 'Error';
@@ -48,21 +43,19 @@ if ($result->num_rows == 0) {
 $menuItem = $result->fetch_assoc();
 $stmt->close();
 
-// Fetch the associated stock_id from the menu_item_stocks table
-$stockQuery = "SELECT stock_id FROM menu_item_stocks WHERE menu_item_id = ?";
+// Fetch the associated stocks
+$stockQuery = "SELECT s.stock_id, s.stock_name, mis.quantity_required
+               FROM menu_item_stocks mis
+               JOIN stocks s ON mis.stock_id = s.stock_id
+               WHERE mis.menu_item_id = ?";
 $stockStmt = $conn->prepare($stockQuery);
 $stockStmt->bind_param("i", $itemID);
 $stockStmt->execute();
-$stockResult = $stockStmt->get_result();
-
-$selectedStockID = null;
-if ($stockResult->num_rows > 0) {
-    $stockRow = $stockResult->fetch_assoc();
-    $selectedStockID = $stockRow['stock_id'];
-}
+$stocks = $stockStmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 $stockStmt->close();
 ?>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -239,85 +232,90 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
             <div class="menu-section-container">
-                <div class="inserting-section">
-                    <div class="menu-header">
-                        <h1 class="menu-header-title">update menu</h1>
-                        <!-- <div class="menu-category">
-                            <select name="menu_insert_category" class="menu-insert-category" id="menu_insert_category">
-                                <option value="main-course">main course</option>
-                                <option value="dessert">Dessert</option>
-                                <option value="beverages">beverages</option>
-                            </select>
-                        </div> -->
-                    </div>
-                    <div class="inserting-form-container">
-                        <form action="../php/edit_menu_entry.php" method="POST" class="inserting-dish-form" enctype="multipart/form-data">
-                            <input type="hidden" value="<?php echo $itemID ?>" name="item_id"> 
+            <div class="inserting-section">
+                <div class="menu-header">
+                    <h1 class="menu-header-title">Update Menu</h1>
+                </div>
+                <div class="inserting-form-container">
+                    <form action="../php/edit_menu_entry.php" method="POST" class="inserting-dish-form" enctype="multipart/form-data">
+                        <input type="hidden" value="<?php echo htmlspecialchars($itemID); ?>" name="item_id">
 
-                            <?php if(isset($_GET['error'])) { ?>
-                                <div class="alert alert-danger" role="alert">
-                                    <?php echo $_GET['error']; ?>
-                                </div>
-                            <?php } ?>
+                        <?php if (isset($_GET['error'])) { ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?php echo htmlspecialchars($_GET['error']); ?>
+                            </div>
+                        <?php } ?>
 
-                            <?php if(isset($_GET['success'])) { ?>
-                                <div class="success alert-success" role="alert">
-                                    <?php echo $_GET['success']; ?>
-                                </div>
-                            <?php } ?>
+                        <?php if (isset($_GET['success'])) { ?>
+                            <div class="success alert-success" role="alert">
+                                <?php echo htmlspecialchars($_GET['success']); ?>
+                            </div>
+                        <?php } ?>
 
-                            <div class="form-groups">
-                                <div class="form-group">
-                                    <label for="item_name">Item Name</label>
-                                    <input type="text" name="item_name" value="<?php echo htmlspecialchars($menuItem['item_name']); ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="item_price">Price</label>
-                                    <input type="number" name="item_price" step="0.01" min="0" value="<?php echo htmlspecialchars($menuItem['item_price']); ?>">
-                                </div>
+                        <div class="form-groups">
+                            <div class="form-group">
+                                <label for="item_name">Item Name</label>
+                                <input type="text" name="item_name" value="<?php echo htmlspecialchars($menuItem['item_name']); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="item_price">Price</label>
+                                <input type="number" name="item_price" step="0.01" min="0" value="<?php echo htmlspecialchars($menuItem['item_price']); ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-groups">
+                            <div class="form-group">
+                                <label for="item_categories">Category</label>
+                                <select name="item_categories" id="item_categories">
+                                    <option value="" hidden>Select a category</option>
+                                    <option value="Main Course" <?php echo ($menuItem['item_category'] == 'Main Course') ? 'selected' : ''; ?>>Main Course</option>
+                                    <option value="Dessert" <?php echo ($menuItem['item_category'] == 'Dessert') ? 'selected' : ''; ?>>Dessert</option>
+                                    <option value="Beverages" <?php echo ($menuItem['item_category'] == 'Beverages') ? 'selected' : ''; ?>>Beverages</option>
+                                </select>
+                            </div>
+                        </div>
+                            <!-- Dynamic Stock Fields -->
+                            <div id="stock_fields" class="form-group">
+                                <?php foreach ($stocks as $index => $stock) { ?>
+                                    <div class="form-groups stock_entry" id="stock_entry_<?php echo $index + 1; ?>">
+                                        <div class="form-group">
+                                            <label for="stock_categories_<?php echo $index + 1; ?>">Stock</label>
+                                            <select id="stock_categories_<?php echo $index + 1; ?>" name="stock_id[]" required>
+                                                <option value="" hidden>Select Stock Category</option>
+                                                <?php
+                                                $stockQuery = "SELECT * FROM stocks ORDER BY stock_name ASC";
+                                                $stockResult = $conn->query($stockQuery);
+                                                while ($row = $stockResult->fetch_assoc()) {
+                                                    $selected = ($row['stock_id'] == $stock['stock_id']) ? 'selected' : '';
+                                                    echo "<option value='{$row['stock_id']}' $selected>{$row['stock_name']}</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="stock_quantity_<?php echo $index + 1; ?>">Stock Quantity</label>
+                                            <input type="number" step="1" min="0" name="quantities[]" value="<?php echo htmlspecialchars($stock['quantity_required']); ?>" required>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                             </div>
 
-                            <div class="form-groups">
-                                <div class="form-group">
-                                    <label for="item_categories">Category</label>
-                                    <select name="item_categories" id="item_categories">
-                                        <option value="" hidden>Select a category</option>
-                                        <option value="Main Course" <?php echo ($menuItem['item_category'] == 'Main Course') ? 'selected' : ''; ?>>Main Course</option>
-                                        <option value="Dessert" <?php echo ($menuItem['item_category'] == 'Dessert') ? 'selected' : ''; ?>>Dessert</option>
-                                        <option value="Beverages" <?php echo ($menuItem['item_category'] == 'Beverages') ? 'selected' : ''; ?>>Beverages</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="stock_categories">Stock</label>
-                                    <select id="stock_categories" name="stock_id">
-                                        <option value="" hidden>Select stock category</option>
-                                        <?php
-                                        $query = "SELECT * FROM stocks ORDER BY stock_name ASC";
-                                        $result = mysqli_query($conn, $query);
-
-                                        while ($row = mysqli_fetch_assoc($result)) {
-                                            $selected = ($row['stock_id'] == $selectedStockID) ? 'selected' : '';
-                                            echo "<option value='{$row['stock_id']}' $selected>{$row['stock_name']}</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
+                            <!-- Add and Remove Stock Buttons -->
+                            <div class="form-groups button-group">
+                                <button type="button" class="button-add" onclick="addStockField()">
+                                    <span>Add Column</span>
+                                </button>
+                                <button type="button" class="button-remove" onclick="removeStockField()">
+                                    <span>Remove Column</span>
+                                </button>
                             </div>
-                            <?php
-                            // If the form is submitted, keep the image path in a hidden input field
-                            $itemImage = isset($menuItem['item_image']) ? htmlspecialchars($menuItem['item_image']) : '';
 
-                            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['current_image'])) {
-                                $itemImage = htmlspecialchars($_POST['current_image']);
-                            }
-
-                            ?>              
                             <div class="form-group image-form" id="image-form">
                                 <label for="">Menu Image</label>
                                 <div class="form-image-container" id="form_image_container">
                                     <?php
-                                    if (!empty($itemImage)) {
-                                        echo "<img src='../uploads/" . $itemImage . "' id='item_image'>";
+                                    if (!empty($menuItem['item_image'])) {
+                                        echo "<img src='../uploads/" . htmlspecialchars($menuItem['item_image']) . "' id='item_image'>";
                                     } else {
                                         echo "<img src='../assets/thumbnail.webp' id='item_image'>";
                                     }
@@ -325,9 +323,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                                 <label for="input-image" class="input-image">Upload Image</label>
                                 <input type="file" id="input-image" name="item_photo" accept="image/*">
-                                <!-- Store the current image path in a hidden input field -->
-                                <input type="hidden" name="current_image" value="<?php echo $itemImage; ?>">
-                            </div> 
+                                <input type="hidden" name="current_image" value="<?php echo htmlspecialchars($menuItem['item_image']); ?>">
+                            </div>
 
                             <div class="form-groups button-group">
                                 <button class="btn-cancel" type="reset">
@@ -339,9 +336,54 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <span>Save Menu</span>
                                 </button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
+
+            <!-- JavaScript for adding/removing stock fields -->
+            <script>
+                let stockCount = <?php echo count($stocks); ?>; // Initialize with the number of existing stock fields
+
+                function addStockField() {
+                    stockCount++;
+                    const container = document.getElementById('stock_fields');
+                    const newField = document.createElement('div');
+                    newField.className = 'form-groups stock_entry';
+                    newField.id = `stock_entry_${stockCount}`;
+                    newField.innerHTML = `
+                        <div class="form-group">
+                            <label for="stock_categories_${stockCount}">Stock</label>
+                            <select id="stock_categories_${stockCount}" name="stock_id[]" required>
+                                <option value="" hidden>Select Stock Category</option>
+                                <?php
+                                $query = "SELECT * FROM stocks ORDER BY stock_name ASC";
+                                $result = $conn->query($query);
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<option value='{$row['stock_id']}'>{$row['stock_name']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="stock_quantity_${stockCount}">Stock Quantity</label>
+                            <input type="number" step="1" min="0" name="quantities[]" required>
+                        </div>
+                    `;
+                    container.appendChild(newField);
+                }
+
+                function removeStockField() {
+                    if (stockCount > 1) {  // Ensure there's at least one field remaining
+                        const container = document.getElementById('stock_fields');
+                        const lastField = document.getElementById(`stock_entry_${stockCount}`);
+                        container.removeChild(lastField);
+                        stockCount--;
+                    } else {
+                        alert('At least one stock field must remain.');
+                    }
+                }
+            </script>
+
                 <?php
                     include_once "../includes/connection.php";
 
