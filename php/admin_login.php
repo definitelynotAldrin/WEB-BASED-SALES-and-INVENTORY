@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['account_logged_in'] = true; // Optionally set a flag for login status
             
             // Redirect to index page or any desired page
-            header("Location: ../public/index?&success=Greetings admin!");
+            header("Location: ../public/index?&success=Log in as admin");
             exit();
         } else {
             // Invalid email or password, display an error message

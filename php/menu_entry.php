@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $data = "item_name=" . $itemName . "&item_price=" . $itemPrice . "&item_categories=" . $itemCat . "&stock_id=" . $stockID;
 
+        // Validation checks
         if (empty($itemName)) {
             $errorMsg = "Menu name is required";
             header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
@@ -35,7 +36,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
             exit;
         } else {
-            // Handle file upload
+            // Check if the menu item with the same name and category already exists
+            $checkSql = "SELECT * FROM menu_items WHERE item_name = ? AND item_category = ?";
+            $checkStmt = $conn->prepare($checkSql);
+            $checkStmt->bind_param("ss", $itemName, $itemCat);
+            $checkStmt->execute();
+            $result = $checkStmt->get_result();
+
+            if ($result->num_rows > 0) {
+                // Menu item already exists
+                $errorMsg = "Menu item already exists!";
+                header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+                exit;
+            }
+
+            // Proceed with file upload if item doesn't exist
             $tempName = $_FILES["item_photo"]["tmp_name"];
             $fileName = $_FILES["item_photo"]["name"];
             $filePath = "../uploads/" . $fileName;
@@ -87,4 +102,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 ob_end_flush();
-

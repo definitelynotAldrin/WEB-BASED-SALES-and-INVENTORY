@@ -1,133 +1,44 @@
-<?php
-    session_start();
-	include_once 'dbh.inc.php';
-
-	if(isset($_POST['upload'])){
-		$id = $_POST['id'];
-
-        $sql = "SELECT * FROM product WHERE id = $id";
-        $stmt = mysqli_stmt_init($conn);
-        if (!mysqli_stmt_prepare($stmt, $sql)){
-            echo "SQL statement Failed";
-        }else{
-            mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $row = mysqli_fetch_assoc($result);
-        
-        $image = $row['images'];
-        $name = $row['name'];
-        
-        }
-
-        $path = "Product_images/uploads/".$image;
-
-        $newFileName = $name;
-        if(empty($newFileName)){
-            $newFileName = 'image';
-        }else{
-            $newFileName = strtolower(str_replace("", "-", $newFileName));
-        }
-        
-        
-        
-        
-
-
-        $file = $_FILES['file'];
-        $filename = $file["name"];
-        $fileType = $file["type"];
-        $fileTempName = $file["tmp_name"];
-        $fileError = $file["error"];
-        $fileSize = $file["size"];
-        $fileExt = explode(".", $filename);
-    
-        $fileActualExt = strtolower(end($fileExt));
-        
-        $allowed = array("jpg", "jpeg", "png");
-       
-
-        if (in_array($fileActualExt, $allowed) ){
-            if($fileError === 0){
-                if($fileSize < 2000000){
-                    $imageFullName = $newFileName . "." . uniqid("", true) . "." .$fileActualExt;
-                    $fileDestination = "Product_images/uploads/" . $imageFullName;
-    
-                   
-                    
-    
-                    include_once "dbh.inc.php";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <?php 
+     include_once "../includes/connection.php";
      
-                    if(empty($newFileName)){
-                        header("Location: ../manage-items.php?upload=empty?");
-                        exit();
-                    }else{
-                        if(!unlink($path)){
-                        header("Location: ../manage-items.php?upload=Failed?");
-                        exit;
-                        }else{
-                            
-                          
-                            try {
-                                require_once "dbh.inc.php";
-                    
-                                $query = "UPDATE product SET images = :images WHERE id = $id ;";
-                    
-                                $stmt = $pdo->prepare($query);
-                    
-                                $stmt ->bindParam(":images", $imageFullName);
-                                
-                        
-                    
-                                $stmt ->execute();
-                                $pdo = null;
-                                $stmt = null;
-                                
-                                move_uploaded_file($fileTempName, $fileDestination);
-                              
-                    
-                                header("Location: ../manage-items.php?upload=success?");
+        $sql = "SELECT mi.item_id, mi.item_name, mi.item_category, s.stock_quantity, mis.quantity_required
+        FROM menu_items mi
+        JOIN menu_item_stocks mis ON mi.item_id = mis.menu_item_id
+        JOIN stocks s ON mis.stock_id = s.stock_id";
 
-                                die();
-                            } catch (PDOException $e){
-                                die('QUERY FAILED: ' . $e->getMessage());
-                    
-                            }
-                        
+$result = $conn->query($sql);
 
-                
-                            header("Location: ../manage-items.php?upload=success?");
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $stock_quantity = $row['stock_quantity'];
+        $quantity_required = $row['quantity_required'];
+        $low_stock_threshold = 10; // Define your low stock threshold here
 
-                        exit;
+        // Check if stock is low
+        if ($stock_quantity < $low_stock_threshold) {
+            $low_stock_indicator = "Low Stock: " . $stock_quantity . " left";
+        } else {
+            $low_stock_indicator = "In Stock";
+        }
 
-                        }
+        // Display the menu item with the stock indicator
+        echo "<div class='menu-item'>";
+        echo "<h3>" . $row['item_name'] . "</h3>";
+        echo "<p>Stock Status: " . $low_stock_indicator . "</p>";
+        echo "</div>";
+    }
+} else {
+    echo "No items found.";
+}
 
-
-                        
-                    }
-    
-                }else{
-                  
-                    header("Location: ../manage-items.php?upload=failed&Filesize&error");
-                    // echo '<script>alert("Image files is to big")</script>';
-                }
-            }else{
-                
-                header("Location: ../manage-items.php?upload=failed&You&had&an&error");
-    
-            }
-            
-        } else{
-            // echo 'File format must be jpg or png';
-            
-            header("Location: ../manage-items.php?upload=imgfailed");
-            
-            exit();
-        }    
-
-	}
-	else{
-		$_SESSION['error'] = 'Select voter to update photo first';
-	}
-
-	header('location: ../manage-items.php');
-?>
+    ?>
+</body>
+</html>

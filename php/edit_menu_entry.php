@@ -35,6 +35,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
 
+        // Check if menu name and category combination already exists (excluding the current item being updated)
+        $checkSql = "SELECT * FROM menu_items WHERE item_name = ? AND item_category = ? AND item_id != ?";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->bind_param("ssi", $itemName, $itemCat, $itemId);
+        $checkStmt->execute();
+        $checkResult = $checkStmt->get_result();
+
+        if ($checkResult->num_rows > 0) {
+            // Menu item with the same name and category already exists
+            $errorMsg = "Menu item already exists";
+            header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+            exit;
+        }
+        $checkStmt->close();
+
         // Check if a new file was uploaded
         if (isset($_FILES["item_photo"]) && $_FILES["item_photo"]["error"] == UPLOAD_ERR_OK) {
             // Validate file type (e.g., image/jpeg, image/png)

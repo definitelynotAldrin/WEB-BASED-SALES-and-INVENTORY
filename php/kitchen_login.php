@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['account_logged_in'] = true; // Optionally set a flag for login status
             
             // Redirect to index page or any desired page
-            header("Location: ../public/kitchen_dashboard");
+            header("Location: ../public/kitchen_dashboard?&success=Log in successfully!");
             exit();
         } else {
             // Invalid email or password, display an error message
