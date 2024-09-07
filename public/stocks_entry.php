@@ -254,33 +254,51 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         </div>
                         <div class="menu-card-content">
-                            <?php
-                            include_once "../includes/connection.php";
-                            // Fetch all registered stocks
-                            $sql = "SELECT * FROM stocks";
-                            $result = $conn->query($sql);
+    <?php
+    include_once "../includes/connection.php";
+    // Fetch all registered stocks
+    $sql = "SELECT * FROM stocks";
+    $result = $conn->query($sql);
 
-                            if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                    ?>
-                                    <div class="menu-cards" data-category="<?php echo $row['stock_unit']; ?>">
-                                        <div class="menu-cards-group menu-details">
-                                            <h1 class="menu-cards-menu-title"><?php echo $row['stock_name']; ?></h1>
-                                            <p class="menu-cards-menu-stock">Stocks: <span><?php echo $row['stock_quantity']; ?></span> <?php echo $row['stock_unit']; ?></p>
-                                        </div>
-                                        <div class="menu-cards-button">
-                                            <i class="fa-regular fa-pen-to-square btn-edit" data-product-id="<?php echo $row['stock_id']; ?>"></i>
-                                            <i class="fa-regular fa-trash-can btn-delete"></i>
-                                        </div>
-                                    </div>
-                                    <?php
-                                }
-                            } else {
-                                echo "<p>No stock items found.</p>";
-                            }
-                            $conn->close();
-                            ?>
-                        </div>
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $stockStatus = $row['stock_status']; // Fetch stock status from the database
+            ?>
+            <div class="menu-cards" data-category="<?php echo $row['stock_unit']; ?>">
+                <div class="menu-cards-group menu-details">
+                    <h1 class="menu-cards-menu-title"><?php echo $row['stock_name']; ?></h1>
+                    <p class="menu-cards-menu-stock">Stocks: <span><?php echo $row['stock_quantity']; ?></span> <?php echo $row['stock_unit']; ?></p>
+                </div>
+                <div class="menu-cards-button">
+                    <!-- Edit button (disable if inactive) -->
+                    <i class="fa-regular fa-pen-to-square btn-edit" 
+                       data-product-id="<?php echo $row['stock_id']; ?>"
+                       style="<?php echo ($stockStatus === 'inactive') ? 'pointer-events: none; opacity: 0.5;' : ''; ?>">
+                    </i>
+
+                    <!-- Delete button (only show if active) -->
+                    <i class="fa-regular fa-trash-can btn-delete" 
+                       data-product-id="<?php echo $row['stock_id']; ?>"
+                       style="<?php echo ($stockStatus === 'inactive') ? 'display: none;' : ''; ?>">
+                    </i>
+
+                    <!-- Return button (only show if inactive) -->
+                    <i class="fa-solid fa-rotate-left btn-return" 
+                       data-product-id="<?php echo $row['stock_id']; ?>"
+                       style="<?php echo ($stockStatus === 'active') ? 'display: none;' : ''; ?>">
+                    </i>
+                </div>
+            </div>
+            <?php
+        }
+    } else {
+        echo "<p>No stock items found.</p>";
+    }
+    $conn->close();
+    ?>
+</div>
+
+
                     </div>
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
@@ -343,8 +361,129 @@ document.addEventListener("DOMContentLoaded", function() {
                             }
                         });
                     });
+                </script>
 
-                    </script>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.btn-delete');
+    const returnButtons = document.querySelectorAll('.btn-return');
+    const confirmationOverlay = document.querySelector('.delete-confirmation-overlay');
+    const confirmationContainer = document.querySelector('.delete-confirmation-container');
+    const confirmDeleteButton = document.querySelector('.confirm-delete');
+    const confirmCancelButton = document.querySelector('.confirm-cancel');
+    
+    // For return confirmation
+    const returnOverlay = document.querySelector('.return-confirmation-overlay');
+    const returnContainer = document.querySelector('.return-confirmation-container');
+    const confirmReturnButton = document.querySelector('.return-btn');
+    const cancelReturnButton = document.querySelector('.return-cancel');
+
+    let selectedProductId = null; // To store the product ID for the selected item
+
+    // Show confirmation popup when delete button is clicked
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            selectedProductId = this.getAttribute('data-product-id');
+            confirmationOverlay.style.display = 'block';
+            confirmationContainer.style.display = 'block';
+        });
+    });
+
+    // Cancel button in confirmation popup for delete
+    confirmCancelButton.addEventListener('click', function() {
+        confirmationOverlay.style.display = 'none';
+        confirmationContainer.style.display = 'none';
+        selectedProductId = null; // Reset the product ID
+    });
+
+    // Confirm delete (set as inactive)
+    confirmDeleteButton.addEventListener('click', function() {
+        if (selectedProductId) {
+            // Send AJAX request to set the item as inactive
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../php/set_stock_inactive.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Update the UI to reflect the inactive status
+                    const menuCard = document.querySelector(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
+                    const deleteButton = menuCard.querySelector('.btn-delete');
+                    const returnButton = menuCard.querySelector('.btn-return');
+                    const editButton = menuCard.querySelector('.btn-edit');
+
+                    // Hide delete button and show return button
+                    deleteButton.style.display = 'none';
+                    returnButton.style.display = 'inline-block';
+
+                    // Disable the edit button
+                    editButton.style.pointerEvents = 'none';
+                    editButton.style.opacity = '0.5';
+
+                    // Hide confirmation popup
+                    confirmationOverlay.style.display = 'none';
+                    confirmationContainer.style.display = 'none';
+                    selectedProductId = null;
+                }
+            };
+            xhr.send(`product_id=${selectedProductId}`);
+        }
+    });
+
+    // Show confirmation popup when return button is clicked
+    returnButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            selectedProductId = this.getAttribute('data-product-id');
+            returnOverlay.style.display = 'block';
+            returnContainer.style.display = 'block';
+        });
+    });
+
+    // Cancel button in confirmation popup for return
+    cancelReturnButton.addEventListener('click', function() {
+        returnOverlay.style.display = 'none';
+        returnContainer.style.display = 'none';
+        selectedProductId = null; // Reset the product ID
+    });
+
+    // Confirm return (set as active)
+    confirmReturnButton.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent default link behavior
+        if (selectedProductId) {
+            // Send AJAX request to set the item as active
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../php/set_stock_active.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Update the UI to reflect the active status
+                    const menuCard = document.querySelector(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
+                    const deleteButton = menuCard.querySelector('.btn-delete');
+                    const returnButton = menuCard.querySelector('.btn-return');
+                    const editButton = menuCard.querySelector('.btn-edit');
+
+                    // Show delete button and hide return button
+                    deleteButton.style.display = 'inline-block';
+                    returnButton.style.display = 'none';
+
+                    // Enable the edit button
+                    editButton.style.pointerEvents = 'auto';
+                    editButton.style.opacity = '1';
+
+                    // Hide return confirmation popup
+                    returnOverlay.style.display = 'none';
+                    returnContainer.style.display = 'none';
+                    selectedProductId = null;
+                }
+            };
+            xhr.send(`product_id=${selectedProductId}`);
+        }
+    });
+});
+
+
+
+                </script>
                 </div>
             </div>
 
@@ -388,11 +527,23 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="delete-confirmation-container">
                 <div class="delete-confirmation-content">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <h1>Are you sure you want?</h1>
-                    <p>Removing this item in the inventory will cause inactivity of the product on the menu.</p>
+                    <h1>Are you sure?</h1>
+                    <p>Setting this item as an inactive will cause inactivity of the product on the menu.</p>
                     <div class="form-groups button-group confirmation-button">
-                        <button class="confirm-delete">remove</button>
+                        <button class="confirm-delete">set as inactive</button>
                         <button class="confirm-cancel">cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="pop-up-overlay return-confirmation-overlay"></div>
+            <div class="pop-up-container return-confirmation-container">
+                <div class="pop-up-content return-confirmation-content">
+                    <i class="fa-solid fa-question"></i>
+                    <h1>Are you sure?</h1>
+                    <p>Do you wish to set this item active again?</p>
+                    <div class="pop-up-buttons return-buttons">
+                        <a href="#" class="btn-first return-btn">yes</a>
+                        <a href="#" class="btn-second return-cancel">no</a>
                     </div>
                 </div>
             </div>
@@ -411,7 +562,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 <script src="../js/sidenav.js"></script>
 <script src="../js/menu_entry_panel.js"></script>
-<script src="../js/popup_forms.js"></script>
+<!-- <script src="../js/popup_forms.js"></script> -->
 <script src="../js/logout.js"></script>
 <script src="../js/alert_disappear.js"></script>
 </body>
