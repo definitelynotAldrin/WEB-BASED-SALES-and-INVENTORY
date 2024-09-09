@@ -4,17 +4,18 @@ session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if (isset($_POST['item_id'], $_POST['item_name'], $_POST['item_price'], $_POST['item_categories'], $_POST['stock_id'])) {
+    if (isset($_POST['item_id'], $_POST['item_name'], $_POST['item_price'], $_POST['item_categories'], $_POST['stock_id'], $_POST['quantities'])) {
         include_once "../includes/connection.php";
 
         $itemId = intval($_POST['item_id']); // ID of the menu item to be updated
         $itemName = trim($_POST['item_name']);
         $itemPrice = floatval($_POST['item_price']);
         $itemCat = $_POST['item_categories'];
-        $stockId = intval($_POST['stock_id']);
+        $stockIds = $_POST['stock_id']; // Array of stock IDs
+        $quantities = $_POST['quantities']; // Array of quantities
 
         // Build query string for redirect URL
-        $data = "item_id=" . $itemId . "&item_name=" . urlencode($itemName) . "&item_price=" . urlencode($itemPrice) . "&item_categories=" . urlencode($itemCat) . "&stock_id=" . urlencode($stockId);
+        $data = "item_id=" . $itemId . "&item_name=" . urlencode($itemName) . "&item_price=" . urlencode($itemPrice) . "&item_categories=" . urlencode($itemCat);
 
         // Input validation
         if (empty($itemName)) {
@@ -27,10 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         } else if (empty($itemCat)) {
             $errorMsg = "Menu category is required";
-            header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
-            exit;
-        } else if ($stockId <= 0) {
-            $errorMsg = "Stock category is required";
             header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
             exit;
         }
@@ -66,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bind_param("ssssi", $itemName, $itemPrice, $itemCat, $fileName, $itemId);
             } else {
                 $errorMsg = "Invalid file type. Only JPG, PNG, and GIF are allowed.";
-                header("Location: ../public/menu_entry.php?error=$errorMsg&$data");
+                header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
                 exit;
             }
         } else {
@@ -79,22 +76,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->execute()) {
             $stmt->close();
 
-            // Update or insert into menu_item_stocks table
-            $menuStockSql = "INSERT INTO menu_item_stocks (menu_item_id, stock_id, quantity_required) 
-                             VALUES (?, ?, ?) 
-                             ON DUPLICATE KEY UPDATE quantity_required = VALUES(quantity_required)";
-            $menuStockStmt = $conn->prepare($menuStockSql);
-            $quantityRequired = 1; // Update or set as needed
-            $menuStockStmt->bind_param("iii", $itemId, $stockId, $quantityRequired);
+            // First delete any existing stocks associated with this menu item
+            $deleteStocksSql = "DELETE FROM menu_item_stocks WHERE menu_item_id = ?";
+            $deleteStocksStmt = $conn->prepare($deleteStocksSql);
+            $deleteStocksStmt->bind_param("i", $itemId);
+            $deleteStocksStmt->execute();
+            $deleteStocksStmt->close();
 
-            if ($menuStockStmt->execute()) {
-                header("Location: ../public/menu_entry.php?success=Menu item updated successfully");
-            } else {
-                $errorMsg = "Failed to update stock information.";
-                header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
+            // Insert or update the stocks for this menu item
+            $menuStockSql = "INSERT INTO menu_item_stocks (menu_item_id, stock_id, quantity_required) 
+                             VALUES (?, ?, ?)";
+            $menuStockStmt = $conn->prepare($menuStockSql);
+
+            // Loop through the stocks and quantities
+            for ($i = 0; $i < count($stockIds); $i++) {
+                $stockId = intval($stockIds[$i]);
+                $quantityRequired = intval($quantities[$i]);
+
+                if ($stockId > 0 && $quantityRequired >= 0) {
+                    $menuStockStmt->bind_param("iid", $menuItemId, $stockID, $quantityRequired);
+                    $menuStockStmt->execute();
+                } else {
+                    $errorMsg = "Invalid stock ID or quantity.";
+                    header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
+                    exit;
+                }
             }
 
             $menuStockStmt->close();
+            header("Location: ../public/menu_entry.php?success=Menu item updated successfully");
         } else {
             $errorMsg = "Failed to update menu item.";
             header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");

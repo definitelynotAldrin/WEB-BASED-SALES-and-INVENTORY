@@ -518,10 +518,11 @@ select{
 
 .menu-card-img{
     width: 40%;
+    height: auto;
 }
 
 .menu-card-img img{
-    width: 100%;
+    width: 100px;
     border-radius: 5px;
 }
 

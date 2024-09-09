@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <?php } ?>
                         <div class="form-groups">
                             <div class="form-group">
-                                <label for="">Item Name</label>
+                                <label for="">Menu Name</label>
                                 <input type="text" name="item_name" value="<?php echo (isset($_GET['item_name']))?$_GET['item_name']:"" ?>">
                             </div>
                             <div class="form-group">
@@ -231,9 +231,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         <div id="stock_fields">
                             <div class="form-groups stock_entry">
                                 <div class="form-group">
-                                    <label for="stock_categories_1">Stock</label>
-                                    <select id="stock_categories_1" name="stock_id[]" required>
-                                        <option value="" hidden>Select Stock Category</option>
+                                    <label for="stock_categories_1">Ingredient/Item</label>
+                                    <select id="stock_categories_1" name="stock_id[]" >
+                                        <option value="" hidden>Select Stock ingredient</option>
                                         <?php
                                             include_once "../includes/connection.php";
 
@@ -248,8 +248,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="stock_quantity_1">Stock Quantity</label>
-                                    <input type="number" step="1" min="0" name="quantities[]" required>
+                                    <label for="stock_quantity_1">quantity required</label>
+                                    <input type="number" step="0.01" min="0" name="quantities[]"  value="<?php echo (isset($_GET['quantities']))?$_GET['quantities']:"" ?>">
                                 </div>
                             </div>
                         </div>
@@ -298,9 +298,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     newField.id = `stock_entry_${stockCount}`;
                     newField.innerHTML = `
                         <div class="form-group">
-                            <label for="stock_categories_${stockCount}">Stock</label>
+                            <label for="stock_categories_${stockCount}">Ingredient</label>
                             <select id="stock_categories_${stockCount}" name="stock_id[]" required>
-                                <option value="" hidden>Select Stock Category</option>
+                                <option value="" hidden>Select Stock ingredient</option>
                                 <?php
                                 // Populate the dropdown with stock options
                                 $query = "SELECT * FROM stocks";
@@ -313,8 +313,8 @@ document.addEventListener("DOMContentLoaded", function() {
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="stock_quantity_${stockCount}">Stock Quantity</label>
-                            <input type="number" step="1" min="0" name="quantities[]" required>
+                            <label for="stock_quantity_${stockCount}">quantity required</label>
+                            <input type="number" step="0.01" min="0" name="quantities[]" required>
                         </div>
                     `;
                     container.appendChild(newField);
@@ -330,6 +330,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         window.location.href = '../public/menu_entry.php?error=At least one stock field must remain.';
                     }
                 }
+
             </script>
                 <?php
                     include_once "../includes/connection.php";
@@ -367,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <p class="menu-cards-menu-desc"><?php echo $row['item_category']; ?></p>
                                         </div>
                                         <div class="menu-cards-buttons">
-                                            <a href="menu_entry_edit.php?item_id=<?php echo $row['item_id']; ?>&success=You're now in edit mode">
+                                            <a href="menu_entry_edit.php?item_id=<?php echo $row['item_id']; ?>&success=You're now in update section">
                                                 <i class="fa-regular fa-pen-to-square btn-edit"></i>
                                             </a>
                                             <a href="#">

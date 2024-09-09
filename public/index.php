@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>
             </div>
-            <!-- <div class="chart-container">
+            <div class="chart-container">
                 <div class="chart-header">
                     <select name="year" id="year_selection">
 
@@ -366,7 +366,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </select>
                 </div>
                 <canvas id="sales_chart"></canvas>
-            </div> -->
+            </div>
         </div>
         <div class="pop-up-overlay logout-confirmation-overlay"></div>
         <div class="pop-up-container logout-confirmation-container">
