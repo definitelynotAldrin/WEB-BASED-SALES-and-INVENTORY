@@ -8,3 +8,17 @@ document.addEventListener('DOMContentLoaded', function() {
  
 
 });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const collectibles = document.querySelector('.btn-cancel');
+    
+    // Add click event listener to the button
+    collectibles.addEventListener('click', function(){
+        window.location.href = '../public/menu_entry.php?success=Update Cancelled';
+    });
+ 
+
+});
+
+

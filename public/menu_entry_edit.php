@@ -197,32 +197,49 @@ document.addEventListener("DOMContentLoaded", function() {
                     <h4>Let's add delicious dishes and make sales...</h4>
                 </div>
                 <div class="header-profile">
-                    <div class="notification">
+                <div class="notification">
+                        <?php 
+                            include_once "../includes/connection.php";
+
+                            $sql = "SELECT * FROM stocks";
+                            $result = $conn->query($sql);
+                        ?>
                         <i class="fa-solid fa-bell notification-bell">
                             <i class="fa-solid fa-circle"></i>
                         </i>
                         <div class="notification-content-container">
                             <h1 class="notification-title">Notifications</h1>
-                           <div class="notification-card-container">
-                            <div class="notification-content">
-                                <div class="notification-img">
-                                    <img src="../assets/mark.png" alt="">
+                            <div class="notification-card-container">
+                                <?php
+                                    if ($result->num_rows > 0) {
+                                        $low_stock_threshold = 10; // Define your low stock threshold here
+                                        while($row = $result->fetch_assoc()) {
+                                            $stock_quantity = $row['stock_quantity'];
+                                            $stock_name = $row['stock_name']; // Assuming stock name is stored in 'stock_name' column
+
+                                            // Check if stock is low
+                                            if ($stock_quantity < $low_stock_threshold) {
+                                                // $low_stock_indicator = "Low Stock: " . $stock_quantity . " left";
+
+                                                // Display low stock notification
+                                ?>
+                                <div class="notification-content">
+                                    <div class="notification-img">
+                                        <img src="../assets/mark.png">
+                                    </div>
+                                    <div class="notification-details">
+                                        <h1 class="notification-details-title"><?php echo htmlspecialchars($stock_name); ?></h1>
+                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span><?php echo $stock_quantity; ?></span> available.</p>
+                                    </div>
                                 </div>
-                                <div class="notification-details">
-                                    <h1 class="notification-details-title">coke</h1>
-                                    <p><span>Stock Alert:</span> This item is running low. <br>Only <span>20</span> available.</p>
-                                </div>
+                                <?php
+                                            }
+                                        }
+                                    } else {
+                                        echo "<p>Items are in stock!</p>";
+                                    }
+                                ?>
                             </div>
-                            <div class="notification-content">
-                                <div class="notification-img">
-                                    <img src="../assets/mark.png" alt="">
-                                </div>
-                                <div class="notification-details">
-                                    <h1 class="notification-details-title">shrimp</h1>
-                                    <p><span>Stock Alert:</span> This item is running low. <br>Only <span>20</span> kg available.</p>
-                                </div>
-                            </div>
-                           </div>
                         </div>
                     </div>
                     <div class="profile">
@@ -327,9 +344,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
 
                                 <div class="form-groups button-group">
-                                    <button class="btn-cancel" type="reset">
+                                    <button class="btn-cancel" type="button">
                                         <i class="fa-solid fa-rotate-left"></i>
-                                        <span>Reset Fields</span>
+                                        <span>Cancel</span>
                                     </button>
                                     <button class="btn-save" type="submit">
                                         <i class="fa-regular fa-floppy-disk"></i>
@@ -513,6 +530,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/popup_forms.js"></script>
 <script src="../js/logout.js"></script>
 <script src="../js/alert_disappear.js"></script>
+<script src="../js/hyperlinks_nav.js"></script>
 <!-- <script src="../js/popup_confirmations.js"></script> -->
 </body>
 

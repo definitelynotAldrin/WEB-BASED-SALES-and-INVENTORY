@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <h4>Let's check sales performances & analytics.</h4>
                 </div>
                 <div class="header-profile">
-                <div class="notification">
+                    <div class="notification">
                         <?php 
                             include_once "../includes/connection.php";
 
