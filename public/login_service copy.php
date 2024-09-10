@@ -35,8 +35,8 @@
                     </div>
                 <?php } ?>
                 <div class="form-group">
-                    <label for="username">username</label>
-                    <input type="text" name="username" value="<?php echo (isset($_GET['username']))?$_GET['username']:"" ?>">
+                    <label for="email">email</label>
+                    <input type="email" name="email" value="<?php echo (isset($_GET['email']))?$_GET['email']:"" ?>">
                 </div>
                 <div class="form-group">
                     <label for="password">password</label>

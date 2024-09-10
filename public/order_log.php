@@ -203,7 +203,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="bottom-cards customers-cards">
                                 <div class="bottom-cards-group customer-details">
                                     <h1 class="bottom-cards-customer">christian campbell</h1>
-                                    <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p>
                                 </div>
                                 <div class="bottom-cards-group settlement">
                                     <h3>order date & time</h3>
@@ -222,7 +221,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             <span class="order-date">08/10/2024</span>
                             <span class="order-time">11:24 AM</span>
                         </h1>
-                        <h1 class="header-title customer-location">Location: Purok 1, barangay san jose, talisayan, misamis oriental</h1>
                     </div>
                     <div class="second-panel-card-container order-summary-section">
                         <div class="table-container">

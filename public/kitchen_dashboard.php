@@ -376,5 +376,6 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/order_entry_panel.js"></script> -->
 <script src="../js/kitchen_panel.js"></script>
 <script src="../js/logout.js"></script>
+<script src="../js/alert_disappear.js"></script>
 </body>
 </html>

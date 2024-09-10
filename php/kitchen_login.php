@@ -5,17 +5,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include_once "../includes/connection.php";
     
     // Retrieve form data
-    $email = $_POST["email"];
+    $username = $_POST["username"];
     $password = $_POST["password"];
     
     // SQL query to retrieve the user data from the database
-    $sql = "SELECT * FROM accounts WHERE account_email = ? AND account_password = ?";
+    $sql = "SELECT * FROM accounts WHERE account_username = ? AND account_password = ?";
     
     // Prepare the SQL statement
     $stmt = $conn->prepare($sql);
     
     // Bind parameters
-    $stmt->bind_param("ss", $email, $password);
+    $stmt->bind_param("ss", $username, $password);
     
     // Execute the query
     $stmt->execute();
@@ -23,10 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Store the result
     $result = $stmt->get_result();
 
-    $data = "email=".$email;
+    $data = "username=".$username;
     
-    if(empty($email)){
-    	$errorMsg = "Email is required";
+    if(empty($username)){
+    	$errorMsg = "username is required";
         header("Location: ../public/login_kitchen.php?error=$errorMsg&$data");
 	    exit;
     }else if(empty($password)){
@@ -42,17 +42,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Set session variables
             $_SESSION['account_id'] = $row['account_id'];
-            $_SESSION['account_email'] = $row['account_email'];
+            $_SESSION['account_username'] = $row['account_username'];
             $_SESSION['account_password'] = $row['account_password'];
             $_SESSION['user_role'] = $row['user_role'];
             $_SESSION['account_logged_in'] = true; // Optionally set a flag for login status
             
             // Redirect to index page or any desired page
-            header("Location: ../public/kitchen_dashboard?&success=Log in successfully!");
+            header("Location: ../public/kitchen_dashboard?&success=Successfully log in!");
             exit();
         } else {
-            // Invalid email or password, display an error message
-            $errorMsg = "Incorrect email or password";
+            // Invalid username or password, display an error message
+            $errorMsg = "Incorrect username or password";
             header("Location: ../public/login_kitchen.php?error=$errorMsg");
         }
 
