@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_FILES["item_photo"]) && $_FILES["item_photo"]["error"] == UPLOAD_ERR_OK) {
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
             if (in_array($_FILES["item_photo"]["type"], $allowedTypes)) {
-                $fileName = time() . "_" . basename($_FILES["item_photo"]["name"]);
+                $fileName = basename($_FILES["item_photo"]["name"]);
                 $filePath = "../uploads/" . $fileName;
 
                 $sql = "UPDATE menu_items SET item_name = ?, item_price = ?, item_category = ?, item_image = ? WHERE item_id = ?";

@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $quantityRequired = $stockQuantities[$index];
 
             // Insert stock entry for each stock ID and quantity
-            $menuStockStmt->bind_param("iii", $menuItemId, $stockID, $quantityRequired);
+            $menuStockStmt->bind_param("iid", $menuItemId, $stockID, $quantityRequired);
             $menuStockStmt->execute();
         }
 
