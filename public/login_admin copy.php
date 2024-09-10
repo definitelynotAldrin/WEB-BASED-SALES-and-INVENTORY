@@ -42,7 +42,7 @@
                     <label for="password">password</label>
                     <input type="password" name="password" id="passwordInput">
                     <i class="fas fa-eye" id="showPassword"></i>
-                    <i class="fas fa-eye-slash" id="hidePassword"></i>
+                    <i class="fas fa-eye-slash" id="showPassword"></i>
                 </div>
                 <div class="button-group">
                     <button type="submit">admin login</button>
