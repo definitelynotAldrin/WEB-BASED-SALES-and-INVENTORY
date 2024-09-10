@@ -271,49 +271,49 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         </div>
                         <div class="menu-card-content">
-    <?php
-    include_once "../includes/connection.php";
-    // Fetch all registered stocks
-    $sql = "SELECT * FROM stocks";
-    $result = $conn->query($sql);
+                            <?php
+                            include_once "../includes/connection.php";
+                            // Fetch all registered stocks
+                            $sql = "SELECT * FROM stocks";
+                            $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $stockStatus = $row['stock_status']; // Fetch stock status from the database
-            ?>
-            <div class="menu-cards" data-category="<?php echo $row['stock_unit']; ?>">
-                <div class="menu-cards-group menu-details">
-                    <h1 class="menu-cards-menu-title"><?php echo $row['stock_name']; ?></h1>
-                    <p class="menu-cards-menu-stock">Stocks: <span><?php echo $row['stock_quantity']; ?></span> <?php echo $row['stock_unit']; ?></p>
-                </div>
-                <div class="menu-cards-button">
-                    <!-- Edit button (disable if inactive) -->
-                    <i class="fa-regular fa-pen-to-square btn-edit" 
-                       data-product-id="<?php echo $row['stock_id']; ?>"
-                       style="<?php echo ($stockStatus === 'inactive') ? 'pointer-events: none; opacity: 0.5;' : ''; ?>">
-                    </i>
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    $stockStatus = $row['stock_status']; // Fetch stock status from the database
+                                    ?>
+                                    <div class="menu-cards" data-category="<?php echo $row['stock_unit']; ?>">
+                                        <div class="menu-cards-group menu-details">
+                                            <h1 class="menu-cards-menu-title"><?php echo $row['stock_name']; ?></h1>
+                                            <p class="menu-cards-menu-stock">Stocks: <span><?php echo $row['stock_quantity']; ?></span> <?php echo $row['stock_unit']; ?></p>
+                                        </div>
+                                        <div class="menu-cards-button">
+                                            <!-- Edit button (disable if inactive) -->
+                                            <i class="fa-regular fa-pen-to-square btn-edit" 
+                                            data-product-id="<?php echo $row['stock_id']; ?>"
+                                            style="<?php echo ($stockStatus === 'inactive') ? 'pointer-events: none; opacity: 0.5;' : ''; ?>">
+                                            </i>
 
-                    <!-- Delete button (only show if active) -->
-                    <i class="fa-regular fa-trash-can btn-delete" 
-                       data-product-id="<?php echo $row['stock_id']; ?>"
-                       style="<?php echo ($stockStatus === 'inactive') ? 'display: none;' : ''; ?>">
-                    </i>
+                                            <!-- Delete button (only show if active) -->
+                                            <i class="fa-regular fa-trash-can btn-delete" 
+                                            data-product-id="<?php echo $row['stock_id']; ?>"
+                                            style="<?php echo ($stockStatus === 'inactive') ? 'display: none;' : ''; ?>">
+                                            </i>
 
-                    <!-- Return button (only show if inactive) -->
-                    <i class="fa-solid fa-rotate-left btn-return" 
-                       data-product-id="<?php echo $row['stock_id']; ?>"
-                       style="<?php echo ($stockStatus === 'active') ? 'display: none;' : ''; ?>">
-                    </i>
-                </div>
-            </div>
-            <?php
-        }
-    } else {
-        echo "<p>No stock items found.</p>";
-    }
-    $conn->close();
-    ?>
-</div>
+                                            <!-- Return button (only show if inactive) -->
+                                            <i class="fa-solid fa-rotate-left btn-return" 
+                                            data-product-id="<?php echo $row['stock_id']; ?>"
+                                            style="<?php echo ($stockStatus === 'active') ? 'display: none;' : ''; ?>">
+                                            </i>
+                                        </div>
+                                    </div>
+                                    <?php
+                                }
+                            } else {
+                                echo "<p>No stock items found.</p>";
+                            }
+                            $conn->close();
+                            ?>
+                        </div>
 
 
                     </div>
