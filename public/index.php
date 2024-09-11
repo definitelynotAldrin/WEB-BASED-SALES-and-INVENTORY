@@ -165,30 +165,50 @@ document.addEventListener("DOMContentLoaded", function() {
                     <h4>Let's check sales performances & analytics.</h4>
                 </div>
                 <div class="header-profile">
-                    <div class="notification">
+                <div class="notification">
                         <?php 
                             include_once "../includes/connection.php";
 
                             $sql = "SELECT * FROM stocks";
                             $result = $conn->query($sql);
+
+                            $low_stock_found = false; // Flag to track if any stock is low
                         ?>
                         <i class="fa-solid fa-bell notification-bell">
-                            <i class="fa-solid fa-circle"></i>
+                            <?php if ($result->num_rows > 0) { ?>
+                                <?php 
+                                    $low_stock_threshold = 10; // Define your low stock threshold here
+                                    while($row = $result->fetch_assoc()) {
+                                        $stock_quantity = $row['stock_quantity'];
+                                        $stock_name = $row['stock_name']; // Assuming stock name is stored in 'stock_name' column
+
+                                        // Check if stock is low
+                                        if ($stock_quantity < $low_stock_threshold) {
+                                            $low_stock_found = true; // Set flag if there's a low stock
+                                        }
+                                    }
+                                ?>
+                                <?php if ($low_stock_found) { ?>
+                                    <!-- Display fa-circle only if there's a low stock -->
+                                    <i class="fa-solid fa-circle"></i>
+                                <?php } ?>
+                            <?php } ?>
                         </i>
+
                         <div class="notification-content-container">
                             <h1 class="notification-title">Notifications</h1>
                             <div class="notification-card-container">
                                 <?php
                                     if ($result->num_rows > 0) {
-                                        $low_stock_threshold = 10; // Define your low stock threshold here
+                                        // Reset the result pointer for another loop
+                                        $result->data_seek(0); // Important to reset the result pointer for another loop
+
                                         while($row = $result->fetch_assoc()) {
                                             $stock_quantity = $row['stock_quantity'];
                                             $stock_name = $row['stock_name']; // Assuming stock name is stored in 'stock_name' column
 
                                             // Check if stock is low
                                             if ($stock_quantity < $low_stock_threshold) {
-                                                // $low_stock_indicator = "Low Stock: " . $stock_quantity . " left";
-
                                                 // Display low stock notification
                                 ?>
                                 <div class="notification-content">
@@ -210,7 +230,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         </div>
                     </div>
-
                     <div class="profile">
                         <img src="../assets/me.jpg">
                     </div>

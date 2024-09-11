@@ -118,9 +118,9 @@
 }
 
 .nav-lists li.disabled-nav{
-    opacity: 0.5;
+    display: none;
     pointer-events: none;
-    cursor: none;
+    cursor: none; 
 }
 
 .nav-lists li .active{

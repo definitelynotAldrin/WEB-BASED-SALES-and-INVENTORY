@@ -158,30 +158,50 @@ document.addEventListener("DOMContentLoaded", function() {
                     <h4>Let's add item stocks and make sales...</h4>
                 </div>
                 <div class="header-profile">
-                <div class="notification">
+                    <div class="notification">
                         <?php 
                             include_once "../includes/connection.php";
 
                             $sql = "SELECT * FROM stocks";
                             $result = $conn->query($sql);
+
+                            $low_stock_found = false; // Flag to track if any stock is low
                         ?>
                         <i class="fa-solid fa-bell notification-bell">
-                            <i class="fa-solid fa-circle"></i>
+                            <?php if ($result->num_rows > 0) { ?>
+                                <?php 
+                                    $low_stock_threshold = 10; // Define your low stock threshold here
+                                    while($row = $result->fetch_assoc()) {
+                                        $stock_quantity = $row['stock_quantity'];
+                                        $stock_name = $row['stock_name']; // Assuming stock name is stored in 'stock_name' column
+
+                                        // Check if stock is low
+                                        if ($stock_quantity < $low_stock_threshold) {
+                                            $low_stock_found = true; // Set flag if there's a low stock
+                                        }
+                                    }
+                                ?>
+                                <?php if ($low_stock_found) { ?>
+                                    <!-- Display fa-circle only if there's a low stock -->
+                                    <i class="fa-solid fa-circle"></i>
+                                <?php } ?>
+                            <?php } ?>
                         </i>
+
                         <div class="notification-content-container">
                             <h1 class="notification-title">Notifications</h1>
                             <div class="notification-card-container">
                                 <?php
                                     if ($result->num_rows > 0) {
-                                        $low_stock_threshold = 10; // Define your low stock threshold here
+                                        // Reset the result pointer for another loop
+                                        $result->data_seek(0); // Important to reset the result pointer for another loop
+
                                         while($row = $result->fetch_assoc()) {
                                             $stock_quantity = $row['stock_quantity'];
                                             $stock_name = $row['stock_name']; // Assuming stock name is stored in 'stock_name' column
 
                                             // Check if stock is low
                                             if ($stock_quantity < $low_stock_threshold) {
-                                                // $low_stock_indicator = "Low Stock: " . $stock_quantity . " left";
-
                                                 // Display low stock notification
                                 ?>
                                 <div class="notification-content">
@@ -335,6 +355,8 @@ document.addEventListener("DOMContentLoaded", function() {
                             });
                         });
                     </script>
+
+                    <!-- ------------------Fetching Data Using AJAx----------------------- -->
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script>
                     document.addEventListener('DOMContentLoaded', function() {
@@ -372,135 +394,132 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
 
                         // Close the popup when the close button or outside of the popup is clicked
-                        document.querySelector('.popup-form-container').addEventListener('click', function(event) {
-                            if (event.target.classList.contains('popup-form-container')) {
-                                this.style.display = 'none';
-                            }
-                        });
+                        // document.querySelector('.popup-form-container').addEventListener('click', function(event) {
+                        //     if (event.target.classList.contains('popup-form-container')) {
+                        //         this.style.display = 'none';
+                        //     }
+                        // });
                     });
                 </script>
 
-
+        <!-- --------------------------Set Status for stock------------------------ -->
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.btn-delete');
-    const returnButtons = document.querySelectorAll('.btn-return');
-    const confirmationOverlay = document.querySelector('.delete-confirmation-overlay');
-    const confirmationContainer = document.querySelector('.delete-confirmation-container');
-    const confirmDeleteButton = document.querySelector('.confirm-delete');
-    const confirmCancelButton = document.querySelector('.confirm-cancel');
-    
-    // For return confirmation
-    const returnOverlay = document.querySelector('.return-confirmation-overlay');
-    const returnContainer = document.querySelector('.return-confirmation-container');
-    const confirmReturnButton = document.querySelector('.return-btn');
-    const cancelReturnButton = document.querySelector('.return-cancel');
+                        const deleteButtons = document.querySelectorAll('.btn-delete');
+                        const returnButtons = document.querySelectorAll('.btn-return');
+                        const confirmationOverlay = document.querySelector('.delete-confirmation-overlay');
+                        const confirmationContainer = document.querySelector('.delete-confirmation-container');
+                        const confirmDeleteButton = document.querySelector('.confirm-delete');
+                        const confirmCancelButton = document.querySelector('.confirm-cancel');
+                        
+                        // For return confirmation
+                        const returnOverlay = document.querySelector('.return-confirmation-overlay');
+                        const returnContainer = document.querySelector('.return-confirmation-container');
+                        const confirmReturnButton = document.querySelector('.return-btn');
+                        const cancelReturnButton = document.querySelector('.return-cancel');
 
-    let selectedProductId = null; // To store the product ID for the selected item
+                        let selectedProductId = null; // To store the product ID for the selected item
 
-    // Show confirmation popup when delete button is clicked
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            selectedProductId = this.getAttribute('data-product-id');
-            confirmationOverlay.style.display = 'block';
-            confirmationContainer.style.display = 'block';
-        });
-    });
+                        // Show confirmation popup when delete button is clicked
+                        deleteButtons.forEach(button => {
+                            button.addEventListener('click', function() {
+                                selectedProductId = this.getAttribute('data-product-id');
+                                confirmationOverlay.style.display = 'block';
+                                confirmationContainer.style.display = 'block';
+                            });
+                        });
 
-    // Cancel button in confirmation popup for delete
-    confirmCancelButton.addEventListener('click', function() {
-        confirmationOverlay.style.display = 'none';
-        confirmationContainer.style.display = 'none';
-        selectedProductId = null; // Reset the product ID
-    });
+                        // Cancel button in confirmation popup for delete
+                        confirmCancelButton.addEventListener('click', function() {
+                            confirmationOverlay.style.display = 'none';
+                            confirmationContainer.style.display = 'none';
+                            selectedProductId = null; // Reset the product ID
+                        });
 
-    // Confirm delete (set as inactive)
-    confirmDeleteButton.addEventListener('click', function() {
-        if (selectedProductId) {
-            // Send AJAX request to set the item as inactive
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '../php/set_stock_inactive.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    // Update the UI to reflect the inactive status
-                    const menuCard = document.querySelector(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
-                    const deleteButton = menuCard.querySelector('.btn-delete');
-                    const returnButton = menuCard.querySelector('.btn-return');
-                    const editButton = menuCard.querySelector('.btn-edit');
+                        // Confirm delete (set as inactive)
+                        confirmDeleteButton.addEventListener('click', function() {
+                            if (selectedProductId) {
+                                // Send AJAX request to set the item as inactive
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', '../php/set_stock_inactive.php', true);
+                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === 4 && xhr.status === 200) {
+                                        // Update the UI to reflect the inactive status
+                                        const menuCard = document.querySelector(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
+                                        const deleteButton = menuCard.querySelector('.btn-delete');
+                                        const returnButton = menuCard.querySelector('.btn-return');
+                                        const editButton = menuCard.querySelector('.btn-edit');
 
-                    // Hide delete button and show return button
-                    deleteButton.style.display = 'none';
-                    returnButton.style.display = 'inline-block';
+                                        // Hide delete button and show return button
+                                        deleteButton.style.display = 'none';
+                                        returnButton.style.display = 'inline-block';
 
-                    // Disable the edit button
-                    editButton.style.pointerEvents = 'none';
-                    editButton.style.opacity = '0.5';
+                                        // Disable the edit button
+                                        editButton.style.pointerEvents = 'none';
+                                        editButton.style.opacity = '0.5';
 
-                    // Hide confirmation popup
-                    confirmationOverlay.style.display = 'none';
-                    confirmationContainer.style.display = 'none';
-                    selectedProductId = null;
-                }
-            };
-            xhr.send(`product_id=${selectedProductId}`);
-        }
-    });
+                                        // Hide confirmation popup
+                                        confirmationOverlay.style.display = 'none';
+                                        confirmationContainer.style.display = 'none';
+                                        selectedProductId = null;
+                                    }
+                                };
+                                xhr.send(`product_id=${selectedProductId}`);
+                            }
+                        });
 
-    // Show confirmation popup when return button is clicked
-    returnButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            selectedProductId = this.getAttribute('data-product-id');
-            returnOverlay.style.display = 'block';
-            returnContainer.style.display = 'block';
-        });
-    });
+                        // Show confirmation popup when return button is clicked
+                        returnButtons.forEach(button => {
+                            button.addEventListener('click', function() {
+                                selectedProductId = this.getAttribute('data-product-id');
+                                returnOverlay.style.display = 'block';
+                                returnContainer.style.display = 'block';
+                            });
+                        });
 
-    // Cancel button in confirmation popup for return
-    cancelReturnButton.addEventListener('click', function() {
-        returnOverlay.style.display = 'none';
-        returnContainer.style.display = 'none';
-        selectedProductId = null; // Reset the product ID
-    });
+                        // Cancel button in confirmation popup for return
+                        cancelReturnButton.addEventListener('click', function() {
+                            returnOverlay.style.display = 'none';
+                            returnContainer.style.display = 'none';
+                            selectedProductId = null; // Reset the product ID
+                        });
 
-    // Confirm return (set as active)
-    confirmReturnButton.addEventListener('click', function(e) {
-        e.preventDefault(); // Prevent default link behavior
-        if (selectedProductId) {
-            // Send AJAX request to set the item as active
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '../php/set_stock_active.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    // Update the UI to reflect the active status
-                    const menuCard = document.querySelector(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
-                    const deleteButton = menuCard.querySelector('.btn-delete');
-                    const returnButton = menuCard.querySelector('.btn-return');
-                    const editButton = menuCard.querySelector('.btn-edit');
+                        // Confirm return (set as active)
+                        confirmReturnButton.addEventListener('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+                            if (selectedProductId) {
+                                // Send AJAX request to set the item as active
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', '../php/set_stock_active.php', true);
+                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === 4 && xhr.status === 200) {
+                                        // Update the UI to reflect the active status
+                                        const menuCard = document.querySelector(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
+                                        const deleteButton = menuCard.querySelector('.btn-delete');
+                                        const returnButton = menuCard.querySelector('.btn-return');
+                                        const editButton = menuCard.querySelector('.btn-edit');
 
-                    // Show delete button and hide return button
-                    deleteButton.style.display = 'inline-block';
-                    returnButton.style.display = 'none';
+                                        // Show delete button and hide return button
+                                        deleteButton.style.display = 'inline-block';
+                                        returnButton.style.display = 'none';
 
-                    // Enable the edit button
-                    editButton.style.pointerEvents = 'auto';
-                    editButton.style.opacity = '1';
+                                        // Enable the edit button
+                                        editButton.style.pointerEvents = 'auto';
+                                        editButton.style.opacity = '1';
 
-                    // Hide return confirmation popup
-                    returnOverlay.style.display = 'none';
-                    returnContainer.style.display = 'none';
-                    selectedProductId = null;
-                }
-            };
-            xhr.send(`product_id=${selectedProductId}`);
-        }
-    });
-});
-
-
-
-                </script>
+                                        // Hide return confirmation popup
+                                        returnOverlay.style.display = 'none';
+                                        returnContainer.style.display = 'none';
+                                        selectedProductId = null;
+                                    }
+                                };
+                                xhr.send(`product_id=${selectedProductId}`);
+                            }
+                        });
+                    });
+                    </script>
                 </div>
             </div>
 
@@ -513,7 +532,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="popup-content">
                     <form action="../php/stocks_update.php" class="popup-form" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="item_id" id="item_id">
-                        <input type="hidden" name="submission_time" value="<?php echo date('Y-m-d H:i:s'); ?>">
+                        <input type="hidden" name="submission_time" value="<?php date_default_timezone_set('Asia/Manila'); echo date('Y-m-d H:i:s'); ?>">
                         <div class="form-groups popup-form-groups">
                             <div class="form-group">
                                 <label for="">item name</label>
