@@ -236,117 +236,121 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="menu-section-container">
                 <div class="first-panel-section">
+                <?php
+                    include_once "../includes/connection.php";
+
+                    // Fetch all unique menu items and their associated stock data
+                    $sql = "
+                        SELECT mi.*, GROUP_CONCAT(s.stock_name) AS ingredients
+                        FROM menu_items mi
+                        LEFT JOIN menu_item_stocks mis ON mi.item_id = mis.menu_item_id
+                        LEFT JOIN stocks s ON mis.stock_id = s.stock_id
+                        WHERE s.stock_status = 1 -- Only active stocks are considered
+                        GROUP BY mi.item_id";  // Group by item_id to avoid duplicates
+
+                    $result = $conn->query($sql);
+                    ?>
+
                     <div class="menu-header">
                         <h1 class="menu-header-title">Order Menu</h1>
                         <div class="dropdown-category menu-category">
-                            <select name="menu_insert_category" class="menu-insert-category" id="menu_insert_category">
-                                <option value="main-course">main course</option>
+                            <select name="menu_order_category" id="menu_order_category">
+                                <option value="all">All Categories</option>
+                                <option value="main course">Main Course</option>
                                 <option value="dessert">Dessert</option>
-                                <option value="beverages">beverages</option>
+                                <option value="beverages">Beverages</option>
                             </select>
                         </div>
                     </div>
+
                     <div class="first-panel-cards-container menu-cards-container">
-                        <div class="card menu-item-card">
-                            <img src="../assets/fish haha.jpg" class="card-img menu-img">
-                            <div class="card-details menu-card-details">
-                                <span class="card-name menu-name">humba</span>
-                            </div>
-                        </div>               
-                        <div class="card menu-item-card">
-                            <img src="../assets/fish haha.jpg" class="card-img menu-img">
-                            <div class="card-details menu-card-details">
-                                <span class="card-name menu-name">humba</span>
-                            </div>
-                        </div>
-                        <div class="card menu-item-card">
-                            <img src="../assets/fish haha.jpg" class="card-img menu-img">
-                            <div class="card-details menu-card-details">
-                                <span class="card-name menu-name">humba</span>
-                            </div>
-                        </div>
-                        <div class="card menu-item-card">
-                            <img src="../assets/fish haha.jpg" class="card-img menu-img">
-                            <div class="card-details menu-card-details">
-                                <span class="card-name menu-name">humba</span>
-                            </div>
-                        </div>
-                        <div class="card menu-item-card">
-                            <img src="../assets/fish haha.jpg" class="card-img menu-img">
-                            <div class="card-details menu-card-details">
-                                <span class="card-name menu-name">humba</span>
-                            </div>
-                        </div>
-                        <div class="card menu-item-card">
-                            <img src="../assets/fish haha.jpg" class="card-img menu-img">
-                            <div class="card-details menu-card-details">
-                                <span class="card-name menu-name">humba</span>
-                            </div>
-                        </div>
-                        <div class="card menu-item-card">
-                            <img src="../assets/fish haha.jpg" class="card-img menu-img">
-                            <div class="card-details menu-card-details">
-                                <span class="card-name menu-name">humba</span>
-                            </div>
-                        </div>
-                        <div class="card menu-item-card">
-                            <img src="../assets/fish haha.jpg" class="card-img menu-img">
-                            <div class="card-details menu-card-details">
-                                <span class="card-name menu-name">humba</span>
-                            </div>
-                        </div>
-                        <div class="card menu-item-card">
-                            <img src="../assets/fish haha.jpg" class="card-img menu-img">
-                            <div class="card-details menu-card-details">
-                                <span class="card-name menu-name">humba</span>
-                            </div>
-                        </div>
+                        <?php
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                $itemCategory = strtolower($row['item_category']); // Convert category to lowercase to match filter
+                                ?>
+                                <div class="card menu-item-card" data-category="<?php echo $itemCategory; ?>" data-item-id="<?php echo $row['item_id']; ?>">
+                                    
+                                    <img src="../uploads/<?php echo $row['item_image']; ?>" class="card-img menu-img" alt="<?php echo $row['item_name']; ?>">
+                                    <div class="card-details menu-card-details">
+                                        <span class="card-name menu-name"><?php echo $row['item_name']; ?></span>
+                                        
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                        } else {
+                            echo "<p>No menu items available.</p>";
+                        }
+                        ?>
                     </div>
-                  
-                    <div class="popup_order_quantity maincourse-quantity">
+
+                    <?php $conn->close(); ?>
+
+                    <script>
+                    document.getElementById('menu_order_category').addEventListener('change', function() {
+                        var selectedCategory = this.value.toLowerCase();
+                        var items = document.querySelectorAll('.menu-item-card');
+
+                        items.forEach(function(item) {
+                            var itemCategory = item.getAttribute('data-category');
+                            
+                            // Show or hide based on the selected category
+                            if (selectedCategory === 'all' || itemCategory === selectedCategory) {
+                                item.style.display = 'flex';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+                    });
+                    </script>
+
+
+                                    
+                    <div class="popup_order_quantity kilograms-quantity" id="kilograms-popup">
                         <div class="popup-header">
                             <i class="fa-solid fa-scale-balanced"></i>
-                            <h1>Input how many kilo (s) does the order require.</h1>
+                            <h1>Input how many kilo(s) does the order require.</h1>
                         </div>
                         <form action="">
+                            <!-- HIDDEN INPUTS FOR STORING DATA FROM THE MENU -->
+                            <input type="hidden" name="dish_id" id="dish_id_kg">
+                            <input type="hidden" name="dish_name" id="dish_name_kg">
                             <div class="card-group">
-                                <!-- HIDDEN INPUTS FOR STORING DATA FROM THE MENU -->
-                                <input type="hidden" name="product_id" id="product_id">
-                                <input type="hidden" name="product_name" id="product_name">
-                                <div class="card-boxes menu-item-quantity">
+                                <div class="card-boxes menu-item-quantity" data-value="0.25">
                                     <h3>1/4</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity">
+                                <div class="card-boxes menu-item-quantity" data-value="0.5">
                                     <h3>1/2</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity">
+                                <div class="card-boxes menu-item-quantity" data-value="0.75">
                                     <h3>3/4</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity">
+                                <div class="card-boxes menu-item-quantity" data-value="5">
                                     <h3>1</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity">
+                                <div class="card-boxes menu-item-quantity" data-value="5">
                                     <h3>2</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity">
+                                <div class="card-boxes menu-item-quantity" data-value="5">
                                     <h3>3</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity">
+                                <div class="card-boxes menu-item-quantity" data-value="5">
                                     <h3>4</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity">
+                                <div class="card-boxes menu-item-quantity" data-value="5">
                                     <h3>5</h3>
                                     <span>Kilo(s)</span>
                                 </div>
                                 <div class="card-boxes card-input-field">
-                                    <input type="number" min="1">
+                                    <input type="number" min="1" id="custom_kg">
                                     <span>Kilo(s)</span>
                                 </div>
                             </div>
@@ -361,18 +365,38 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         </form>
                     </div>
+
+                    <div class="popup_order_quantity pieces-quantity" id="pieces-popup">
+                        <div class="popup-header">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            <h1>Input how many quantity(s) does the order require.</h1>
+                        </div>
+                        <form action="">
+                            <!-- HIDDEN INPUTS FOR STORING DATA FROM THE MENU -->
+                            <input type="hidden" name="dish_id" id="dish_id_pieces">
+                            <input type="hidden" name="dish_name" id="dish_name_pieces">
+                            <div class="card-group">
+                                <div class="card-boxes card-input-field">
+                                    <input type="number" min="1">
+                                    <span>Quantity</span>
+                                </div>
+                            </div>
+                            <div class="card-button-group">
+                                <button class="btn-cancel" type="button">
+                                    <span>cancel</span>
+                                </button>
+                                <button class="btn-proceed" type="submit">
+                                    <span>proceed</span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
                 <div class="second-panel-section">
                     <div class="menu-header">
                         <h1 class="menu-header-title">order summary</h1>
-                        <!-- <div class="dropdown-category menu-category">
-                            <select name="menu_category" id="">
-                                <option value="" hidden>select menu category</option>
-                                <option value="Main Course">main course</option>
-                                <option value="Dessert">Dessert</option>s
-                                <option value="Beverages">beverages</option>
-                            </select>
-                        </div> -->
                     </div>
                     <div class="second-panel-card-container order-summary-section">
                         <div class="table-container">
@@ -460,53 +484,18 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <input type="text" placeholder="Optional" name="customer_note">
                                 </div>
                             </div>
-                        </div>
-                        <div class="button-section">
+                            <div class="button-section">
                             <button type="submit">
                                 <span>proceed to kitchen</span>
                                 <i class="fa-solid fa-arrow-right-long"></i>
                             </button>
                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="popup-overlay"></div>
 
-            <!-- <div class="popup-overlay"></div>
-            <div class="popup-form-container">
-                <div class="popup-form-header">
-                    <h1>update item / add new stock</h1>
-                    <i class="fa-regular fa-circle-xmark btn-close"></i>
-                </div>
-                <div class="popup-content">
-                    <form action="" class="popup-form">
-                        <div class="form-groups popup-form-groups">
-                            <div class="form-group">
-                                <label for="">item name</label>
-                                <input type="text" id="item_name" name="item_name">
-                            </div>
-                            <div class="form-group">
-                                <label for="">stocks quantity</label>
-                                <input type="number" id="stock_quantity" name="stock_quantity" step="1" min="0">
-                            </div>
-                        </div>
-                        <div class="menu-category item-category">
-                            <select name="item_category" id="">
-                                <option value="" hidden>select menu category</option>
-                                <option value="Main Course">main course</option>
-                                <option value="Dessert">Dessert</option>
-                                <option value="Beverages">beverages</option>
-                            </select>
-                        </div>
-                        <div class="form-groups button-group">
-                            <button class="btn-save">
-                                <i class="fa-regular fa-floppy-disk"></i>
-                                <span>save menu</span>
-                            </button>
-                        </div>
-                    </form> 
-                </div>
-            </div> -->
+            <div id="popup-overlay" class="popup-overlay"></div>           
         <div class="delete-confirmation-overlay"></div>
         <div class="delete-confirmation-container">
             <div class="delete-confirmation-content">

@@ -45,26 +45,73 @@ document.addEventListener('DOMContentLoaded', function() {
 // POPUP QUANTITY
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    const menu_items = document.querySelectorAll('.menu-item-card');
-    const maincourse_quantity = document.querySelector('.maincourse-quantity');
-    const btnCancel = document.querySelectorAll('.btn-cancel');
-    const popupOverlay = document.querySelector('.popup-overlay')
+// document.addEventListener('DOMContentLoaded', function () {
+//     const menu_items = document.querySelectorAll('.menu-item-card');
+//     const maincourse_quantity = document.querySelector('.kilograms-quantity');
+//     const btnCancel = document.querySelectorAll('.btn-cancel');
+//     const popupOverlay = document.querySelector('.popup-overlay')
 
-    menu_items.forEach(function(menu_item){
-        menu_item.addEventListener('click', function(){
-            maincourse_quantity.style.display = "block";
-            popupOverlay.style.display = "block";
-            document.body.style.overflow = "hidden";
-        });
-    });
+//     // menu_items.forEach(function(menu_item){
+//     //     menu_item.addEventListener('click', function(){
+//     //         maincourse_quantity.style.display = "block";
+//     //         popupOverlay.style.display = "block";
+//     //         document.body.style.overflow = "hidden";
+//     //     });
+//     // });
+
+//     btnCancel.forEach(function(cancelBtn){
+//         cancelBtn.addEventListener('click', function(){
+//             maincourse_quantity.style.display = "none";
+//             popupOverlay.style.display = "none";
+//             document.body.style.overflow = "auto";
+//         });
+//     });
+    
+// });
+
+
+// Function to handle the popup display
+function showPopup(category, id, name) {
+    // Hide both popups initially
+    document.getElementById('kilograms-popup').style.display = 'none';
+    document.getElementById('pieces-popup').style.display = 'none';
+    document.getElementById('popup-overlay').style.display = 'none';
+    const btnCancel = document.querySelectorAll('.btn-cancel');
+
+    if (category === 'main course') {
+        // Show the kilograms popup
+        document.getElementById('kilograms-popup').style.display = 'block';
+        document.getElementById('popup-overlay').style.display = 'block';
+        // Populate the hidden fields for kilograms popup
+        document.getElementById('dish_id_kg').value = id;
+        document.getElementById('dish_name_kg').value = name;
+    } else {
+        // Show the pieces popup for dessert and beverages
+        document.getElementById('pieces-popup').style.display = 'block';
+        document.getElementById('popup-overlay').style.display = 'block';
+        // Populate the hidden fields for pieces popup
+        document.getElementById('dish_id_pieces').value = id;
+        document.getElementById('dish_name_pieces').value = name;
+    }
 
     btnCancel.forEach(function(cancelBtn){
         cancelBtn.addEventListener('click', function(){
-            maincourse_quantity.style.display = "none";
-            popupOverlay.style.display = "none";
+            document.getElementById('kilograms-popup').style.display = 'none';
+            document.getElementById('pieces-popup').style.display = 'none';
+            document.getElementById('popup-overlay').style.display = 'none';
             document.body.style.overflow = "auto";
         });
     });
-    
+}
+
+// Add click event listeners to menu cards
+document.querySelectorAll('.menu-item-card').forEach(card => {
+    card.addEventListener('click', function() {
+        const itemId = this.getAttribute('data-id');
+        const itemName = this.querySelector('.menu-name').innerText;
+        const itemCategory = this.getAttribute('data-category');
+
+        // Show corresponding popup based on category
+        showPopup(itemCategory, itemId, itemName);
+    });
 });
