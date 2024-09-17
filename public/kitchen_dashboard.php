@@ -31,6 +31,11 @@ document.addEventListener("DOMContentLoaded", function() {
             navItem.style.pointerEvents = 'auto';
             navItem.style.cursor = 'pointer';
         });
+
+        var allButtons = document.querySelectorAll('.button-disable');
+        allButtons.forEach(function(disButtons){
+            disButtons.style.display = 'none';
+        });
     } 
     else if (userRole === 'user_service') {
         // Disable all navigation except order entry and order log
@@ -236,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
             <div class="menu-section-container">
-                <div class="first-panel-section">
+                <div class="orders-panel first-panel-section">
                     <div class="menu-header">
                         <h1 class="menu-header-title">to prepare</h1>
                     </div>
@@ -248,9 +253,10 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="card-details order-card-details">
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
-                            <div class="card-buttons">
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
                                 <button class="btn-view">view order</button>
-                                <button class="btn-serve">serve</button>
+                                <button class="btn-serve">confirm</button>
                             </div>
                         </div>
                         <div class="card order-item-card">
@@ -260,9 +266,10 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="card-details order-card-details">
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
-                            <div class="card-buttons">
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
                                 <button class="btn-view">view order</button>
-                                <button class="btn-serve">serve</button>
+                                <button class="btn-serve">confirm</button>
                             </div>
                         </div>
                         <div class="card order-item-card">
@@ -272,9 +279,23 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="card-details order-card-details">
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
-                            <div class="card-buttons">
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
                                 <button class="btn-view">view order</button>
-                                <button class="btn-serve">serve</button>
+                                <button class="btn-serve">confirm</button>
+                            </div>
+                        </div>         
+                        <div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
                             </div>
                         </div>
                         <div class="card order-item-card">
@@ -284,68 +305,138 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="card-details order-card-details">
                                 <span class="card-name order-number">Order # 0001</span>
                             </div>
-                            <div class="card-buttons">
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
                                 <button class="btn-view">view order</button>
-                                <button class="btn-serve">serve</button>
+                                <button class="btn-serve">confirm</button>
                             </div>
-                        </div>               
-                    </div>
-                    <div class="popup-card-container popup-order-view">
-                        <div class="popup-card-header">
-                            <h1 class="popup-order-title">Order # 0000</h1>
-                            <i class="fa-regular fa-circle-xmark btn-close"></i>
                         </div>
-                        <div class="popup-card-content">
-                            <div class="popup-card-table">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Order name</th>
-                                            <th>quantity</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Bangus</td>
-                                            <td>2 Kilo (s)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bangus</td>
-                                            <td>2 Kilo (s)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bangus</td>
-                                            <td>2 Kilo (s)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
                             </div>
-                            <div class="popup-card-textarea">
-                                <div class="card-textarea">
-                                    <h3>Customer name</h3>
-                                    <textarea name="" id="" disabled placeholder="John Doe"></textarea>
-                                </div>
-                                <div class="card-textarea">
-                                    <h3>note</h3>
-                                    <textarea name="" id="" disabled placeholder="Lorem Ipsum"></textarea>
-                                </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
+                            </div>
+                        </div>
+                        <div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
+                            </div>
+                        </div>
+                        <div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
+                            </div>
+                        </div>
+                        <div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
+                            </div>
+                        </div>
+                        <div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
+                            </div>
+                        </div>
+                        <div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
+                            </div>
+                        </div><div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
+                            </div>
+                        </div>
+                        <div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
                             </div>
                         </div>
                     </div> 
                 </div>
-                <div class="second-panel-section">
+                <div class="orders-panel second-panel-section">
+                    <div class="menu-header">
+                        <h1 class="menu-header-title">to prepare</h1>
+                    </div>
+                    <div class="first-panel-cards-container order-cards-container">
+                        <div class="card order-item-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons button-disable">
+                                <button class="btn-cancel">cancel</button>
+                                <button class="btn-view">view order</button>
+                                <button class="btn-serve">confirm</button>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="orders-panel third-panel-section">
                     <div class="menu-header">
                         <h1 class="menu-header-title">served</h1>
                         <!-- <div class="dropdown-category menu-category">
@@ -391,10 +482,79 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <span class="serve-text">served</span>
                             </div>
                         </div>
+                        <div class="card order-serve-card">
+                            <div class="card-img-container">
+                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                            </div>
+                            <div class="card-details order-card-details">
+                                <span class="card-name order-number">Order # 0001</span>
+                            </div>
+                            <div class="card-buttons">
+                                <span class="serve-text">served</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- --------------------Popup View-------------------- -->
+        <div class="popup-card-container popup-order-view">
+            <div class="popup-card-header">
+                <h1 class="popup-order-title">Order # 0000</h1>
+                <i class="fa-regular fa-circle-xmark btn-close"></i>
+            </div>
+            <div class="popup-card-content">
+                <div class="popup-card-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order name</th>
+                                <th>quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bangus</td>
+                                <td>2 Kilo (s)</td>
+                            </tr>
+                            <tr>
+                                <td>Rice</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>Bangus</td>
+                                <td>2 Kilo (s)</td>
+                            </tr>
+                            <tr>
+                                <td>Rice</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>Bangus</td>
+                                <td>2 Kilo (s)</td>
+                            </tr>
+                            <tr>
+                                <td>Rice</td>
+                                <td>2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="popup-card-textarea">
+                    <div class="card-textarea">
+                        <h3>Customer name</h3>
+                        <textarea name="" id="" disabled placeholder="John Doe"></textarea>
+                    </div>
+                    <div class="card-textarea">
+                        <h3>note</h3>
+                        <textarea name="" id="" disabled placeholder="Lorem Ipsum"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="pop-up-overlay logout-confirmation-overlay"></div>
         <div class="pop-up-container logout-confirmation-container">
             <div class="pop-up-content logout-confirmation-content">
