@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
     else if (userRole === 'user_kitchen') {
         // Disable all navigation except order entry and order log
         var allNavItems = document.querySelectorAll('.navbar-item');
-        var allowedNavs = ['kitchen', 'settlement'];
+        var allowedNavs = ['kitchen', 'settlement', 'order_log'];
 
         allNavItems.forEach(function(navItem) {
             var navId = navItem.id; // Assuming each nav item has a unique ID

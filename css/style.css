@@ -364,7 +364,8 @@
     font-weight: 700;
 }
 
-.collectibles-link{
+.collectibles-link,
+.sales-link{
     position: absolute;
     right: 5%;
     bottom: 10%;
@@ -412,6 +413,24 @@
     background-color: #eeeeee;
     border: 1px solid rgba(0, 0, 0, 0.1);
     padding: 25px;
+}
+
+.bottom-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu-category select, option{
+    padding: 6px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: var(--secondary-white);
+    text-transform: capitalize;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 600;
 }
 
 .bottom-cards-title{

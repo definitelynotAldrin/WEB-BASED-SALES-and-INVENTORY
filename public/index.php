@@ -247,6 +247,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </select>
                     </div>
                     <h1 class="header-card-value">&#x20B1;<span>234,555.90</span></h1>
+                    <i class="fa-solid fa-arrow-up-right-from-square sales-link"></i>
                 </div>
                 <div class="header-card collectibles-card">
                     <div class="header-card-group">
@@ -263,7 +264,17 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="bottom-cards-container">
                 <div class="bottom-card sellers">
-                    <h1 class="bottom-cards-title">best seller</h1>
+                   <div class="bottom-header">
+                        <h1 class="bottom-cards-title">best seller</h1>
+                        <div class="menu-category">
+                            <select name="menu_categories" id="menu_categories">
+                                <option value="all">All Categories</option>
+                                <option value="Main Course">Main Course</option>
+                                <option value="Dessert">Dessert</option>
+                                <option value="Beverages">Beverages</option>
+                            </select>
+                        </div>
+                   </div>
                     <div class="bottom-card-content">
                         <div class="bottom-cards">
                             <div class="bottom-card-img">

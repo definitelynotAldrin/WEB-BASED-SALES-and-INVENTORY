@@ -260,6 +260,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <option value="dessert">Dessert</option>
                                 <option value="beverages">Beverages</option>
                             </select>
+                            <input type="text" placeholder="search menu">
                         </div>
                     </div>
 

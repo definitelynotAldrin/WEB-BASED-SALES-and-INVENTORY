@@ -245,15 +245,13 @@ document.addEventListener("DOMContentLoaded", function() {
                             <?php echo $_GET['success']; ?>
                             </div>
                         <?php } ?>
-                        <div class="form-groups">
-                            <div class="form-group">
-                                <label for="">Menu Name</label>
-                                <input type="text" name="item_name" value="<?php echo (isset($_GET['item_name']))?$_GET['item_name']:"" ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="">Price</label>
-                                <input type="number" step="1" min="0" name="item_price" value="<?php echo (isset($_GET['item_price']))?$_GET['item_price']:"" ?>">
-                            </div>
+                        <div class="form-group">
+                            <label for="">Menu Name</label>
+                            <input type="text" name="item_name" value="<?php echo (isset($_GET['item_name']))?$_GET['item_name']:"" ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Price</label>
+                            <input type="number" step="1" min="0" name="item_price" value="<?php echo (isset($_GET['item_price']))?$_GET['item_price']:"" ?>">
                         </div>
                         <div class="form-group">
                             <label for="item_categories">Category</label>
@@ -455,17 +453,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
             </div>
             <div class="delete-confirmation-overlay"></div>
-                <div class="delete-confirmation-container">
-                    <div class="delete-confirmation-content">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <h1>Are you sure?</h1>
-                        <p>Setting this item as an inactive will cause not showing in the order menu.</p>
-                        <div class="form-groups button-group confirmation-button">
-                            <button class="confirm-delete">remove</button>
-                            <button class="confirm-cancel">cancel</button>
-                        </div>
+            <div class="delete-confirmation-container">
+                <div class="delete-confirmation-content">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <h1>Are you sure?</h1>
+                    <p>Setting this item as an inactive will cause not showing in the order menu.</p>
+                    <div class="form-groups button-group confirmation-button">
+                        <button class="confirm-delete">remove</button>
+                        <button class="confirm-cancel">cancel</button>
                     </div>
                 </div>
+            </div>
         </div>
         <div class="pop-up-overlay logout-confirmation-overlay"></div>
         <div class="pop-up-container logout-confirmation-container">

@@ -344,9 +344,9 @@
     margin-bottom: 0;
 }
 
-.dropdown-category select, option{
+.dropdown-category select, option, input{
     padding: 6px;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     border-radius: 5px;
     outline: none;
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -354,8 +354,12 @@
     text-transform: capitalize;
     color: rgba(0, 0, 0, 0.7);
     font-weight: 600;
+}
+
+.dropdown-category select, option{
     cursor: pointer;
 }
+
 
 .first-panel-cards-container{
     display: flex;
