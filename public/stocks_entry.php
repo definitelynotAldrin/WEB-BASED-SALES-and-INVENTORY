@@ -286,10 +286,13 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <select name="stock_categories" id="stock_categories">
                                     <option value="all">All Items</option>
                                     <option value="KG">Kilogram Items</option>
-                                    <option value="Pieces">Pieces item</option>
+                                    <option value="Pieces">Pieces Items</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
                                 </select>
                             </div>
                         </div>
+
                         <div class="menu-card-content">
                             <?php
                             include_once "../includes/connection.php";
@@ -301,7 +304,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 while ($row = $result->fetch_assoc()) {
                                     $stockStatus = $row['stock_status']; // Fetch stock status from the database
                                     ?>
-                                    <div class="menu-cards" data-category="<?php echo $row['stock_unit']; ?>">
+                                    <div class="menu-cards" data-category="<?php echo $row['stock_unit']; ?>" data-status="<?php echo $row['stock_status']; ?>">
                                         <div class="menu-cards-group menu-details">
                                             <h1 class="menu-cards-menu-title"><?php echo $row['stock_name']; ?></h1>
                                             <p class="menu-cards-menu-stock">Stocks: <span><?php echo $row['stock_quantity']; ?></span> <?php echo $row['stock_unit']; ?></p>
@@ -309,23 +312,21 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <div class="menu-cards-button">
                                             <!-- Edit button (disable if inactive) -->
                                             <i class="fa-regular fa-pen-to-square btn-edit" 
-                                            data-product-id="<?php echo $row['stock_id']; ?>"
-                                            style="<?php echo ($stockStatus === 'inactive') ? 'pointer-events: none; opacity: 0.5;' : ''; ?>">
-                                            </i>
+                                            data-product-id="<?php echo $row['stock_id']; ?>" 
+                                            style="<?php echo ($row['stock_status'] === 'inactive') ? 'pointer-events: none; opacity: 0.5;' : ''; ?>"></i>
 
                                             <!-- Delete button (only show if active) -->
                                             <i class="fa-regular fa-trash-can btn-delete" 
-                                            data-product-id="<?php echo $row['stock_id']; ?>"
-                                            style="<?php echo ($stockStatus === 'inactive') ? 'display: none;' : ''; ?>">
-                                            </i>
+                                            data-product-id="<?php echo $row['stock_id']; ?>" 
+                                            style="<?php echo ($row['stock_status'] === 'inactive') ? 'display: none;' : ''; ?>"></i>
 
                                             <!-- Return button (only show if inactive) -->
                                             <i class="fa-solid fa-rotate-left btn-return" 
-                                            data-product-id="<?php echo $row['stock_id']; ?>"
-                                            style="<?php echo ($stockStatus === 'active') ? 'display: none;' : ''; ?>">
-                                            </i>
+                                            data-product-id="<?php echo $row['stock_id']; ?>" 
+                                            style="<?php echo ($row['stock_status'] === 'active') ? 'display: none;' : ''; ?>"></i>
                                         </div>
                                     </div>
+
                                     <?php
                                 }
                             } else {
@@ -337,6 +338,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
                     </div>
+                    
+            <!-- ------------------------------------stock dropdown------------------------------- -->
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             const categorySelect = document.getElementById('stock_categories');
@@ -346,14 +349,32 @@ document.addEventListener("DOMContentLoaded", function() {
                                 const selectedCategory = this.value;
 
                                 stockItems.forEach(function(item) {
-                                    if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
+                                    const itemCategory = item.getAttribute('data-category');
+                                    const itemStatus = item.getAttribute('data-status');
+
+                                    // Logic for filtering based on category and status
+                                    if (selectedCategory === 'all') {
+                                        // Show all items
                                         item.style.display = 'flex';
+                                    } else if (selectedCategory === 'active' || selectedCategory === 'inactive') {
+                                        // Show items based on their status (active or inactive)
+                                        if (itemStatus === selectedCategory) {
+                                            item.style.display = 'flex';
+                                        } else {
+                                            item.style.display = 'none';
+                                        }
                                     } else {
-                                        item.style.display = 'none';
+                                        // Show items based on their category (KG, Pieces)
+                                        if (itemCategory === selectedCategory) {
+                                            item.style.display = 'flex';
+                                        } else {
+                                            item.style.display = 'none';
+                                        }
                                     }
                                 });
                             });
                         });
+
                     </script>
 
                     <!-- ------------------Fetching Data Using AJAx----------------------- -->
@@ -463,6 +484,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                         confirmationOverlay.style.display = 'none';
                                         confirmationContainer.style.display = 'none';
                                         selectedProductId = null;
+
+                                        location.reload();
                                     }
                                 };
                                 xhr.send(`product_id=${selectedProductId}`);
@@ -513,9 +536,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                         returnOverlay.style.display = 'none';
                                         returnContainer.style.display = 'none';
                                         selectedProductId = null;
+
+                                        location.reload();
                                     }
                                 };
                                 xhr.send(`product_id=${selectedProductId}`);
+                                
                             }
                         });
                     });

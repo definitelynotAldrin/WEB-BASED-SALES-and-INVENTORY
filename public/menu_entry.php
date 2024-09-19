@@ -245,14 +245,16 @@ document.addEventListener("DOMContentLoaded", function() {
                             <?php echo $_GET['success']; ?>
                             </div>
                         <?php } ?>
+                       <div class="form-groups">
                         <div class="form-group">
-                            <label for="">Menu Name</label>
-                            <input type="text" name="item_name" value="<?php echo (isset($_GET['item_name']))?$_GET['item_name']:"" ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Price</label>
-                            <input type="number" step="1" min="0" name="item_price" value="<?php echo (isset($_GET['item_price']))?$_GET['item_price']:"" ?>">
-                        </div>
+                                <label for="">Menu Name</label>
+                                <input type="text" name="item_name" value="<?php echo (isset($_GET['item_name']))?$_GET['item_name']:"" ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Price</label>
+                                <input type="number" step="1" min="0" name="item_price" value="<?php echo (isset($_GET['item_price']))?$_GET['item_price']:"" ?>">
+                            </div>
+                       </div>
                         <div class="form-group">
                             <label for="item_categories">Category</label>
                             <select name="item_categories" id="item_categories">
@@ -263,8 +265,8 @@ document.addEventListener("DOMContentLoaded", function() {
                             </select>
                         </div>
                         <!-- Dynamic Stock Fields -->
-                        <div id="stock_fields">
-                            <div class="form-groups stock_entry">
+                        <div id="stock_fields" class="form-group">
+                            <div class="form-groups stock_entry" id="stock_entry_1">
                                 <div class="form-group">
                                     <label for="stock_categories_1">Ingredient/Item</label>
                                     <select id="stock_categories_1" name="stock_id[]" >
@@ -283,19 +285,18 @@ document.addEventListener("DOMContentLoaded", function() {
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="stock_quantity_1">quantity required</label>
-                                    <input type="number" step="0.01" min="0" name="quantities[]"  value="<?php echo (isset($_GET['quantities']))?$_GET['quantities']:"" ?>">
+                                    <label for="stock_quantity_1">Quantity required</label>
+                                    <input type="number" step="0.01" min="0" name="quantities[]" value="<?php echo (isset($_GET['quantities'])) ? $_GET['quantities'] : '' ?>">
                                 </div>
+                                <!-- Remove field icon -->
+                                <i class="fa-regular fa-circle-xmark remove-field" onclick="removeSpecificField(this)"></i>
                             </div>
                         </div>
 
-                        <!-- Add and Remove Stock Buttons -->
+                        <!-- Add Stock Button -->
                         <div class="form-groups button-group">
                             <button type="button" class="button-add" onclick="addStockField()">
                                 <span>Add Column</span>
-                            </button>
-                            <button type="button" class="button-remove" onclick="removeStockField()">
-                                <span>Remove Column</span>
                             </button>
                         </div>
 
@@ -325,6 +326,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <script>
                 let stockCount = 1;
 
+                // Function to add new stock fields
                 function addStockField() {
                     stockCount++;
                     const container = document.getElementById('stock_fields');
@@ -337,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <select id="stock_categories_${stockCount}" name="stock_id[]" required>
                                 <option value="" hidden>Select Stock ingredient</option>
                                 <?php
-                                // Populate the dropdown with stock options
+                                // PHP to populate stock options from the database
                                 $query = "SELECT * FROM stocks";
                                 $result = mysqli_query($conn, $query);
 
@@ -348,25 +350,30 @@ document.addEventListener("DOMContentLoaded", function() {
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="stock_quantity_${stockCount}">quantity required</label>
+                            <label for="stock_quantity_${stockCount}">Quantity required</label>
                             <input type="number" step="0.01" min="0" name="quantities[]" required>
                         </div>
+                        <!-- Remove field icon -->
+                        <i class="fa-regular fa-circle-xmark remove-field" onclick="removeSpecificField(this)"></i>
                     `;
                     container.appendChild(newField);
                 }
 
-                function removeStockField() {
-                    if (stockCount > 1) {  // Ensure there's at least one field remaining
-                        const container = document.getElementById('stock_fields');
-                        const lastField = document.getElementById(`stock_entry_${stockCount}`);
-                        container.removeChild(lastField);
-                        stockCount--;
+                // Function to remove a specific stock field
+                function removeSpecificField(element) {
+                    const container = document.getElementById('stock_fields');
+                    const stockFields = container.querySelectorAll('.stock_entry');  // Get all stock entry fields
+
+                    // Ensure at least one stock field remains
+                    if (stockFields.length > 1) {
+                        const fieldToRemove = element.parentElement;  // Get the parent of the icon (the stock entry)
+                        fieldToRemove.remove();
                     } else {
                         window.location.href = '../public/menu_entry.php?error=At least one stock field must remain.';
                     }
                 }
-
             </script>
+
                 <?php
                     include_once "../includes/connection.php";
 

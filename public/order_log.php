@@ -9,11 +9,11 @@ if(!isset($account_id)){
    header('location: ../public/login_panel.php');
 }
 
-if ($user_role !== 'user_admin' &&  $user_role !== 'user_service') {
-    // Redirect to login or error page if user does not have the right role
-    header('Location: ../public/login_panel');
-    exit();
-}
+// if ($user_role !== 'user_admin' &&  $user_role !== 'user_service') {
+//     // Redirect to login or error page if user does not have the right role
+//     header('Location: ../public/login_panel');
+//     exit();
+// }
 
 ?>
 
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
     else if (userRole === 'user_kitchen') {
         // Disable all navigation except order entry and order log
         var allNavItems = document.querySelectorAll('.navbar-item');
-        var allowedNavs = ['kitchen', 'settlement'];
+        var allowedNavs = ['kitchen', 'settlement', 'order_log'];
 
         allNavItems.forEach(function(navItem) {
             var navId = navItem.id; // Assuming each nav item has a unique ID

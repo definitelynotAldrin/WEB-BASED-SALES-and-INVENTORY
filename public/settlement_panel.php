@@ -505,6 +505,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
         </div>
+        <div class="popup-overlay"></div>
         <div class="pop-up-overlay logout-confirmation-overlay"></div>
         <div class="pop-up-container logout-confirmation-container">
             <div class="pop-up-content logout-confirmation-content">

@@ -550,7 +550,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    max-height: 500px;
+    max-height: 550px;
 }
 
 .table-container{
@@ -618,7 +618,7 @@ td{
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 1rem;
+    padding: 0.8rem;
     background-color: var(--semi-white);
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 4px;
@@ -646,13 +646,29 @@ td{
 
 .card-bottom-group input{
     width: 100%;
-    padding: 0.5rem 0;
+    padding: 5px 0;
     border: none;
     outline: none;
     font-weight: 600;
     color: var(--darker);
     background-color: transparent;
     font-size: 0.9rem;
+}
+
+.card-bottom-group select{
+    width: 100%;
+    border: none;
+    outline: none;
+    font-weight: 600;
+    color: var(--darker);
+    background-color: transparent;
+    font-size: 0.9rem;
+}
+
+.button-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .button-section button{

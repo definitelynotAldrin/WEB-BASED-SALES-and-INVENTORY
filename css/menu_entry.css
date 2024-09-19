@@ -379,6 +379,20 @@
 }
 
 
+.stock_entry{
+    position: relative;
+}
+
+.remove-field{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 1.1rem;
+    color: var(--red);
+    cursor: pointer;
+}
+
+
 .image-form{
     display: flex;
     flex-direction: column;

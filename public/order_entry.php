@@ -485,12 +485,23 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <input type="text" placeholder="Optional" name="customer_note">
                                 </div>
                             </div>
+                            <div class="card-bottom-group orderNumber-field">
+                                <select name="" id="">
+                                    <option value="">1</option>
+                                    <option value="">2</option>
+                                    <option value="">3</option>
+                                </select>
+                            </div>
                             <div class="button-section">
-                            <button type="submit">
-                                <span>proceed to kitchen</span>
-                                <i class="fa-solid fa-arrow-right-long"></i>
-                            </button>
-                        </div>
+                                <button type="submit">
+                                    <span>proceed to kitchen</span>
+                                    <i class="fa-solid fa-arrow-right-long"></i>
+                                </button>
+                                <button type="submit">
+                                    <span>proceed to kitchen</span>
+                                    <i class="fa-solid fa-arrow-right-long"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
