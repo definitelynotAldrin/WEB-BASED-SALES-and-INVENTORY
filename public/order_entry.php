@@ -236,16 +236,17 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="menu-section-container">
                 <div class="first-panel-section">
-                <?php
+                    <?php
                     include_once "../includes/connection.php";
 
-                    // Fetch all unique menu items and their associated stock data
+                    // Fetch all unique menu items and their associated stock data, including inactive stocks
                     $sql = "
-                        SELECT mi.*, GROUP_CONCAT(s.stock_name) AS ingredients
+                        SELECT mi.*, 
+                            GROUP_CONCAT(s.stock_name) AS ingredients, 
+                            MAX(CASE WHEN s.stock_status = 1 THEN 0 ELSE 1 END) AS has_inactive_stock
                         FROM menu_items mi
                         LEFT JOIN menu_item_stocks mis ON mi.item_id = mis.menu_item_id
                         LEFT JOIN stocks s ON mis.stock_id = s.stock_id
-                        WHERE s.stock_status = 1 -- Only active stocks are considered
                         GROUP BY mi.item_id";  // Group by item_id to avoid duplicates
 
                     $result = $conn->query($sql);
@@ -260,22 +261,24 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <option value="dessert">Dessert</option>
                                 <option value="beverages">Beverages</option>
                             </select>
-                            <input type="text" placeholder="search menu">
+                            <input type="text" id="search_menu" placeholder="Search menu">
                         </div>
                     </div>
-
                     <div class="first-panel-cards-container menu-cards-container">
                         <?php
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 $itemCategory = strtolower($row['item_category']); // Convert category to lowercase to match filter
+
+                                // Check if the item uses any inactive stock
+                                $inactiveClass = ($row['has_inactive_stock'] == 1) ? 'inactive-card' : '';
+
+                                // Render the menu item card
                                 ?>
-                                <div class="card menu-item-card" data-category="<?php echo $itemCategory; ?>" data-item-id="<?php echo $row['item_id']; ?>">
-                                    
+                                <div class="card menu-item-card <?php echo $inactiveClass; ?>" data-category="<?php echo $itemCategory; ?>" data-item-id="<?php echo $row['item_id']; ?>">
                                     <img src="../uploads/<?php echo $row['item_image']; ?>" class="card-img menu-img" alt="<?php echo $row['item_name']; ?>">
                                     <div class="card-details menu-card-details">
                                         <span class="card-name menu-name"><?php echo $row['item_name']; ?></span>
-                                        
                                     </div>
                                 </div>
                                 <?php
@@ -285,6 +288,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                         ?>
                     </div>
+
 
                     <?php $conn->close(); ?>
 

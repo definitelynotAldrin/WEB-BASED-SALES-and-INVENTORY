@@ -385,6 +385,29 @@
     overflow: hidden;
 }
 
+.inactive-card{
+    opacity: 0.5;
+    border: 1px solid var(--red);
+    pointer-events: none;
+    position: relative;
+}
+
+.inactive-card::after{
+    content: 'Item Inactive';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 7px;
+    border-radius: 4px;
+    border: 1px solid var(--red);
+    width: 50%;
+    background-color: var(--white);
+    color: var(--red);
+    text-align: center;
+    font-family: 600;
+}
+
 .card-img{
     position: absolute;
     width: 100%;
@@ -693,7 +716,7 @@ td{
 .popup-overlay{
     position: absolute;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     top: 0;
     object-fit: cover;
     background-color: rgba(26, 26, 26, 0.5);
@@ -989,6 +1012,27 @@ td{
     }
 }
 
+@media (max-width: 540px){
+    
+    .menu-header{
+        flex-direction: column;
+        align-items: start;
+        gap: 0.5rem;
+    }
+
+    .dropdown-category{
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .dropdown-category input, select{
+        width: 100%;
+    }
+}
+
+
 
 @media (max-width: 699px){
     .logo-title{
@@ -1238,6 +1282,10 @@ td{
     .popup-form-groups{
         flex-direction: row;
     }
+    
+}
+
+@media screen and (min-width: 1199px) and (max-width: 1480px) {
 
     .menu-header{
         flex-direction: column;
@@ -1245,15 +1293,15 @@ td{
         gap: 0.5rem;
     }
 
-    
-}
-
-@media screen and (min-width: 1200px) and (max-width: 1380px) {
-
-    .menu-header{
-        flex-direction: column;
-        align-items: start;
+    .dropdown-category{
+        display: flex;
+        flex-direction: column-reverse;
         gap: 0.5rem;
+        width: 100%;
+    }
+
+    .dropdown-category input, select{
+        width: 100%;
     }
     .form-groups{
         flex-direction: column;

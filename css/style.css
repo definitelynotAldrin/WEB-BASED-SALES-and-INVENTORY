@@ -336,6 +336,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1rem;
 }
 
 .header-card-group h3{
@@ -356,6 +357,49 @@
     outline: none;
     cursor: pointer;
 }
+
+.header-date-group{
+    width: 100%;
+}
+
+.header-card-group label{
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.header-card-group input{
+    color: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    padding: 7px 5px;
+    border-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    background-color: #f3f3f3;
+    outline: none;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 3px;
+}
+
+.header-card-button button{
+    padding: 7px 20px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-transform: capitalize;
+    color: var(--white);
+    background-color: var(--dark-green);
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
+
+.header-card-button button:active{
+    background-color: #224b12;
+}
+
 
 .header-card-value{
     color: rgba(0, 0, 0, 0.7);

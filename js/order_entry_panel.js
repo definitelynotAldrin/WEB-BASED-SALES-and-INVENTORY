@@ -77,11 +77,13 @@ function showPopup(category, id, name) {
     document.getElementById('pieces-popup').style.display = 'none';
     document.getElementById('popup-overlay').style.display = 'none';
     const btnCancel = document.querySelectorAll('.btn-cancel');
+    const overlay = document.querySelector('.popup-overlay');
 
     if (category === 'main course') {
         // Show the kilograms popup
         document.getElementById('kilograms-popup').style.display = 'block';
         document.getElementById('popup-overlay').style.display = 'block';
+        document.body.style.overflow = "hidden";
         // Populate the hidden fields for kilograms popup
         document.getElementById('dish_id_kg').value = id;
         document.getElementById('dish_name_kg').value = name;
@@ -89,6 +91,7 @@ function showPopup(category, id, name) {
         // Show the pieces popup for dessert and beverages
         document.getElementById('pieces-popup').style.display = 'block';
         document.getElementById('popup-overlay').style.display = 'block';
+        document.body.style.overflow = "hidden";
         // Populate the hidden fields for pieces popup
         document.getElementById('dish_id_pieces').value = id;
         document.getElementById('dish_name_pieces').value = name;
@@ -102,6 +105,14 @@ function showPopup(category, id, name) {
             document.body.style.overflow = "auto";
         });
     });
+
+    overlay.addEventListener('click', function(){
+        document.getElementById('kilograms-popup').style.display = 'none';
+        document.getElementById('pieces-popup').style.display = 'none';
+        document.getElementById('popup-overlay').style.display = 'none';
+        document.body.style.overflow = "auto";
+    });
+
 }
 
 // Add click event listeners to menu cards
@@ -113,5 +124,33 @@ document.querySelectorAll('.menu-item-card').forEach(card => {
 
         // Show corresponding popup based on category
         showPopup(itemCategory, itemId, itemName);
+    });
+});
+
+
+
+
+// -----------------------Search bar for order entry--------------------------
+
+document.getElementById('search_menu').addEventListener('input', function() {
+    // Get the value typed by the user in the search input
+    let searchValue = this.value.toLowerCase();
+
+    // Get all the menu item cards
+    let menuItems = document.querySelectorAll('.menu-item-card');
+
+    // Loop through the menu items
+    menuItems.forEach(function(item) {
+        // Get the menu item name text (convert to lowercase to make search case-insensitive)
+        let itemName = item.querySelector('.menu-name').textContent.toLowerCase();
+
+        // Check if the menu item name includes the typed search value
+        if (itemName.includes(searchValue)) {
+            // If it matches, display the item
+            item.style.display = 'flex';
+        } else {
+            // If it doesn't match, hide the item
+            item.style.display = 'none';
+        }
     });
 });
