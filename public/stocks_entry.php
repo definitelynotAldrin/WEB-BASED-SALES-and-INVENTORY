@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="menu-section-container">
                 <div class="inserting-section">
                     <div class="menu-header">
-                        <h1 class="menu-header-title">add new product</h1>
+                        <h1 class="menu-header-title">add new stocks</h1>
                     </div>
                     <div class="inserting-form-container">
                         <form action="../php/stocks_entry.php" class="inserting-dish-form" method="POST" enctype="multipart/form-data">
@@ -335,8 +335,9 @@ document.addEventListener("DOMContentLoaded", function() {
                             $conn->close();
                             ?>
                         </div>
-
-
+                        <div class="stock-history">
+                            <a href="../public/stocks_history.php" class="btn-history">view history</a>
+                        </div>
                     </div>
                     
             <!-- ------------------------------------stock dropdown------------------------------- -->
@@ -485,7 +486,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         confirmationContainer.style.display = 'none';
                                         selectedProductId = null;
 
-                                        location.reload();
+                                        window.location.href = '../public/stocks_entry.php?success=Stocks item set as inactive';
                                     }
                                 };
                                 xhr.send(`product_id=${selectedProductId}`);
@@ -537,7 +538,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         returnContainer.style.display = 'none';
                                         selectedProductId = null;
 
-                                        location.reload();
+                                        window.location.href = '../public/stocks_entry.php?success=Stock item set as active';
                                     }
                                 };
                                 xhr.send(`product_id=${selectedProductId}`);

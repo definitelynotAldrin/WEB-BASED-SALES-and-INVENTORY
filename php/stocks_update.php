@@ -22,19 +22,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: ../public/stocks_entry.php?error=$errorMsg&$data");
             exit;
         } else {
-            // Update the stock item
-            $sql = "UPDATE stocks SET stock_name = ?, stock_quantity = ?, stock_unit = ?, stock_date_added = ? WHERE stock_id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssi", $formattedName, $stockQuantity, $stockUnit, $submissionTime, $stockID);
+            // Start transaction
+            $conn->begin_transaction();
 
-            if ($stmt->execute()) {
-                header("Location: ../public/stocks_entry.php?success=Stock item updated successfully");
-            } else {
-                $errorMsg = "Failed to update stock item.";
+            try {
+                // 1. Update the stock item (but don't update the date)
+                $updateSql = "UPDATE stocks SET stock_name = ?, stock_quantity = stock_quantity + ?, stock_unit = ? WHERE stock_id = ?";
+                $updateStmt = $conn->prepare($updateSql);
+                $updateStmt->bind_param("sssi", $formattedName, $stockQuantity, $stockUnit, $stockID);
+
+                if (!$updateStmt->execute()) {
+                    throw new Exception("Failed to update stock item.");
+                }
+
+                // 2. Insert a new history record in `stock_history`
+                $historySql = "INSERT INTO stock_history (stock_id, updated_quantity, updated_at) VALUES (?, ?, ?)";
+                $historyStmt = $conn->prepare($historySql);
+                $historyStmt->bind_param("iis", $stockID, $stockQuantity, $submissionTime);
+
+                if (!$historyStmt->execute()) {
+                    throw new Exception("Failed to insert stock history.");
+                }
+
+                // Commit the transaction
+                $conn->commit();
+
+                header("Location: ../public/stocks_entry.php?success=Stock item updated and history recorded successfully");
+            } catch (Exception $e) {
+                // Rollback transaction in case of error
+                $conn->rollback();
+                $errorMsg = $e->getMessage();
                 header("Location: ../public/stocks_entry.php?error=$errorMsg");
             }
+
+            // Close prepared statements
+            $updateStmt->close();
+            $historyStmt->close();
             
-            $stmt->close();
             exit;
         }
     } else {
