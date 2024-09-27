@@ -310,6 +310,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <p class="menu-cards-menu-stock">Stocks: <span><?php echo $row['stock_quantity']; ?></span> <?php echo $row['stock_unit']; ?></p>
                                         </div>
                                         <div class="menu-cards-button">
+
+                                            <i class="fa-regular fa-square-plus btn-add"
+                                            data-product-id="<?php echo $row['stock_id']; ?> 
+                                            style="<?php echo ($row['stock_status'] === 'inactive') ? 'pointer-events: none; opacity: 0.5;' : ''; ?>"></i>
+
                                             <!-- Edit button (disable if inactive) -->
                                             <i class="fa-regular fa-pen-to-square btn-edit" 
                                             data-product-id="<?php echo $row['stock_id']; ?>" 
@@ -381,48 +386,77 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- ------------------Fetching Data Using AJAx----------------------- -->
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        // Get all the edit buttons
-                        const editButtons = document.querySelectorAll('.btn-edit');
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // Get all the edit buttons
+                            const editButtons = document.querySelectorAll('.btn-edit');
 
-                        // Add click event listeners to each edit button
-                        editButtons.forEach(function(button) {
-                            button.addEventListener('click', function() {
-                                const stockID = this.getAttribute('data-product-id');
+                            // Add click event listeners to each edit button
+                            editButtons.forEach(function(button) {
+                                button.addEventListener('click', function() {
+                                    const stockID = this.getAttribute('data-product-id');
 
-                                // Perform AJAX request to fetch data
-                                fetch(`../php/get_stock.php?stock_id=${stockID}`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            // Populate the form with the fetched data
-                                            document.getElementById('item_id').value = data.stock_id;
-                                            document.getElementById('item_name').value = data.stock_name;
-                                            document.getElementById('item_quantity').value = data.stock_quantity;
-                                            document.getElementById('stock_unit').value = data.stock_unit;
+                                    // Perform AJAX request to fetch data
+                                    fetch(`../php/get_stock_first.php?stock_id=${stockID}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                // Populate the form with the fetched data
+                                                document.getElementById('item_id').value = data.stock_id;
+                                                document.getElementById('item_name').value = data.stock_name;
+                                                document.getElementById('item_quantity').value = data.stock_quantity;
+                                                document.getElementById('stock_unit').value = data.stock_unit;
 
-                                            // Open the popup (you may need to adjust this depending on how your popup works)
-                                            document.querySelector('.popup-form-container').style.display = 'block';
-                                            document.querySelector('.popup-overlay').style.display = 'block';
-                                        } else {
-                                            alert('Failed to retrieve data. Please try again.');
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error fetching stock details:', error);
-                                        alert('An error occurred. Please try again later.');
-                                    });
+                                                // Open the popup (you may need to adjust this depending on how your popup works)
+                                                document.querySelector('.update-stock-details').style.display = 'block';
+                                                document.querySelector('.popup-overlay').style.display = 'block';
+                                            } else {
+                                                alert('Failed to retrieve data. Please try again.');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error fetching stock details:', error);
+                                            alert('An error occurred. Please try again later.');
+                                        });
+                                });
                             });
+
                         });
 
-                        // Close the popup when the close button or outside of the popup is clicked
-                        // document.querySelector('.popup-form-container').addEventListener('click', function(event) {
-                        //     if (event.target.classList.contains('popup-form-container')) {
-                        //         this.style.display = 'none';
-                        //     }
-                        // });
-                    });
-                </script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // Get all the edit buttons
+                            const addButtons = document.querySelectorAll('.btn-add');
+
+                            // Add click event listeners to each edit button
+                            addButtons.forEach(function(addBtn) {
+                                addBtn.addEventListener('click', function() {
+                                    const stockID = this.getAttribute('data-product-id');
+
+                                    // Perform AJAX request to fetch data
+                                    fetch(`../php/get_stock_second.php?stock_id=${stockID}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                // Populate the form with the fetched data
+                                                document.getElementById('item_ID').value = data.stock_id;
+                                                document.getElementById('item_NAME').value = data.stock_name;
+                                                document.getElementById('item_QUANTITY').value = data.stock_quantity;
+
+                                                // Open the popup (you may need to adjust this depending on how your popup works)
+                                                document.querySelector('.add-stock').style.display = 'block';
+                                                document.querySelector('.popup-overlay').style.display = 'block';
+                                            } else {
+                                                alert('Failed to retrieve data. Please try again.');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error fetching stock details:', error);
+                                            alert('An error occurred. Please try again later.');
+                                        });
+                                });
+                            });
+
+                        });
+                    </script>
 
         <!-- --------------------------Set Status for stock------------------------ -->
                 <script>
@@ -551,9 +585,9 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
 
             <div class="popup-overlay"></div>
-            <div class="popup-form-container">
+            <div class="popup-form-container update-stock-details">
                 <div class="popup-form-header">
-                    <h1>update item / add new stock</h1>
+                    <h1>update item</h1>
                     <i class="fa-regular fa-circle-xmark btn-close"></i>
                 </div>
                 <div class="popup-content">
@@ -575,6 +609,35 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <option value="KG">KG</option>
                                 <option value="Pieces">Pieces</option>
                             </select>
+                        </div>
+                        <div class="form-groups button-group">
+                            <button class="btn-save" type="submit">
+                                <i class="fa-regular fa-floppy-disk"></i>
+                                <span>Update Item</span>
+                            </button>
+                        </div>
+                    </form> 
+                </div>
+
+            </div>
+            <div class="popup-form-container add-stock">
+                <div class="popup-form-header">
+                    <h1>update item/add stock</h1>
+                    <i class="fa-regular fa-circle-xmark btn-close"></i>
+                </div>
+                <div class="popup-content">
+                    <form action="../php/stocks_adding.php" class="popup-form" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="item_ID" id="item_ID">
+                        <input type="hidden" name="submission_Time" value="<?php date_default_timezone_set('Asia/Manila'); echo date('Y-m-d H:i:s'); ?>">
+                        <div class="form-groups popup-form-groups">
+                            <div class="form-group disabled-input">
+                                <label for="">name(not editable)</label>
+                                <input type="text" id="item_NAME" name="item_NAME" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="">stocks quantity</label>
+                                <input type="number" id="item_QUANTITY" name="item_QUANTITY" min="0">
+                            </div>
                         </div>
                         <div class="form-groups button-group">
                             <button class="btn-save" type="submit">
@@ -623,6 +686,7 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         </div>
 </div>
+<script src="../libs/jquery-3.6.0.min.js"></script>
 <script src="../js/sidenav.js"></script>
 <script src="../js/menu_entry_panel.js"></script>
 <script src="../js/popup_forms.js"></script>

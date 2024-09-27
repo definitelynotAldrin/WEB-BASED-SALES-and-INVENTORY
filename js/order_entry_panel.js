@@ -70,62 +70,62 @@ document.addEventListener('DOMContentLoaded', function() {
 // });
 
 
-// Function to handle the popup display
-function showPopup(category, id, name) {
-    // Hide both popups initially
-    document.getElementById('kilograms-popup').style.display = 'none';
-    document.getElementById('pieces-popup').style.display = 'none';
-    document.getElementById('popup-overlay').style.display = 'none';
-    const btnCancel = document.querySelectorAll('.btn-cancel');
-    const overlay = document.querySelector('.popup-overlay');
+// // Function to handle the popup display
+// function showPopup(category, id, name) {
+//     // Hide both popups initially
+//     document.getElementById('kilograms-popup').style.display = 'none';
+//     document.getElementById('pieces-popup').style.display = 'none';
+//     document.getElementById('popup-overlay').style.display = 'none';
+//     const btnCancel = document.querySelectorAll('.btn-cancel');
+//     const overlay = document.querySelector('.popup-overlay');
 
-    if (category === 'main course') {
-        // Show the kilograms popup
-        document.getElementById('kilograms-popup').style.display = 'block';
-        document.getElementById('popup-overlay').style.display = 'block';
-        document.body.style.overflow = "hidden";
-        // Populate the hidden fields for kilograms popup
-        document.getElementById('dish_id_kg').value = id;
-        document.getElementById('dish_name_kg').value = name;
-    } else {
-        // Show the pieces popup for dessert and beverages
-        document.getElementById('pieces-popup').style.display = 'block';
-        document.getElementById('popup-overlay').style.display = 'block';
-        document.body.style.overflow = "hidden";
-        // Populate the hidden fields for pieces popup
-        document.getElementById('dish_id_pieces').value = id;
-        document.getElementById('dish_name_pieces').value = name;
-    }
+//     if (category === 'main course') {
+//         // Show the kilograms popup
+//         document.getElementById('kilograms-popup').style.display = 'block';
+//         document.getElementById('popup-overlay').style.display = 'block';
+//         document.body.style.overflow = "hidden";
+//         // Populate the hidden fields for kilograms popup
+//         document.getElementById('dish_id_kg').value = id;
+//         document.getElementById('dish_name_kg').value = name;
+//     } else {
+//         // Show the pieces popup for dessert and beverages
+//         document.getElementById('pieces-popup').style.display = 'block';
+//         document.getElementById('popup-overlay').style.display = 'block';
+//         document.body.style.overflow = "hidden";
+//         // Populate the hidden fields for pieces popup
+//         document.getElementById('dish_id_pieces').value = id;
+//         document.getElementById('dish_name_pieces').value = name;
+//     }
 
-    btnCancel.forEach(function(cancelBtn){
-        cancelBtn.addEventListener('click', function(){
-            document.getElementById('kilograms-popup').style.display = 'none';
-            document.getElementById('pieces-popup').style.display = 'none';
-            document.getElementById('popup-overlay').style.display = 'none';
-            document.body.style.overflow = "auto";
-        });
-    });
+//     btnCancel.forEach(function(cancelBtn){
+//         cancelBtn.addEventListener('click', function(){
+//             document.getElementById('kilograms-popup').style.display = 'none';
+//             document.getElementById('pieces-popup').style.display = 'none';
+//             document.getElementById('popup-overlay').style.display = 'none';
+//             document.body.style.overflow = "auto";
+//         });
+//     });
 
-    overlay.addEventListener('click', function(){
-        document.getElementById('kilograms-popup').style.display = 'none';
-        document.getElementById('pieces-popup').style.display = 'none';
-        document.getElementById('popup-overlay').style.display = 'none';
-        document.body.style.overflow = "auto";
-    });
+//     overlay.addEventListener('click', function(){
+//         document.getElementById('kilograms-popup').style.display = 'none';
+//         document.getElementById('pieces-popup').style.display = 'none';
+//         document.getElementById('popup-overlay').style.display = 'none';
+//         document.body.style.overflow = "auto";
+//     });
 
-}
+// }
 
-// Add click event listeners to menu cards
-document.querySelectorAll('.menu-item-card').forEach(card => {
-    card.addEventListener('click', function() {
-        const itemId = this.getAttribute('data-id');
-        const itemName = this.querySelector('.menu-name').innerText;
-        const itemCategory = this.getAttribute('data-category');
+// // Add click event listeners to menu cards
+// document.querySelectorAll('.menu-item-card').forEach(card => {
+//     card.addEventListener('click', function() {
+//         const itemId = this.getAttribute('data-id');
+//         const itemName = this.querySelector('.menu-name').innerText;
+//         const itemCategory = this.getAttribute('data-category');
 
-        // Show corresponding popup based on category
-        showPopup(itemCategory, itemId, itemName);
-    });
-});
+//         // Show corresponding popup based on category
+//         showPopup(itemCategory, itemId, itemName);
+//     });
+// });
 
 
 

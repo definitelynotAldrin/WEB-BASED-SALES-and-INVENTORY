@@ -26,8 +26,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $conn->begin_transaction();
 
             try {
-                // 1. Update the stock item (but don't update the date)
-                $updateSql = "UPDATE stocks SET stock_name = ?, stock_quantity = stock_quantity + ?, stock_unit = ? WHERE stock_id = ?";
+                // 1. Retrieve the previous stock quantity before update
+                $sqlGetPrevQuantity = "SELECT stock_quantity FROM stocks WHERE stock_id = ?";
+                $stmtGetPrevQuantity = $conn->prepare($sqlGetPrevQuantity);
+                $stmtGetPrevQuantity->bind_param("i", $stockID);
+                $stmtGetPrevQuantity->execute();
+                $result = $stmtGetPrevQuantity->get_result();
+                
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $previousQuantity = $row['stock_quantity']; // Store previous quantity
+                } else {
+                    throw new Exception("Stock item not found.");
+                }
+
+                // 2. Update the stock item (but don't update the date)
+                $updateSql = "UPDATE stocks SET stock_name = ?, stock_quantity = ?, stock_unit = ? WHERE stock_id = ?";
                 $updateStmt = $conn->prepare($updateSql);
                 $updateStmt->bind_param("sssi", $formattedName, $stockQuantity, $stockUnit, $stockID);
 
@@ -35,10 +49,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     throw new Exception("Failed to update stock item.");
                 }
 
-                // 2. Insert a new history record in `stock_history`
-                $historySql = "INSERT INTO stock_history (stock_id, updated_quantity, updated_at) VALUES (?, ?, ?)";
+                // 3. Insert a new history record in `stock_history`
+                $historySql = "INSERT INTO stock_history (stock_id, updated_quantity, previous_quantity, updated_at, last_action_type) 
+                               VALUES (?, ?, ?, ?, 'update')";
                 $historyStmt = $conn->prepare($historySql);
-                $historyStmt->bind_param("iis", $stockID, $stockQuantity, $submissionTime);
+                $historyStmt->bind_param("iiis", $stockID, $stockQuantity, $previousQuantity, $submissionTime);
 
                 if (!$historyStmt->execute()) {
                     throw new Exception("Failed to insert stock history.");
@@ -58,6 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Close prepared statements
             $updateStmt->close();
             $historyStmt->close();
+            $stmtGetPrevQuantity->close();
             
             exit;
         }

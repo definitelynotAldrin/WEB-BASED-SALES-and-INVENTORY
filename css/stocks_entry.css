@@ -574,12 +574,12 @@ select{
     gap: 0.5rem;
 }
 
-.btn-edit, .btn-delete, .btn-return{
+.btn-edit, .btn-delete, .btn-return, .btn-add{
     font-size: 1.2rem;
     cursor: pointer;
 }
 
-.btn-edit{
+.btn-edit, .btn-add{
     color: var(--light-green);
 }
 

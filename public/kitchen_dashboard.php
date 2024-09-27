@@ -32,11 +32,11 @@ document.addEventListener("DOMContentLoaded", function() {
             navItem.style.cursor = 'pointer';
         });
 
-        var allButtons = document.querySelectorAll('.button-disable');
-        allButtons.forEach(function(disButtons){
-            disButtons.style.display = 'none';
-            disButtons.style.pointerEvents = 'none';
-        });
+        // var allButtons = document.querySelectorAll('.button-disable');
+        // allButtons.forEach(function(disButtons){
+        //     disButtons.style.display = 'none';
+        //     disButtons.style.pointerEvents = 'none';
+        // });
     } 
     else if (userRole === 'user_service') {
         // Disable all navigation except order entry and order log

@@ -157,6 +157,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 <?php echo $_GET['success']; ?>
                 </div>
             <?php } ?>
+            <?php if(isset($_GET['error'])){ ?>
+                <div class="alert alert-danger" role="alert">
+                <?php echo $_GET['error']; ?>
+                </div>
+            <?php } ?>
             <div class="content-header">
                 <div class="header-text">
                     <h1>Let's seize the day! <span></span></h1>
@@ -264,6 +269,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <input type="text" id="search_menu" placeholder="Search menu">
                         </div>
                     </div>
+
                     <div class="first-panel-cards-container menu-cards-container">
                         <?php
                         if ($result->num_rows > 0) {
@@ -273,12 +279,16 @@ document.addEventListener("DOMContentLoaded", function() {
                                 // Check if the item uses any inactive stock
                                 $inactiveClass = ($row['has_inactive_stock'] == 1) ? 'inactive-card' : '';
 
-                                // Render the menu item card
+                                // Render the menu item card with hidden item_price input
                                 ?>
                                 <div class="card menu-item-card <?php echo $inactiveClass; ?>" data-category="<?php echo $itemCategory; ?>" data-item-id="<?php echo $row['item_id']; ?>">
+                                    <!-- Hidden input to store the item price -->
+                                    <input type="hidden" name="hidden_price" value="<?php echo $row['item_price']; ?>">
                                     <img src="../uploads/<?php echo $row['item_image']; ?>" class="card-img menu-img" alt="<?php echo $row['item_name']; ?>">
                                     <div class="card-details menu-card-details">
                                         <span class="card-name menu-name"><?php echo $row['item_name']; ?></span>
+                                        <!-- Optionally display the price if needed -->
+                                        <!-- <span class="card-price"><?php echo number_format($row['item_price'], 2); ?></span> -->
                                     </div>
                                 </div>
                                 <?php
@@ -288,6 +298,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                         ?>
                     </div>
+
 
 
                     <?php $conn->close(); ?>
@@ -315,12 +326,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="popup_order_quantity kilograms-quantity" id="kilograms-popup">
                         <div class="popup-header">
                             <i class="fa-solid fa-scale-balanced"></i>
-                            <h1>Input how many kilo(s) does the order require.</h1>
+                            <h1>Input how many kilo(s) <span>dish name</span> require.</h1>
                         </div>
                         <form action="">
                             <!-- HIDDEN INPUTS FOR STORING DATA FROM THE MENU -->
-                            <input type="hidden" name="dish_id" id="dish_id_kg">
-                            <input type="hidden" name="dish_name" id="dish_name_kg">
+                            <input type="hidden" name="menu_id" id="menu_id_kg">
+                            <input type="hidden" name="menu_name" id="menu_name_kg">
                             <div class="card-group">
                                 <div class="card-boxes menu-item-quantity" data-value="0.25">
                                     <h3>1/4</h3>
@@ -334,19 +345,19 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <h3>3/4</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity" data-value="5">
+                                <div class="card-boxes menu-item-quantity" data-value="1">
                                     <h3>1</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity" data-value="5">
+                                <div class="card-boxes menu-item-quantity" data-value="2">
                                     <h3>2</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity" data-value="5">
+                                <div class="card-boxes menu-item-quantity" data-value="3">
                                     <h3>3</h3>
                                     <span>Kilo(s)</span>
                                 </div>
-                                <div class="card-boxes menu-item-quantity" data-value="5">
+                                <div class="card-boxes menu-item-quantity" data-value="4">
                                     <h3>4</h3>
                                     <span>Kilo(s)</span>
                                 </div>
@@ -374,12 +385,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="popup_order_quantity pieces-quantity" id="pieces-popup">
                         <div class="popup-header">
                             <i class="fa-solid fa-scale-balanced"></i>
-                            <h1>Input how many quantity(s) does the order require.</h1>
+                            <h1>Input how many quantity(s) of <span>name</span> require.</h1>
                         </div>
                         <form action="">
                             <!-- HIDDEN INPUTS FOR STORING DATA FROM THE MENU -->
-                            <input type="hidden" name="dish_id" id="dish_id_pieces">
-                            <input type="hidden" name="dish_name" id="dish_name_pieces">
+                            <input type="hidden" name="menu_id" id="menu_id_pieces">
+                            <input type="hidden" name="menu_name" id="menu_name_pieces">
                             <div class="card-group">
                                 <div class="card-boxes card-input-field">
                                     <input type="number" min="1">
@@ -408,6 +419,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <table>
                                 <thead>
                                     <tr>
+                                        <th class="order-details-id" style="display:none;"></th>
                                         <th class="order-header">order</th>
                                         <th class="quantity-header">quantity</th>
                                         <th class="subtotal-header">sub-total</th>
@@ -415,93 +427,43 @@ document.addEventListener("DOMContentLoaded", function() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                        <td class="btn-remove">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                        <td class="btn-remove">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                        <td class="btn-remove">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                        <td class="btn-remove">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                        <td class="btn-remove">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                        <td class="btn-remove">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                        <td class="btn-remove">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </td>
-                                    </tr>
+                                    
                                 </tbody>
                             </table>
                         </div>
                         <div class="card-bottom-container total-section">
                             <div class="card-bottom-group total-field">
                                 <h3>total</h3>
-                                <span>&#8369; 1000.00</span>
+                                <span>&#8369; </span>
                             </div>
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group customer-field">
                                     <h3>customer name</h3>
-                                    <input type="text" name="customer_name">
+                                    <input type="text" name="customerName" id="customerName">
                                 </div>
                                 <div class="card-bottom-group note-field">
                                     <h3>note</h3>
-                                    <input type="text" placeholder="Optional" name="customer_note">
+                                    <input type="text" placeholder="Optional" name="customerNote" id="customerNote">
                                 </div>
                             </div>
-                            <div class="card-bottom-group orderNumber-field">
-                                <select name="" id="">
-                                    <option value="">1</option>
-                                    <option value="">2</option>
-                                    <option value="">3</option>
+                            <div class="card-bottom-group order-number-field">
+                                <select name="customerTable" id="customerTable">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">3</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
                                 </select>
                             </div>
                             <div class="button-section">
-                                <button type="submit">
-                                    <span>proceed to kitchen</span>
-                                    <i class="fa-solid fa-arrow-right-long"></i>
-                                </button>
-                                <button type="submit">
+                                <button type="submit" id="submitOrderBtn">
                                     <span>proceed to kitchen</span>
                                     <i class="fa-solid fa-arrow-right-long"></i>
                                 </button>
@@ -512,20 +474,20 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
 
             <div id="popup-overlay" class="popup-overlay"></div>           
-        <div class="delete-confirmation-overlay"></div>
-        <div class="delete-confirmation-container">
-            <div class="delete-confirmation-content">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <h1>Are you sure you want?</h1>
-                <p>Removing this item in the inventory will cause inactivity of the product on the menu.</p>
-                <div class="form-groups button-group confirmation-button">
-                    <button class="confirm-delete">remove</button>
-                    <button class="confirm-cancel">cancel</button>
+            <div class="delete-confirmation-overlay"></div>
+            <div class="delete-confirmation-container">
+                <div class="delete-confirmation-content">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <h1>Are you sure you want?</h1>
+                    <p>Removing this item in the inventory will cause inactivity of the product on the menu.</p>
+                    <div class="form-groups button-group confirmation-button">
+                        <button class="confirm-delete">remove</button>
+                        <button class="confirm-cancel">cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="pop-up-overlay logout-confirmation-overlay"></div>
+        <div class="pop-up-overlay logout-confirmation-overlay"></div>
         <div class="pop-up-container logout-confirmation-container">
             <div class="pop-up-content logout-confirmation-content">
                 <i class="fa-solid fa-question"></i>
@@ -543,5 +505,6 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/order_entry_panel.js"></script>
 <script src="../js/logout.js"></script>
 <script src="../js/alert_disappear.js"></script>
+<script src="../js/order_processing.js"></script>
 </body>
 </html>

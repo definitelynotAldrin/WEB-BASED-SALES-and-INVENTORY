@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="form-groups stock_entry" id="stock_entry_1">
                                 <div class="form-group">
                                     <label for="stock_categories_1">Ingredient/Item</label>
-                                    <select id="stock_categories_1" name="stock_id[]" >
+                                    <select id="stock_categories_1" name="stock_id[]" required>
                                         <option value="" hidden>Select Stock ingredient</option>
                                         <?php
                                             include_once "../includes/connection.php";
@@ -286,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                                 <div class="form-group">
                                     <label for="stock_quantity_1">Quantity required</label>
-                                    <input type="number" step="0.01" min="0" name="quantities[]" value="<?php echo (isset($_GET['quantities'])) ? $_GET['quantities'] : '' ?>">
+                                    <input type="number" step="0.01" min="0" name="quantities[]" required value="<?php echo (isset($_GET['quantities'])) ? $_GET['quantities'] : '' ?>">
                                 </div>
                                 <!-- Remove field icon -->
                                 <i class="fa-regular fa-circle-xmark remove-field" onclick="removeSpecificField(this)"></i>

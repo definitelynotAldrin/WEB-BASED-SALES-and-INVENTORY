@@ -40,7 +40,7 @@
                 </div>
                 <div class="form-group">
                     <label for="password">password</label>
-                    <input type="password" name="password" id="passwordInput">
+                    <input type="password" name="password" id="passwordInput" value="<?php echo (isset($_GET['[password]']))?$_GET['password']:"" ?>">
                     <i class="fas fa-eye" id="showPassword"></i>
                     <i class="fas fa-eye-slash" id="hidePassword"></i>
                 </div>

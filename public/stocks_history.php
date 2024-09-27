@@ -241,14 +241,35 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="menu-section-container">
                 <div class="first-panel-section">
+                    <div class="first-panel-header search-area">
+                        <form method="GET" action="" id="search-form">
+                            <input type="date" name="search_item" id="search_date" placeholder="Search an item" onchange="document.getElementById('search-form').submit();">
+                            <input type="text" id="date_display" value="<?php echo (isset($_GET['search_item'])) ? date("F j, Y", strtotime($_GET['search_item'])) : ''; ?>" placeholder="<?php echo date('F j, Y'); ?>"  disabled>
+                        </form>
+                        
+                    </div>
+
                     <div class="table-container">
-                    <?php
+                        <?php
                         include_once "../includes/connection.php";
 
-                        // Query to get stock history
-                        $sql = "SELECT s.stock_name, sh.updated_quantity, sh.updated_at 
-                                FROM stock_history sh
-                                JOIN stocks s ON sh.stock_id = s.stock_id"; // Assuming you have a `stocks` table for item names
+                        // Get the selected date from the input field
+                        $search_date = isset($_GET['search_item']) ? $_GET['search_item'] : '';
+
+                        // Prepare the SQL query
+                        if ($search_date) {
+                            // If a specific date is selected, filter results by that date
+                            $sql = "SELECT s.stock_name, sh.previous_quantity, sh.updated_quantity, sh.updated_at, sh.last_action_type 
+                                    FROM stock_history sh
+                                    JOIN stocks s ON sh.stock_id = s.stock_id
+                                    WHERE DATE(sh.updated_at) = '$search_date'";
+                        } else {
+                            // If no date is selected, filter results by today's date
+                            $sql = "SELECT s.stock_name, sh.previous_quantity, sh.updated_quantity, sh.updated_at, sh.last_action_type 
+                                    FROM stock_history sh
+                                    JOIN stocks s ON sh.stock_id = s.stock_id
+                                    WHERE DATE(sh.updated_at) = CURDATE()";
+                        }
 
                         $result = $conn->query($sql);
                         ?>
@@ -256,9 +277,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>name</th>
-                                    <th>Added quantity</th>
-                                    <th>Date added</th>
+                                    <th>Item Name</th>
+                                    <th class="quantity">Previous Quantity</th>
+                                    <th class="quantity">Added/Changed Quantity</th>
+                                    <th>Updated Quantity</th>
+                                    <th>Date Added</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -268,12 +291,26 @@ document.addEventListener("DOMContentLoaded", function() {
                                     while($row = $result->fetch_assoc()) {
                                         echo "<tr>";
                                         echo "<td>" . htmlspecialchars($row['stock_name']) . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['previous_quantity']) . "</td>";
+                                        
+                                        // Check if the last action was 'insert' or 'update'
+                                        if ($row['last_action_type'] === 'insert') {
+                                            // For 'insert', display previous + updated quantities
+                                            echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row['previous_quantity'] + $row['updated_quantity']) . "</td>"; // Updated stock = previous + added
+                                        } elseif ($row['last_action_type'] === 'update') {
+                                            // For 'update', just display the change in quantity and the updated total
+                                            // $changeQuantity = $row['updated_quantity'] - $row['previous_quantity']; // Calculate change
+                                            echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>"; // Updated stock = final quantity after update
+                                        }
+                                        
                                         echo "<td>" . htmlspecialchars(date('M d, Y h:i A', strtotime($row['updated_at']))) . "</td>";
                                         echo "</tr>";
                                     }
                                 } else {
-                                    echo "<tr><td colspan='3'>No data found</td></tr>";
+                                    // If no data is found for the selected date or today
+                                    echo "<tr><td colspan='5' style='text-align:center;'>No data found</td></tr>";
                                 }
                                 ?>
                             </tbody>
@@ -284,6 +321,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         $conn->close();
                         ?>
                     </div>
+
                 </div>
             </div>
 

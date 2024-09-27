@@ -2,14 +2,18 @@
 session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Include your database connection file
-    include_once "../includes/connection.php";
+
+    if(isset($_POST['username']) && isset($_POST['password'])){
+        include_once "../includes/connection.php";
     
     // Retrieve form data
     $username = $_POST["username"];
     $password = $_POST["password"];
     
+    $data = "username=" . urlencode($username);
+
     // SQL query to retrieve the user data from the database
-    $sql = "SELECT * FROM accounts WHERE account_username = ? AND account_password = ?";
+    $sql = "SELECT * FROM accounts WHERE account_username = ? AND account_password = ? AND account_id ='1' ";
     
     // Prepare the SQL statement
     $stmt = $conn->prepare($sql);
@@ -23,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Store the result
     $result = $stmt->get_result();
 
-    $data = "username=".$username;
+    // $data = "username=".$username;
     
     if(empty($username)){
     	$errorMsg = "username is required";
@@ -63,5 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Close the database connection
     $conn->close();
+    }
+    
 }
 ?>
