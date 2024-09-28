@@ -622,9 +622,7 @@ td{
     color: var(--dark);
 }
 
-.order-header{
-    width: 150px;
-}
+
 
 .subtotal-header{
     white-space: nowrap;
@@ -668,6 +666,20 @@ td{
     width: 100%;
 }
 
+.btnTable{
+    text-align: center;
+    padding: 0.8rem;
+    background-color: var(--semi-white);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    width: 100%;
+}
+
+.btnTable:active{
+    background-color: var(--dark-green);
+    color: var(--white);
+}
+
 .total-field{
     align-items: end;
 }
@@ -698,7 +710,7 @@ td{
     font-size: 0.9rem;
 }
 
-.card-bottom-group select{
+.card-bottom-group select, button{
     width: 100%;
     border: none;
     outline: none;
@@ -706,6 +718,8 @@ td{
     color: var(--darker);
     background-color: transparent;
     font-size: 0.9rem;
+    text-transform: capitalize;
+    cursor: pointer;
 }
 
 .button-section {
@@ -1271,7 +1285,7 @@ td{
 }
 
 
-@media (max-width: 1200px){
+@media (max-width: 1400px){
     .menu-section-container{
         width: 100%;
         flex-direction: column;

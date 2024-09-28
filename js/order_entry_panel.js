@@ -3,7 +3,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     const kgBoxes = document.querySelectorAll('.menu-item-quantity');
-    const inputField = document.querySelector('.card-input-field input');
+    const inputField = document.getElementById('custom_kg');
 
     kgBoxes.forEach(box => {
         box.addEventListener('click', function() {
@@ -65,6 +65,12 @@ document.addEventListener('DOMContentLoaded', function() {
 //             popupOverlay.style.display = "none";
 //             document.body.style.overflow = "auto";
 //         });
+//     });
+
+//     popupOverlay.addEventListener('click', function(){
+//         maincourse_quantity.style.display = "none";
+//         popupOverlay.style.display = "none";
+//         document.body.style.overflow = "auto";
 //     });
     
 // });

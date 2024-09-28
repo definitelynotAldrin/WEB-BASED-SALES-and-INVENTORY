@@ -2,36 +2,32 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    
-    const closeBtns = document.querySelectorAll('.btn-close');
-    const popupForm = document.querySelectorAll('.popup-form-container');
+    const menuCards = document.querySelectorAll('.menu-item-card');
     const popupOverlay = document.querySelector('.popup-overlay');
+    const popup = document.querySelector('.popup_order_quantity');
+    
+    
+    menuCards.forEach(function(cards) {
+        cards.addEventListener('click', function () {
+            popupOverlay.style.display = "block";
+            popup.style.display = "block";
+        });
+    });
 
-    // editbtns.forEach(function(editBtn) {
-    //     editBtn.addEventListener('click', function () {
-    //         // Show the popup form and overlay
-    //         popupForm.style.display = "block";
-    //         popupOverlay.style.display = "block";
-    //     });
-    // });
+
+    // Close the popups and overlay when clicking the close button or outside the popup
+    const closeBtns = document.querySelectorAll('.btn-cancel');
 
     closeBtns.forEach(function(closeBtn) {
         closeBtn.addEventListener('click', function () {
-            // Hide the popup form and overlay
             popupOverlay.style.display = "none";
-
-            popupForm.forEach(function(forms) {
-                forms.style.display = "none";
-            });
+            popup.style.display = "none";
         });
     });
 
     popupOverlay.addEventListener('click', function() {
-        // Hide the popup form and overlay when clicking outside the form
-        popupForm.forEach(function(forms) {
-            forms.style.display = "none";
-        });
         popupOverlay.style.display = "none";
+        popup.style.display = "none";
     });
 });
 

@@ -281,6 +281,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <th class="quantity">Previous Quantity</th>
                                     <th class="quantity">Added/Changed Quantity</th>
                                     <th>Updated Quantity</th>
+                                    <th>action type</th>
                                     <th>Date Added</th>
                                 </tr>
                             </thead>
@@ -298,11 +299,13 @@ document.addEventListener("DOMContentLoaded", function() {
                                             // For 'insert', display previous + updated quantities
                                             echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>";
                                             echo "<td>" . htmlspecialchars($row['previous_quantity'] + $row['updated_quantity']) . "</td>"; // Updated stock = previous + added
+                                            echo "<td>" . htmlspecialchars($row['last_action_type']) . "</td>";
                                         } elseif ($row['last_action_type'] === 'update') {
                                             // For 'update', just display the change in quantity and the updated total
                                             // $changeQuantity = $row['updated_quantity'] - $row['previous_quantity']; // Calculate change
                                             echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>";
                                             echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>"; // Updated stock = final quantity after update
+                                            echo "<td>" . htmlspecialchars($row['last_action_type']) . "</td>";
                                         }
                                         
                                         echo "<td>" . htmlspecialchars(date('M d, Y h:i A', strtotime($row['updated_at']))) . "</td>";
@@ -310,7 +313,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     }
                                 } else {
                                     // If no data is found for the selected date or today
-                                    echo "<tr><td colspan='5' style='text-align:center;'>No data found</td></tr>";
+                                    echo "<tr><td colspan='5' style='text-align:center;'>No data found for the selected date or today.</td></tr>";
                                 }
                                 ?>
                             </tbody>
