@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             var items = document.querySelectorAll('.menu-item-card');
 
                             items.forEach(function(item) {
-                                var itemCategory = item.getAttribute('data-category');
+                                var itemCategory = item.getAttribute('data-category').toLowerCase();
                                 
                                 // Show or hide based on the selected category
                                 if (selectedCategory === 'all' || itemCategory === selectedCategory) {
@@ -441,37 +441,37 @@ document.addEventListener("DOMContentLoaded", function() {
 
                             // Handle click on predefined quantity boxes
                             $('.menu-item-quantity').on('click', function() {
-        if ($(this).hasClass('active')) {
-            // If clicked box is already active, remove active class and reset selectedQuantity
-            $(this).removeClass('active');
-            selectedQuantity = null;
+                                if ($(this).hasClass('active')) {
+                                    // If clicked box is already active, remove active class and reset selectedQuantity
+                                    $(this).removeClass('active');
+                                    selectedQuantity = null;
 
-            // Enable custom input field
-            $('#custom_kg').val('').prop('disabled', false);
-        } else {
-            // Remove active class from all quantity boxes
-            $('.menu-item-quantity').removeClass('active');
+                                    // Enable custom input field
+                                    $('#custom_kg').val('').prop('disabled', false);
+                                } else {
+                                    // Remove active class from all quantity boxes
+                                    $('.menu-item-quantity').removeClass('active');
 
-            // Add active class to the clicked box
-            $(this).addClass('active');
+                                    // Add active class to the clicked box
+                                    $(this).addClass('active');
 
-            // Set the selected quantity to the data-value of the clicked box
-            selectedQuantity = $(this).data('value');
+                                    // Set the selected quantity to the data-value of the clicked box
+                                    selectedQuantity = $(this).data('value');
 
-            // Clear custom input value and disable it
-            $('#custom_kg').val('').prop('disabled', true);
-        }
-    });
+                                    // Clear custom input value and disable it
+                                    $('#custom_kg').val('').prop('disabled', true);
+                                }
+                            });
 
-    // Enable custom input field when clicked
-    $('#custom_kg').on('click', function() {
-        // Remove active class from predefined quantity boxes
-        $('.menu-item-quantity').removeClass('active');
+                            // Enable custom input field when clicked
+                            $('#custom_kg').on('click', function() {
+                                // Remove active class from predefined quantity boxes
+                                $('.menu-item-quantity').removeClass('active');
 
-        // Enable the custom input field and clear the selected quantity
-        $(this).prop('disabled', false);
-        selectedQuantity = null;
-    });
+                                // Enable the custom input field and clear the selected quantity
+                                $(this).prop('disabled', false);
+                                selectedQuantity = null;
+                            });
 
                             // Handle custom input value change
                             $('#custom_kg').on('input', function() {
@@ -509,7 +509,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         }
                                     });
                                 } else {
-                                    alert('Please select a quantity before proceeding.');
+                                    // alert('Please select a quantity before proceeding.');
                                 }
                             });
                         });
@@ -549,18 +549,57 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         // Update order summary (example function)
                         function updateOrderSummary() {
-                            // Make an AJAX request to get the latest order summary data and update the table
-                            $.ajax({
-                                url: '../php/get_order_summary.php', // Adjust path as needed
-                                type: 'GET',
-                                success: function(response) {
-                                    $('tbody').html(response); // Update the order summary table body with new data
-                                },
-                                error: function(xhr, status, error) {
-                                    alert('Error fetching order summary: ' + error);
+                    // Make an AJAX request to get the latest order summary data
+                    $.ajax({
+                        url: '../php/get_order_summary.php', // Adjust path as needed
+                        type: 'GET',
+                        success: function(response) {
+                            $('tbody').html(response); // Update the order summary table body with new data
+
+                            // Extract total amount from the response or calculate it manually if needed
+                            let totalAmount = 0;
+                            $('tbody tr').each(function() {
+                                let subTotal = parseFloat($(this).find('td:nth-child(5)').text());
+                                if (!isNaN(subTotal)) {
+                                    totalAmount += subTotal;
                                 }
                             });
+
+                            bindRemoveButtonEvents();
+
+                            // Update the total amount field
+                            $('#total-amount').text(totalAmount.toFixed(2));
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error fetching order summary: ' + error);
                         }
+                    });
+                }
+
+
+                        // Bind the remove button functionality
+                        function bindRemoveButtonEvents() {
+                            $('.btn-remove').on('click', function() {
+                                const orderId = $(this).data('id');
+                                
+                                // Make an AJAX request to delete the order
+                                $.ajax({
+                                    url: '../php/delete_order_detail.php', // Adjust path as needed
+                                    type: 'POST',
+                                    data: { order_id: orderId },
+                                    success: function(response) {
+                                        updateOrderSummary(); // Refresh the order summary after deletion
+                                    },
+                                    error: function(xhr, status, error) {
+                                        alert('Error deleting order: ' + error);
+                                    }
+                                });
+                            });
+                        }
+
+                        // Initially call the function to load the order summary
+                        updateOrderSummary();
+
                     });
 
 
@@ -570,12 +609,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         <h1 class="menu-header-title">order summary</h1>
                     </div>
                     <div class="second-panel-card-container order-summary-section">
-                        <?php
-                            include_once "../includes/connection.php";
-                            // Fetch order details from the database
-                            $sql = "SELECT * FROM order_details";
-                            $result = $conn->query($sql);
-                        ?>
                         <div class="table-container">
                             <table>
                                 <thead>
@@ -589,40 +622,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    $totalAmount = 0;
-                                    if ($result->num_rows > 0) {
-                                        // Loop through each row of data
-                                        while($row = $result->fetch_assoc()) {
-                                            echo "<tr>";
-                                            echo "<td style='display:none;'>" . $row['menu_id'] . "</td>";
-                                            echo "<td>" . $row['menu_name'] . "</td>";
-                                            echo "<td>" . $row['quantity'] . "</td>";
-                                            echo "<td>" . $row['menu_price'] . "</td>";
-                                            echo "<td>" . $row['sub_total'] . "</td>";
-                                            echo "<td class='btn-remove'>
-                                                    <i class='fa-regular fa-trash-can'></i>
-                                                </td>";
-                                            echo "</tr>";
-
-                                            $totalAmount += $row['sub_total'];
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='5'>No orders found</td></tr>";
-                                    }
-                                    ?>
+                                    
                                 </tbody>
                             </table>
                         </div>
-                        <?php
-                    $conn->close();
-                    ?>
-
-
                         <div class="card-bottom-container total-section">
                             <div class="card-bottom-group total-field">
                                 <h3>total</h3>
-                                <span>&#8369; <?php echo number_format($totalAmount, 2); ?></span>
+                                <span>&#8369; <span id="total-amount"> 0.00</span></span>
                             </div>
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group customer-field">
@@ -708,7 +715,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/sidenav.js"></script>
 <!-- <script src="../js/menu_entry_panel.js"></script> -->
 <!-- <script src="../js/popup_forms.js"></script> -->
-<!-- <script src="../js/order_entry_panel.js"></script> -->
+<script src="../js/order_entry_panel.js"></script>
 <script src="../js/logout.js"></script>
 <script src="../js/alert_disappear.js"></script>
 <!-- <script src="../js/order_processing.js"></script> -->

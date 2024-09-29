@@ -312,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <div class="menu-cards-button">
 
                                             <i class="fa-regular fa-square-plus btn-add"
-                                            data-product-id="<?php echo $row['stock_id']; ?> 
+                                            data-product-id="<?php echo $row['stock_id']; ?>" 
                                             style="<?php echo ($row['stock_status'] === 'inactive') ? 'pointer-events: none; opacity: 0.5;' : ''; ?>"></i>
 
                                             <!-- Edit button (disable if inactive) -->
@@ -506,14 +506,18 @@ document.addEventListener("DOMContentLoaded", function() {
                                         const deleteButton = menuCard.querySelector('.btn-delete');
                                         const returnButton = menuCard.querySelector('.btn-return');
                                         const editButton = menuCard.querySelector('.btn-edit');
+                                        const addButton = menuCard.querySelector('.btn-add');
 
                                         // Hide delete button and show return button
                                         deleteButton.style.display = 'none';
                                         returnButton.style.display = 'inline-block';
 
-                                        // Disable the edit button
+                                        // Disable the edit & add button
                                         editButton.style.pointerEvents = 'none';
                                         editButton.style.opacity = '0.5';
+
+                                        addButton.style.pointerEvents = 'none';
+                                        addButton.style.opacity = '0.5';
 
                                         // Hide confirmation popup
                                         confirmationOverlay.style.display = 'none';
@@ -558,6 +562,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         const deleteButton = menuCard.querySelector('.btn-delete');
                                         const returnButton = menuCard.querySelector('.btn-return');
                                         const editButton = menuCard.querySelector('.btn-edit');
+                                        const addButton = menuCard.querySelector('.btn-add');
 
                                         // Show delete button and hide return button
                                         deleteButton.style.display = 'inline-block';
@@ -566,6 +571,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                         // Enable the edit button
                                         editButton.style.pointerEvents = 'auto';
                                         editButton.style.opacity = '1';
+
+
+                                        addButton.style.pointerEvents = 'auto';
+                                        addButton.style.opacity = '1';
 
                                         // Hide return confirmation popup
                                         returnOverlay.style.display = 'none';
