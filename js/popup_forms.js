@@ -25,10 +25,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    popupOverlay.addEventListener('click', function() {
-        popupOverlay.style.display = "none";
-        popup.style.display = "none";
-    });
+    // popupOverlay.addEventListener('click', function() {
+    //     popupOverlay.style.display = "none";
+    //     popup.style.display = "none";
+    // });
 });
 
 

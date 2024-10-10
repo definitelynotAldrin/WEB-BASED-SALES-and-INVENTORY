@@ -67,5 +67,72 @@
             }
         }
     </script>
+    <input type="number" name="" id="customer_num" hidden>
+                                
+    <div class="card-bottom-groups">
+        <div class="card-bottom-group customer-field">
+            <h3>customer name</h3>
+            <input type="text" name="customer_name" id="customer_name" required>
+        </div>
+        <div class="card-bottom-group note-field">
+            <h3>note</h3>
+            <input type="text" placeholder="Optional" name="customer_note" id="customer_note" required>
+        </div>
+    </div>
+    <div class="card-bottom-groups order-number-field">
+        <div class="card-bottom-group order-number-field">
+                <?php 
+                //     $randomId = rand(100, 999);
+                //     // $randomId = uniqid();   // Generates a random 3-digit number between 100 and 999
+                    
+                
+                // echo '
+                //     <select name="customer_id" value = "0" id="customer_id">
+
+                        
+                //         <option value="'.$randomId.'" selected></option>
+                //         ';
+                        
+                    
+                //         $sql = "SELECT * FROM order_details WHERE status =  1 GROUP BY customer_id";
+                //         $query = $conn->query($sql);
+                //         while($row = $query->fetch_assoc()){
+                //         echo "
+                //         <option value=".$row['customer_id']." data-id=".$row['order_detail_id'].">".$row['customer_name']."</option>
+                //         ";
+                //         }
+
+                //     echo '
+                    
+                //     </select>
+                // ';
+            ?>
+             <select name="customer_id" id="customer_id">
+                <option value=""></option>
+                <option value=""></option>
+                <option value=""></option>
+             </select>
+
+        </div>
+        <div class="card-bottom-group">
+            <select name="customer-table" id="customer-table">
+                <option value="" hidden>Select Customer Table</option>
+                <?php for ($i = 1; $i <= 12; $i++): ?>
+                <option value="<?php echo $i; ?>">Table <?php echo $i; ?></option>
+                <?php endfor; ?>
+            </select>
+        </div>
+    </div>
+    <button class="btnTable">Update tables</button>
+    <div class="button-section">
+        <button type="submit" id="submitOrderBtn">
+            <span>proceed to kitchen</span>
+            <i class="fa-solid fa-arrow-right-long"></i>
+        </button>
+        <button type="submit" id="standByOrder" name="standByOrder">
+            <span>stand by order</span>
+            <i class="fa-solid fa-arrow-right-long"></i>
+        </button>
+    </div>
 </body>
 </html>

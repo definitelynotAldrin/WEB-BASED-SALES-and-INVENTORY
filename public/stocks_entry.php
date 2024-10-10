@@ -389,6 +389,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         document.addEventListener('DOMContentLoaded', function() {
                             // Get all the edit buttons
                             const editButtons = document.querySelectorAll('.btn-edit');
+                            const overlay = document.querySelector('.popup-overlay');
 
                             // Add click event listeners to each edit button
                             editButtons.forEach(function(button) {
@@ -420,12 +421,18 @@ document.addEventListener("DOMContentLoaded", function() {
                                 });
                             });
 
+                            overlay.addEventListener('click', function() {
+                                document.querySelector('.update-stock-details').style.display = 'none';
+                                document.querySelector('.popup-overlay').style.display = 'none';
+                            });
+
+
                         });
 
                         document.addEventListener('DOMContentLoaded', function() {
                             // Get all the edit buttons
                             const addButtons = document.querySelectorAll('.btn-add');
-
+                            const overlay = document.querySelector('.popup-overlay');
                             // Add click event listeners to each edit button
                             addButtons.forEach(function(addBtn) {
                                 addBtn.addEventListener('click', function() {
@@ -454,6 +461,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                         });
                                 });
                             });
+                            overlay.addEventListener('click', function() {
+                                document.querySelector('.add-stock').style.display = 'none';
+                                document.querySelector('.popup-overlay').style.display = 'none';
+                            });
+
 
                         });
                     </script>
@@ -464,9 +476,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         const deleteButtons = document.querySelectorAll('.btn-delete');
                         const returnButtons = document.querySelectorAll('.btn-return');
                         const confirmationOverlay = document.querySelector('.delete-confirmation-overlay');
-                        const confirmationContainer = document.querySelector('.delete-confirmation-container');
+                        const confirmationContainer = document.querySelectorAll('.delete-confirmation-container');
                         const confirmDeleteButton = document.querySelector('.confirm-delete');
                         const confirmCancelButton = document.querySelector('.confirm-cancel');
+                        const closePopup = document.querySelectorAll('.btn-close');
                         
                         // For return confirmation
                         const returnOverlay = document.querySelector('.return-confirmation-overlay');
@@ -491,6 +504,8 @@ document.addEventListener("DOMContentLoaded", function() {
                             confirmationContainer.style.display = 'none';
                             selectedProductId = null; // Reset the product ID
                         });
+
+                    
 
                         // Confirm delete (set as inactive)
                         confirmDeleteButton.addEventListener('click', function() {
@@ -597,7 +612,6 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="popup-form-container update-stock-details">
                 <div class="popup-form-header">
                     <h1>update item</h1>
-                    <i class="fa-regular fa-circle-xmark btn-close"></i>
                 </div>
                 <div class="popup-content">
                     <form action="../php/stocks_update.php" class="popup-form" method="POST" enctype="multipart/form-data">
@@ -632,7 +646,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="popup-form-container add-stock">
                 <div class="popup-form-header">
                     <h1>update item/add stock</h1>
-                    <i class="fa-regular fa-circle-xmark btn-close"></i>
+                    <!-- <i class="fa-regular fa-circle-xmark btn-close"></i> -->
                 </div>
                 <div class="popup-content">
                     <form action="../php/stocks_adding.php" class="popup-form" method="POST" enctype="multipart/form-data">
