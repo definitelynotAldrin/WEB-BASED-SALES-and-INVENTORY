@@ -160,3 +160,9 @@ document.getElementById('search_menu').addEventListener('input', function() {
         }
     });
 });
+
+
+document.getElementById('combo-input').addEventListener('input', function(event) {
+    const value = event.target.value;
+    console.log("Selected or entered value:", value);
+});

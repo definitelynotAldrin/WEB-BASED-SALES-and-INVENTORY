@@ -257,7 +257,18 @@ document.addEventListener("DOMContentLoaded", function() {
                     ?>
 
                     <div class="menu-header">
-                        <h1 class="menu-header-title">Order Menu</h1>
+                        <div class="menu-header-content">
+                            <h1 class="menu-header-title">Order Menu</h1>
+                            <!-- <div class="container">
+                                <input list="options" id="combo-input" placeholder="Customer's haha" />
+
+                                <datalist id="options">
+                                    <option value="Option 1"></option>
+                                    <option value="Option 2"></option>
+                                    <option value="Option 3"></option>
+                                </datalist>
+                            </div> -->
+                        </div>
                         <div class="dropdown-category menu-category">
                             <select name="menu_order_category" id="menu_order_category">
                                 <option value="all">All Categories</option>
@@ -400,10 +411,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script>
                     $(document).ready(function() {
+
+
+
                         // Variables to store the current selected menu item data
                         let selectedMenuId = null;
                         let selectedMenuName = null;
                         let selectedMenuPrice = null;
+                        let customer_id = null;
 
                         // Handle menu item card click
                         $('.menu-item-card').on('click', function() {
@@ -411,6 +426,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             selectedMenuId = $(this).data('item-id');
                             selectedMenuName = $(this).data('item-name');
                             selectedMenuPrice = $(this).data('item-price');
+                            customer_id = document.getElementById('customer_num').value;
                             const itemCategory = $(this).data('category'); // Get item category
 
                             // Open appropriate popup based on category
@@ -483,11 +499,16 @@ document.addEventListener("DOMContentLoaded", function() {
                             $('#kilograms-popup .btn-proceed').on('click', function() {
                                 // Get selected quantity or custom input value
                                 const quantity = selectedQuantity || parseFloat($('#custom_kg').val());
-                                
+                                const customer_id = document.getElementById('customer_num').value;
+                                const customer_orig = document.getElementById('customer_id').value;
+                                const name = document.getElementById('customer_name').value;
+                                console.log(customer_id);
                                 // Check if quantity and menu item data are available
-                                if (quantity && selectedMenuId && selectedMenuName) {
+                                if (quantity && selectedMenuId && selectedMenuName && customer_id != 0) {
                                     // Prepare data for AJAX
                                     const orderData = {
+                                        customer: customer_id,
+                                        customer_name: name,
                                         menu_id: selectedMenuId,
                                         menu_name: selectedMenuName,
                                         quantity: quantity,
@@ -508,7 +529,34 @@ document.addEventListener("DOMContentLoaded", function() {
                                             alert('Error adding order: ' + error);
                                         }
                                     });
-                                } else {
+                                }
+                                else if (quantity && selectedMenuId && selectedMenuName && customer_id == 0) {
+                                    const orderData = {
+                                        customer: 0,
+                                        customer_name: name,
+                                        menu_id: selectedMenuId,
+                                        menu_name: selectedMenuName,
+                                        quantity: quantity,
+                                        menu_price: selectedMenuPrice,
+                                    };
+
+                                    // Send AJAX request to add the order
+                                    $.ajax({
+                                        url: '../php/add_order_detail.php', // Adjust path as needed
+                                        type: 'POST',
+                                        data: orderData,
+                                        success: function(response) {
+                                            // Handle success (e.g., update order summary table)
+                                            updateOrderSummary();
+                                            $('#kilograms-popup').hide(); // Close the popup
+                                        },
+                                        error: function(xhr, status, error) {
+                                            alert('Error adding order: ' + error);
+                                        }
+                                    });
+                                }
+                                
+                                else {
                                     // alert('Please select a quantity before proceeding.');
                                 }
                             });
@@ -519,11 +567,41 @@ document.addEventListener("DOMContentLoaded", function() {
                         $('#pieces-popup .btn-proceed').on('click', function() {
                             // Get input value from the popup
                             const quantity = $('#quantity_pieces').val();
+                            const customer_id = document.getElementById('customer_num').value;
+                            const customer_orig = document.getElementById('customer_id').value;
+                            const name = document.getElementById('customer_name').value;
 
                             // Check if quantity and menu item data are available
-                            if (quantity && selectedMenuId && selectedMenuName) {
+                            if (quantity && selectedMenuId && selectedMenuName && customer_id != 0) {
                                 // Prepare data for AJAX
                                 const orderData = {
+                                    customer: customer_id,
+                                    customer_name: name,
+                                    menu_id: selectedMenuId,
+                                    menu_name: selectedMenuName,
+                                    quantity: quantity,
+                                    menu_price: selectedMenuPrice,
+                                };
+
+                                // Send AJAX request to add the order
+                                $.ajax({
+                                    url: '../php/add_order_detail.php', // Adjust path as needed
+                                    type: 'POST',
+                                    data: orderData,
+                                    success: function(response) {
+                                        // Handle success (e.g., update order summary table)
+                                        updateOrderSummary();
+                                        $('#pieces-popup').hide(); // Close the popup
+                                    },
+                                    error: function(xhr, status, error) {
+                                        alert('Error adding order: ' + error);
+                                    }
+                                });
+                            }else if(quantity && selectedMenuId && selectedMenuName && customer_id == 0){
+                                 // Prepare data for AJAX
+                                 const orderData = {
+                                    customer: 0,
+                                    customer_name: name,
                                     menu_id: selectedMenuId,
                                     menu_name: selectedMenuName,
                                     quantity: quantity,
@@ -547,34 +625,101 @@ document.addEventListener("DOMContentLoaded", function() {
                             }
                         });
 
-                        // Update order summary (example function)
+                      // Update order summary (example function)
                         function updateOrderSummary() {
-                    // Make an AJAX request to get the latest order summary data
-                    $.ajax({
-                        url: '../php/get_order_summary.php', // Adjust path as needed
-                        type: 'GET',
-                        success: function(response) {
-                            $('tbody').html(response); // Update the order summary table body with new data
+                            // Get the customer ID from the input field
+                            let customerId = $('#customer_id').val(); // Capture the customer ID
+                            console.log(customerId);
+                            // Make an AJAX request to get the latest order summary data
+                            $.ajax({
+                                url: '../php/get_order_summary.php', // Adjust path as needed
+                                type: 'GET',
+                                data: { customer_id: customerId },  // Send customer_id as a parameter
+                                success: function(response) {
+                                    $('tbody').html(response); // Update the order summary table body with new data
 
-                            // Extract total amount from the response or calculate it manually if needed
-                            let totalAmount = 0;
-                            $('tbody tr').each(function() {
-                                let subTotal = parseFloat($(this).find('td:nth-child(5)').text());
-                                if (!isNaN(subTotal)) {
-                                    totalAmount += subTotal;
+                                    // Extract total amount from the response or calculate it manually if needed
+                                    let totalAmount = 0;
+                                    $('tbody tr').each(function() {
+                                        let subTotal = parseFloat($(this).find('td:nth-child(5)').text());
+                                        if (!isNaN(subTotal)) {
+                                            totalAmount += subTotal;
+                                        }
+                                    });
+
+
+
+                                    bindRemoveButtonEvents();
+
+                                    // Update the total amount field
+                                    $('#total-amount').text(totalAmount.toFixed(2));
+                                    
+                                    let customerData = JSON.parse(response);
+                                    document.getElementById('customer_name').value = customerData.customer_name;
+
+                                },
+                                error: function(xhr, status, error) {
+                                    alert('Error fetching order summary: ' + error);
                                 }
                             });
-
-                            bindRemoveButtonEvents();
-
-                            // Update the total amount field
-                            $('#total-amount').text(totalAmount.toFixed(2));
-                        },
-                        error: function(xhr, status, error) {
-                            alert('Error fetching order summary: ' + error);
                         }
-                    });
-                }
+
+                       
+
+                            $("#customer_id").on("change", function() {
+                                var newProductId = $(this).find(":selected").val();  // Get new product ID from the option
+                               
+                                
+                                getRow(newProductId);
+                            
+
+                                
+                                
+                                // Proceed with the AJAX request...
+
+                                // AJAX request to update the product ID
+                                updateOrderSummary();
+
+                            
+                            });
+
+
+                            function getRow(id){
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '../php/customer_row.php',
+                                    data: {id: id},
+                                    dataType: 'json',
+                                    success: function(response) {
+                                        let myvariable;
+
+                                        // Check the status returned from the server
+                                        if (response.status === 'success') {
+                                            $('#customer_name').val(response.customer_name);
+                                            $('#customer_note').val(response.note);
+
+                                            let num = response.customer_id || 0;  // If num is empty, default to 0
+                                            $('#customer_num').val(num);
+                                            $('#standByOrder').attr('name', 're-order');
+                                            $('#standByOrder').removeClass('enable-button').addClass('disable-button');
+                                            myvariable = 'success';  // Set myvariable to success
+                                        } else {
+                                            $('#customer_name').val('');
+                                            $('#customer_note').val('');
+                                            $('#customer_num').val(0);
+                                            $('#standByOrder').attr('name', 'standByOrder');
+                                            $('#standByOrder').addClass('enable-button');
+                                            myvariable = 'failed';  // Set myvariable to failed
+                                        }
+
+                                        // Log the value of myvariable
+                                        
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.log('AJAX Error: ' + error);
+                                    }
+                                });
+                            }
 
 
                         // Bind the remove button functionality
@@ -626,61 +771,79 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </tbody>
                             </table>
                         </div>
+
+
                         <div class="card-bottom-container total-section">
                             <div class="card-bottom-group total-field">
                                 <h3>total</h3>
                                 <span>&#8369; <span id="total-amount"> 0.00</span></span>
                             </div>
-                            <div class="card-bottom-groups">
-                                <div class="card-bottom-group customer-field">
-                                    <h3>customer name</h3>
-                                    <input type="text" name="customerName" id="customerName">
+                            
+                            <form action="../php/standby_order.php" method="POST" class="form-container">
+                                <input type="number" name="" id="customer_num" hidden>
+                                
+                                <div class="card-bottom-groups">
+                                    <div class="card-bottom-group customer-field">
+                                        <h3>customer name</h3>
+                                        
+                                      
+                                        <input type="text" name="customer_name" id="customer_name">
+                                    </div>
+                                    <div class="card-bottom-group note-field">
+                                        <h3>note</h3>
+                                        <input type="text" placeholder="Optional" name="customer_note" id="customer_note">
+                                    </div>
                                 </div>
-                                <div class="card-bottom-group note-field">
-                                    <h3>note</h3>
-                                    <input type="text" placeholder="Optional" name="customerNote" id="customerNote">
-                                </div>
-                            </div>
-                            <div class="card-bottom-groups order-number-field">
-                                <div class="card-bottom-group order-number-field">
-                                    <select name="customerTable" id="customerTable">
-                                        <option value="" hidden>select table number</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">3</option>
-                                        <option value="7">7</option>
-                                        <option value="8">8</option>
-                                        <option value="9">9</option>
-                                        <option value="10">10</option>
-                                        <option value="11">11</option>
-                                        <option value="12">12</option>
-                                    </select>
+                                <div class="card-bottom-groups order-number-field">
+                                    <div class="card-bottom-group order-number-field">
+                                            <?php 
+                                                $randomId = rand(100, 999);
+                                                // $randomId = uniqid();   // Generates a random 3-digit number between 100 and 999
+                                                
+                                            
+                                            echo '
+                                                <select name="customer_id" value = "0" id="customer_id">
+
+                                                    
+                                                    <option value="'.$randomId.'" selected></option>
+                                                    ';
+                                                    
+                                                
+                                                    $sql = "SELECT * FROM order_details WHERE status =  1 GROUP BY customer_id";
+                                                    $query = $conn->query($sql);
+                                                    while($row = $query->fetch_assoc()){
+                                                    echo "
+                                                    <option value=".$row['customer_id']." data-id=".$row['order_detail_id'].">".$row['customer_name']."</option>
+                                                    ";
+                                                    }
+
+                                                echo '
+                                                
+                                                </select>
+                                            ';
+                                        ?>
+
+                                    </div>
+                                    <div class="card-bottom-group">
+                                        <select name="" id="">
+                                            <option value="">haha</option>
+                                            <option value=""></option>
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <button class="btnTable">Update tables</button>
-                            </div>
-                                <!-- <div class="card-bottom-group order-number-field">
-                                    <select name="customerTable" id="customerTable">
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                      
-                                    </select>
-                                </div> -->
-                            <div class="button-section">
-                                <button type="submit" id="submitOrderBtn">
-                                    <span>proceed to kitchen</span>
-                                    <i class="fa-solid fa-arrow-right-long"></i>
-                                </button>
-                                <button type="submit" id="standByOrder">
-                                    <span>stand by order</span>
-                                    <i class="fa-solid fa-arrow-right-long"></i>
-                                </button>
-                            </div>
+                                <div class="button-section">
+                                    <button type="submit" id="submitOrderBtn">
+                                        <span>proceed to kitchen</span>
+                                        <i class="fa-solid fa-arrow-right-long"></i>
+                                    </button>
+                                    <button type="submit" id="standByOrder" name="standByOrder">
+                                        <span>stand by order</span>
+                                        <i class="fa-solid fa-arrow-right-long"></i>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

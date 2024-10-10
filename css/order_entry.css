@@ -343,9 +343,10 @@
 
 .menu-header{
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+    gap: 0.5rem;
 }
 
 .menu-header-title{
@@ -361,6 +362,23 @@
     margin-bottom: 0;
 }
 
+.menu-header-content{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5rem;
+}
+
+.container{
+    width: 100%;
+}
+
+.dropdown-category{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 .dropdown-category select, option, input{
     padding: 6px;
     font-size: 0.8rem;
@@ -371,6 +389,7 @@
     text-transform: capitalize;
     color: rgba(0, 0, 0, 0.7);
     font-weight: 600;
+    width: 100%;
 }
 
 .dropdown-category select, option{
@@ -596,7 +615,7 @@
 .table-container{
     overflow: auto;
     height: 100vh;
-    max-height: 210px;
+    max-height: 250px;
 }
 
 table {
@@ -665,6 +684,12 @@ td{
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     width: 100%;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .btnTable{
@@ -965,6 +990,15 @@ td{
     background-color: var(--dark-green);
     color: var(--white);
     border: 1px solid var(--dark-green);
+}
+
+
+#standByOrder.disable-button{
+    display: none;
+}
+
+#standByOrder.enable-button{
+    display: flex;
 }
 
 
