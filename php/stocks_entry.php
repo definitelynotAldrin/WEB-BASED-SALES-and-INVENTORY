@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Insert into database
             $sql = "INSERT INTO stocks (stock_name, stock_quantity, stock_unit, stock_date_added) VALUES (?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssss", $formattedName, $stockQuantity, $stockUnit, $submissionTime);
+            $stmt->bind_param("sdss", $formattedName, $stockQuantity, $stockUnit, $submissionTime);
             $stmt->execute();
             $stmt->close();
 

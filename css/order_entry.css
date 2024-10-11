@@ -179,7 +179,7 @@
     transition: 0.5s ease;
 }
 
-#message-container{
+#error-container{
     opacity: 0;
     top: 50%;
     z-index: 6;
@@ -187,13 +187,31 @@
     background-color: rgb(134, 2, 2);
 }
 
-#message-container.fadeOut{
+#error-container.fadeOut{
     opacity: 0;
 }
 
-#message-container.fadeIn{
+#error-container.fadeIn{
     opacity: 1;
 }
+
+
+#success-container{
+    opacity: 0;
+    top: 50%;
+    z-index: 6;
+    color: white;
+    background-color: var(--light-green);
+}
+
+#success-container.fadeOut{
+    opacity: 0;
+}
+
+#success-container.fadeIn{
+    opacity: 1;
+}
+
 
 
 .content-header{

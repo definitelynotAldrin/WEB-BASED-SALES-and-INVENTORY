@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <title>Kan-anan by the Sea</title>
     <link rel="stylesheet" href="../css/order_entry.css">
     <link rel="shortcut icon" href="../assets/Sea Sede (200 x 200 px).png" type="image/x-icon">
-    <link rel="stylesheet" href="../fontawesome-free-6.6.0-web/css/all.min.css">
+    <!-- <link rel="stylesheet" href="../fontawesome-free-6.6.0-web/css/all.min.css"> -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -162,7 +162,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 <?php echo $_GET['error']; ?>
                 </div>
             <?php } ?>
-            <div class="alert success-message" id="message-container"></div>
+            <div class="alert error-message" id="error-container"></div>
+            <div class="success success-message" id="success-container"></div>
             <div class="content-header">
                 <div class="header-text">
                     <h1>Let's seize the day! <span></span></h1>
@@ -333,13 +334,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="popup_order_quantity kilograms-quantity" id="kilograms-popup">
                         <div class="popup-header">
                             <i class="fa-solid fa-scale-balanced"></i>
-                            <h1>Input how many kilo(s) <span id="kg-dish-name">dish name</span> required.</h1>
+                            <h1>How many kilo(s) <span id="kg-dish-name">dish name</span> required.</h1>
                         </div>
                         <div class="popup-card-container">
                             <!-- HIDDEN INPUTS FOR STORING DATA FROM THE MENU -->
                             <input type="hidden" name="menu_id" id="menu_id_kg">
                             <input type="hidden" name="menu_name" id="menu_name_kg">
-                            <input type="hidden" name="menu_price" id="menu_price_kg">        
+                            <input type="hidden" name="menu_price" id="menu_price_kg">
+                            <input type="hidden" name="menu_category" id="menu_category_kg">       
                             <div class="card-group">
                                 <div class="card-boxes menu-item-quantity" data-value="0.25">
                                     <h3>1/4</h3>
@@ -388,16 +390,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="popup_order_quantity pieces-quantity" id="pieces-popup">
                         <div class="popup-header">
                             <i class="fa-solid fa-scale-balanced"></i>
-                            <h1>Input how many quantity(s) of <span id="pieces-dish-name">name</span> required.</h1>
+                            <h1>How many quantity(s) of <span id="pieces-dish-name">name</span> required.</h1>
                         </div>
                         <div class="popup-card-container">
                             <!-- HIDDEN INPUTS FOR STORING DATA FROM THE MENU -->
                             <input type="hidden" name="menu_id" id="menu_id_pieces">
                             <input type="hidden" name="menu_name" id="menu_name_pieces">
                             <input type="hidden" name="menu_price" id="menu_price_pieces">
+                            <input type="hidden" name="menu_category" id="menu_category">       
                             <div class="card-group">
                                 <div class="card-boxes card-input-field">
-                                    <input type="number" min="1" id="quantity_pieces">
+                                    <input type="number" min="0" step="1" id="quantity_pieces">
                                     <span>Quantity</span>
                                 </div>
                             </div>
@@ -416,6 +419,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         let selectedMenuId = null;
                         let selectedMenuName = null;
                         let selectedMenuPrice = null;
+                        let ItemCategory = null;
                         let customer_id = null;
 
                         // Handle menu item card click
@@ -424,6 +428,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             selectedMenuId = $(this).data('item-id');
                             selectedMenuName = $(this).data('item-name');
                             selectedMenuPrice = $(this).data('item-price');
+                            ItemCategory = $(this).data('category');
                             const itemCategory = $(this).data('category'); // Get item category
 
                             // Open appropriate popup based on category
@@ -432,18 +437,22 @@ document.addEventListener("DOMContentLoaded", function() {
                                 $('#menu_id_kg').val(selectedMenuId);
                                 $('#menu_name_kg').val(selectedMenuName);
                                 $('#menu_price_kg').val(selectedMenuPrice); // Ensure you set price here if needed
+                                $('#menu_category_kg').val(ItemCategory);
+                                $('#kg-dish-name').text(selectedMenuName);
                                 $('#kilograms-popup').show(); // Show kilograms popup
                                 $('#popup-overlay').show();
-                                $('body').css('overflow', 'hidden');
+                                // $('body').css('overflow', 'hidden');
 
                             } else if (itemCategory === 'Beverages' || itemCategory === 'Dessert') {
                                 // Set values for pieces popup
                                 $('#menu_id_pieces').val(selectedMenuId);
                                 $('#menu_name_pieces').val(selectedMenuName);
-                                $('#menu_price_pieces').val(selectedMenuPrice); // Ensure you set price here if needed
+                                $('#menu_price_pieces').val(selectedMenuPrice);
+                                $('#menu_category').val(ItemCategory); // Ensure you set price here if needed
+                                $('#pieces-dish-name').text(selectedMenuName);
                                 $('#pieces-popup').show(); // Show pieces popup
                                 $('#popup-overlay').show();
-                                $('body').css('overflow', 'hidden');
+                                // $('body').css('overflow', 'hidden');
                             }
                         });
 
@@ -451,7 +460,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         $('.btn-cancel').on('click', function() {
                             $('.popup_order_quantity').hide(); 
                             $('#popup-overlay').hide();
-                            $('body').css('overflow', 'auto');// Hide all popups
+                            // $('body').css('overflow', 'auto');// Hide all popups
                         });
 
                         // Handle proceed button click in kilograms popup
@@ -488,14 +497,15 @@ document.addEventListener("DOMContentLoaded", function() {
                                 console.log("Selected Menu Name: ", selectedMenuName); // Check menu name
                                 console.log("Selected Menu Price: ", selectedMenuPrice); // Check menu price
 
-                                if (quantity && selectedMenuId && selectedMenuName) {
+                                if (quantity && selectedMenuId && selectedMenuName && ItemCategory) {
                                     const orderData = {
                                         menu_id: selectedMenuId,
                                         menu_name: selectedMenuName,
                                         quantity: quantity,
                                         menu_price: selectedMenuPrice,
+                                        menu_category: ItemCategory,
                                     };
-                                    console.log("Order Data: ", orderData); // Check order data
+                                    console.log("Order Data: ", orderData); // Check order data----------------
 
                                     $.ajax({
                                         url: '../php/add_order_detail.php',
@@ -505,6 +515,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             const result = JSON.parse(response);
                                             if (result.status === 'success') {
                                                 updateOrderSummary();
+                                                $('#custom_kg').val('');
                                                 $('#kilograms-popup').hide();
                                                 $('#popup-overlay').hide();
                                                 $('body').css('overflow', 'auto');
@@ -517,7 +528,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         }
                                     });
                                 } else {
-                                    displaySuccessMessage('Select or Input quantity before proceeding!');
+                                    displayErrorMessage('Select or Input quantity before proceeding!');
                                 }
                             });
                         });
@@ -529,13 +540,14 @@ document.addEventListener("DOMContentLoaded", function() {
                             const quantity = $('#quantity_pieces').val();
 
                             // Check if quantity and menu item data are available
-                            if (quantity && selectedMenuId && selectedMenuName) {
+                            if (quantity && selectedMenuId && selectedMenuName && ItemCategory) {
                                 // Prepare data for AJAX
                                 const orderData = {
                                     menu_id: selectedMenuId,
                                     menu_name: selectedMenuName,
                                     quantity: quantity,
                                     menu_price: selectedMenuPrice,
+                                    menu_category: ItemCategory,
                                 };
 
                                 // Send AJAX request to add the order
@@ -548,11 +560,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                         if (result.status === 'success') {
                                             // Update order summary table
                                             updateOrderSummary();
+                                            $('#quantity_pieces').val('');
                                             $('#pieces-popup').hide();
                                             $('#popup-overlay').hide();
                                             $('body').css('overflow', 'auto'); // Close the popup
                                         } else {
-                                            alert(result.message); // Handle error message
+                                            displayErrorMessage(result.message); // Handle error message
                                         }
                                     },
                                     error: function(xhr, status, error) {
@@ -560,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     }
                                 });
                             } else {
-                                displaySuccessMessage('Input quantity before proceeding!');
+                                displayErrorMessage('Input quantity before proceeding!');
                             }
                         });
 
@@ -607,11 +620,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             //     });
                             // }
 
-
-
-
-
-                    
 
 
                     });
@@ -679,18 +687,78 @@ document.addEventListener("DOMContentLoaded", function() {
                     // Initially call the function to load the order summary
                     updateOrderSummary();
 
+                    $(document).ready(function() {
+                        // Handle place order button click
+                        $('#place-order-button').on('click', function() {
+                            // Gather customer data
+                            const customerData = {
+                                customer_name: $('#customer-name').val(),
+                                customer_note: $('#customer-note').val(),
+                                customer_table: $('#customer-table').val()
+                            };
 
-                    function displaySuccessMessage(message) {
+                            console.log(customerData);
+
+                            // Send AJAX request to save customer info
+                            $.ajax({
+                                url: '../php/add_orders.php', // Your PHP file
+                                type: 'POST',
+                                data: customerData,
+                                success: function(response) {
+                                    // Log the entire response object for debugging
+                                    console.log(JSON.stringify(response));
+
+                                    // Check if response is successful
+                                    if (response.status === 'success') {
+                                        displaySuccessMessage('Order successfully placed!');
+
+                                        // Clear customer data fields
+                                        $('#customer-name').val('');
+                                        $('#customer-note').val('');
+                                        $('#customer-table').val('');
+
+                                        // Update the order summary or take any action for success here
+                                        updateOrderSummary();
+                                    } else {
+                                        // Handle error case
+                                        displayErrorMessage(response.message);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    alert('Error submitting customer info: ' + error); // Handle error
+                                }
+                            });
+                        });
+                    });
+
+
+
+
+                    function displaySuccessMessage(message1) {
                         // Create a div to hold the success message
-                        const messageDiv = $('<div class="success-message"></div>').text(message);
+                        const messageDiv = $('<div class="success-message"></div>').text(message1);
                         
                         // Append the message to a specific container in your HTML
-                        $('#message-container').html(messageDiv);
-                        $('#message-container').removeClass('fadeOut').addClass('fadeIn');
+                        $('#success-container').html(messageDiv);
+                        $('#success-container').removeClass('fadeOut').addClass('fadeIn');
 
                         // Optionally, remove the message after a few seconds
                         setTimeout(() => {
-                            $('#message-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                            $('#success-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                        }, 3000); // Change the duration as needed
+                    }
+
+                    function displayErrorMessage(message2) {
+                        // Create a div to hold the success message
+                        const messageDiv = $('<div class="error-message"></div>').text(message2);
+                        
+                        // Append the message to a specific container in your HTML
+                        $('#error-container').html(messageDiv);
+                        $('#error-container').removeClass('fadeOut').addClass('fadeIn');
+
+                        // Optionally, remove the message after a few seconds
+                        setTimeout(() => {
+                            $('#error-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
                         }, 3000); // Change the duration as needed
                     }
 
@@ -726,11 +794,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group customer-field">
                                     <h3>customer name</h3>
-                                    <input type="text" name="customer_name" id="customer-name" required>
+                                    <input type="text" name="customer_name" id="customer-name">
                                 </div>
                                 <div class="card-bottom-group note-field">
                                     <h3>note</h3>
-                                    <input type="text" placeholder="Optional" name="customer_note" id="customer-note" required>
+                                    <input type="text" placeholder="Optional" name="customer_note" id="customer-note">
                                 </div>
                             </div>
                             <div class="card-bottom-groups order-number-field">
@@ -793,41 +861,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
             <script>
-                 $('#place-order-button').on('click', function() {
-                        // Gather order details
-                        const orderData = {
-                            customer_name: $('#customer-name').val(),
-                            customer_note: $('#customer-note').val(),
-                            customer_table: $('#customer-table').val()
-                        };
-
-                        console.log(orderData);
-
-                        // Send AJAX request
-                        $.ajax({
-                            url: '../php/add_orders.php',
-                            type: 'POST',
-                            data: orderData,
-                            success: function(response) {
-                                console.log(response);  // Log the response to check its content
-                                
-                                try {
-                                    const result = JSON.parse(response); // Parse the JSON response
-                                    if (result.status === 'success') {
-                                        alert(result.message);
-                                    } else {
-                                        alert(result.message);
-                                    }
-                                } catch (e) {
-                                    alert('Invalid JSON response: ' + e.message); // Handle JSON parsing error
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                alert('Error placing order: ' + error);
-                            }
-                        });
-
-                    });
+        
             </script>
             <div id="popup-overlay" class="popup-overlay"></div>           
             <div class="delete-confirmation-overlay"></div>

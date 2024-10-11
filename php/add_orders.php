@@ -1,63 +1,84 @@
 <?php
 session_start();
 
-include_once "../includes/connection.php";
-
-// Set the response header to JSON
 header('Content-Type: application/json');
+include_once "../includes/connection.php"; // Ensure your connection.php is correctly configured
 
-// Prepare an empty response array
-$response = array();
-
-try {
-    // Check if order details exist in the session
-    if (isset($_SESSION['order_details']) && !empty($_SESSION['order_details'])) {
-        // Capture other necessary order information from POST data
+// Check if POST data is received
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Check if customer info is provided and not empty
+    if (!empty($_POST['customer_name']) && isset($_POST['customer_note']) && !empty($_POST['customer_table'])) {
         $customerName = $_POST['customer_name'];
-        $customerNote = $_POST['customer_note']; // Optional note from the customer
-        $customerTable = $_POST['customer_table']; // Table number
-        $totalAmount = 0;
+        $customerNote = $_POST['customer_note'];
+        $customerTable = $_POST['customer_table'];
+        
+        // Check if order details exist in the session
+        if (isset($_SESSION['order_details']) && !empty($_SESSION['order_details'])) {
+            $totalAmount = 0;
 
-        // Calculate total amount from session order details
-        foreach ($_SESSION['order_details'] as $order) {
-            $totalAmount += $order['sub_total']; // Assuming sub_total is already calculated
+            // Calculate total amount
+            foreach ($_SESSION['order_details'] as $order) {
+                $totalAmount += $order['sub_total'];
+            }
+
+            // Insert order into orders table
+            $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status) VALUES (?, ?, ?, ?, 'prepare')";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssd", $customerName, $customerNote, $customerTable, $totalAmount);
+            $stmt->execute();
+
+            // Get the last inserted order ID
+            $orderId = $conn->insert_id;
+
+            // Insert order details into order_details table
+            foreach ($_SESSION['order_details'] as $order) {
+                $menuItemId = $order['menu_item_id'];
+                $quantity = $order['quantity'];
+                $menuPrice = $order['menu_price'];
+                $subTotal = $order['sub_total'];
+
+                $detailSql = "INSERT INTO order_details (order_id, menu_item_stock_id, quantity, menu_price, sub_total) VALUES (?, ?, ?, ?, ?)";
+                $detailStmt = $conn->prepare($detailSql);
+                $detailStmt->bind_param("iidds", $orderId, $menuItemId, $quantity, $menuPrice, $subTotal);
+                $detailStmt->execute();
+
+                // After inserting order details, fetch required stocks and deduct quantity from stocks
+                $menuStockSql = "SELECT stock_id, quantity_required FROM menu_item_stocks WHERE menu_item_id = ?";
+                $menuStockStmt = $conn->prepare($menuStockSql);
+                $menuStockStmt->bind_param("i", $menuItemId);
+                $menuStockStmt->execute();
+                $menuStockResult = $menuStockStmt->get_result();
+
+                while ($menuStockRow = $menuStockResult->fetch_assoc()) {
+                    $stockId = $menuStockRow['stock_id'];
+                    $quantityRequired = $menuStockRow['quantity_required'];
+
+                    // Calculate total quantity needed (menu quantity * quantity_required)
+                    $totalQuantityRequired = $quantity * $quantityRequired;
+
+                    // Deduct stock quantity from stocks table
+                    $updateStockSql = "UPDATE stocks SET stock_quantity = stock_quantity - ? WHERE stock_id = ?";
+                    $updateStockStmt = $conn->prepare($updateStockSql);
+                    $updateStockStmt->bind_param("di", $totalQuantityRequired, $stockId);
+                    $updateStockStmt->execute();
+                }
+            }
+
+            // Clear the session order details after successful insertion
+            unset($_SESSION['order_details']);
+
+            // Return success response
+            echo json_encode(['status' => 'success', 'message' => 'Order placed successfully.']);
+        } else {
+            // No order details in session
+            echo json_encode(['status' => 'error', 'message' => 'No items in the order.']);
         }
-
-        // Prepare to insert into the orders table
-        $stmt = $pdo->prepare("INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status) VALUES (?, ?, ?, ?, 'prepare')");
-        $stmt->execute([$customerName, $customerNote, $customerTable, $totalAmount]);
-
-        // Get the last inserted order ID
-        $orderId = $pdo->lastInsertId();
-
-        // Insert order details into the order_details table
-        foreach ($_SESSION['order_details'] as $order) {
-            $menuItemId = $order['menu_item_id']; // Assuming this is the ID of the menu item
-            $quantity = $order['quantity'];
-            $menuPrice = $order['menu_price'];
-            $subTotal = $order['sub_total'];
-
-            $detailStmt = $pdo->prepare("INSERT INTO order_details (order_id, menu_item_stock_id, quantity, menu_price, sub_total) VALUES (?, ?, ?, ?, ?)");
-            $detailStmt->execute([$orderId, $menuItemId, $quantity, $menuPrice, $subTotal]);
-        }
-
-        // Clear the session order details after successful insertion
-        unset($_SESSION['order_details']);
-
-        // Set the success response
-        $response['status'] = 'success';
-        $response['message'] = 'Order placed successfully.';
     } else {
-        // Handle case where there are no order details
-        $response['status'] = 'error';
-        $response['message'] = 'No items in the order.';
+        // Missing or empty customer info
+        echo json_encode(['status' => 'error', 'message' => 'Customer information is missing or empty.']);
     }
-} catch (Exception $e) {
-    // Catch any exceptions (e.g., database errors) and set an error response
-    $response['status'] = 'error';
-    $response['message'] = 'Failed to place order: ' . $e->getMessage();
+} else {
+    // Not a POST request
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
 }
-
-// Return the response as JSON
-echo json_encode($response);
 ?>

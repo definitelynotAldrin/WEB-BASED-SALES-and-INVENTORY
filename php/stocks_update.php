@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // 2. Update the stock item (but don't update the date)
                 $updateSql = "UPDATE stocks SET stock_name = ?, stock_quantity = ?, stock_unit = ? WHERE stock_id = ?";
                 $updateStmt = $conn->prepare($updateSql);
-                $updateStmt->bind_param("sssi", $formattedName, $stockQuantity, $stockUnit, $stockID);
+                $updateStmt->bind_param("sdsi", $formattedName, $stockQuantity, $stockUnit, $stockID);
 
                 if (!$updateStmt->execute()) {
                     throw new Exception("Failed to update stock item.");
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $historySql = "INSERT INTO stock_history (stock_id, updated_quantity, previous_quantity, updated_at, last_action_type) 
                                VALUES (?, ?, ?, ?, 'update')";
                 $historyStmt = $conn->prepare($historySql);
-                $historyStmt->bind_param("iiis", $stockID, $stockQuantity, $previousQuantity, $submissionTime);
+                $historyStmt->bind_param("idds", $stockID, $stockQuantity, $previousQuantity, $submissionTime);
 
                 if (!$historyStmt->execute()) {
                     throw new Exception("Failed to insert stock history.");

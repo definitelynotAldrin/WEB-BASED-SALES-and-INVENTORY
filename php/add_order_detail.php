@@ -2,13 +2,20 @@
 session_start(); // Start session
 
 // Check if required POST data is received
-if (isset($_POST['menu_id']) && isset($_POST['quantity']) && isset($_POST['menu_price'])) {
+if (isset($_POST['menu_id']) && isset($_POST['quantity']) && isset($_POST['menu_price']) && isset($_POST['menu_category'])) {
     // Sanitize input values
     $menu_id = intval($_POST['menu_id']);
     $menu_name = $_POST['menu_name'];
     $quantity = floatval($_POST['quantity']);
     $menu_price = floatval($_POST['menu_price']);
+    $menu_category = $_POST['menu_category'];
     $sub_total = $quantity * $menu_price;
+
+    // Check if the category is 'Beverage' or 'Dessert' and ensure quantity is an integer
+    if (($menu_category === 'Beverage' || $menu_category === 'Dessert') && floor($quantity) != $quantity) {
+        echo json_encode(array('status' => 'error', 'message' => 'Quantity for beverages and desserts must be a whole number.'));
+        exit; // Stop further processing
+    }
 
     // Create an array for the order details if it doesn't exist
     if (!isset($_SESSION['order_details'])) {

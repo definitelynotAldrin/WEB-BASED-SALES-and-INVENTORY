@@ -254,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                                 <div class="form-group">
                                     <label for="">stocks quantity</label>
-                                    <input type="number" id="stock_quantity" name="stock_quantity" min="0" value="<?php echo (isset($_GET['stock_quantity']))?$_GET['stock_quantity']:"" ?>">
+                                    <input type="number" id="stock_quantity" name="stock_quantity" step="0.01" min="0" value="<?php echo (isset($_GET['stock_quantity']))?$_GET['stock_quantity']:"" ?>">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -307,8 +307,20 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <div class="menu-cards" data-category="<?php echo $row['stock_unit']; ?>" data-status="<?php echo $row['stock_status']; ?>">
                                         <div class="menu-cards-group menu-details">
                                             <h1 class="menu-cards-menu-title"><?php echo $row['stock_name']; ?></h1>
-                                            <p class="menu-cards-menu-stock">Stocks: <span><?php echo $row['stock_quantity']; ?></span> <?php echo $row['stock_unit']; ?></p>
+                                            <p class="menu-cards-menu-stock">Stocks: 
+                                                <span>
+                                                    <?php 
+                                                    if ($row['stock_unit'] == 'Pieces') {
+                                                        echo intval($row['stock_quantity']); // Removes decimals for pieces
+                                                    } else {
+                                                        echo number_format($row['stock_quantity'], 2); // Keeps 2 decimals for other units like KG
+                                                    }
+                                                    ?>
+                                                </span> 
+                                                <?php echo $row['stock_unit']; ?>
+                                            </p>
                                         </div>
+
                                         <div class="menu-cards-button">
 
                                             <i class="fa-regular fa-square-plus btn-add"
@@ -624,7 +636,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                             <div class="form-group">
                                 <label for="">stocks quantity</label>
-                                <input type="number" id="item_quantity" name="item_quantity" min="0">
+                                <input type="number" id="item_quantity" name="item_quantity" step="0.01" min="0">
                             </div>
                         </div>
                         <div class="menu-category item-category">
@@ -645,7 +657,7 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="popup-form-container add-stock">
                 <div class="popup-form-header">
-                    <h1>update item/add stock</h1>
+                    <h1>add stock</h1>
                     <!-- <i class="fa-regular fa-circle-xmark btn-close"></i> -->
                 </div>
                 <div class="popup-content">
@@ -655,11 +667,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         <div class="form-groups popup-form-groups">
                             <div class="form-group disabled-input">
                                 <label for="">name(not editable)</label>
-                                <input type="text" id="item_NAME" name="item_NAME" min="0">
+                                <input type="text" id="item_NAME" name="item_NAME">
                             </div>
                             <div class="form-group">
                                 <label for="">stocks quantity</label>
-                                <input type="number" id="item_QUANTITY" name="item_QUANTITY" min="0">
+                                <input type="number" id="item_QUANTITY" name="item_QUANTITY" step="0.01" min="0">
                             </div>
                         </div>
                         <div class="form-groups button-group">
