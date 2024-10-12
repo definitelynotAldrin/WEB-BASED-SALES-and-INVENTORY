@@ -166,3 +166,58 @@ document.getElementById('search_menu').addEventListener('input', function() {
 //     const value = event.target.value;
 //     console.log("Selected or entered value:", value);
 // });
+
+
+
+
+
+
+
+
+// -------------------------------popup table tabs----------------------------------
+
+document.addEventListener('DOMContentLoaded', function() {
+    const activePanel = document.querySelector('.active-panel');
+    const inactivePanel = document.querySelector('.inactive-panel');
+    const activeBtn = document.querySelector('.activeBtn');
+    const inactiveBtn = document.querySelector('.inactiveBtn');
+
+    // Set initial color for activeBtn
+    activeBtn.style.color = 'green';  // Default color for activeBtn
+
+    activeBtn.addEventListener('click', function() {
+        // Show active panel and hide inactive panel
+        activePanel.style.display = 'block';
+        inactivePanel.style.display = 'none';
+
+        // Set the active button to green
+        activeBtn.style.color = 'green';
+
+        // Remove the color from inactive button
+        inactiveBtn.style.color = '';
+
+        // Add activeTab class to activeBtn (if you want to use a class for styling)
+        // activeBtn.classList.add('activeTab');
+
+        // // Remove activeTab class from inactiveBtn
+        // inactiveBtn.classList.remove('activeTab');
+    });
+
+    inactiveBtn.addEventListener('click', function() {
+        // Show inactive panel and hide active panel
+        activePanel.style.display = 'none';
+        inactivePanel.style.display = 'block';
+
+        // Set the inactive button to green
+        inactiveBtn.style.color = 'red';
+
+        // Remove the color from active button
+        activeBtn.style.color = '';
+
+        // // Add activeTab class to inactiveBtn
+        // inactiveBtn.classList.add('activeTab');
+
+        // // Remove activeTab class from activeBtn
+        // activeBtn.classList.remove('activeTab');
+    });
+});

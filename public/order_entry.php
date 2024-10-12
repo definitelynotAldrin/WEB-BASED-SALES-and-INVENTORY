@@ -463,6 +463,12 @@ document.addEventListener("DOMContentLoaded", function() {
                             // $('body').css('overflow', 'auto');// Hide all popups
                         });
 
+                        $('#popup-overlay').on('click', function() {
+                            $('.popup_order_quantity').hide(); 
+                            $('#popup-overlay').hide();
+                            // $('body').css('overflow', 'auto');// Hide all popups
+                        });
+
                         // Handle proceed button click in kilograms popup
                         $(document).ready(function() {
                             let selectedQuantity = null;
@@ -520,7 +526,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 $('#popup-overlay').hide();
                                                 $('body').css('overflow', 'auto');
                                             } else {
-                                                alert(result.message);
+                                                displayErrorMessage(result.message);
                                             }
                                         },
                                         error: function(xhr, status, error) {
@@ -683,6 +689,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             }
                         });
                     }
+                    
 
                     // Initially call the function to load the order summary
                     updateOrderSummary();
@@ -719,6 +726,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         // Update the order summary or take any action for success here
                                         updateOrderSummary();
+                                        updateTable();
                                     } else {
                                         // Handle error case
                                         displayErrorMessage(response.message);
@@ -730,9 +738,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             });
                         });
                     });
-
-
-
 
                     function displaySuccessMessage(message1) {
                         // Create a div to hold the success message
@@ -762,6 +767,147 @@ document.addEventListener("DOMContentLoaded", function() {
                         }, 3000); // Change the duration as needed
                     }
 
+
+                    // ----------------------updating table-----------------------
+
+                    $(document).ready(function() {
+                        // Show the popup when the 'Update tables' button is clicked
+                        $('.btnTable').on('click', function() {
+                            // Display the popup
+                            $('.popup-table-container').fadeIn();
+
+                            // Load active and inactive tables for today
+                            loadTableStatus();
+                        });
+
+                        // Switch between active and inactive panels
+                        $('.activeBtn').on('click', function() {
+                            $('.active-panel').show();
+                            $('.inactive-panel').hide();
+                        });
+
+                        $('.inactiveBtn').on('click', function() {
+                            $('.active-panel').hide();
+                            $('.inactive-panel').show();
+                        });
+
+                        // Function to load active and inactive tables
+                        function loadTableStatus() {
+                            $.ajax({
+                                url: '../php/get_today_table_status.php', // Your PHP script to get table statuses for today
+                                type: 'GET',
+                                success: function(response) {
+                                    var data = JSON.parse(response);
+                                    var activeTablesHtml = '';
+                                    var inactiveTablesHtml = '';
+
+                                    // Loop through the response data to populate active and inactive panels
+                                    data.forEach(function(item) {
+                                        if (item.table_status == 1) { // Active table
+                                            activeTablesHtml += `
+                                                <div class="item">
+                                                    <input type="hidden" name="customer_id" value="${item.order_id}">
+                                                    <div class="table-number">Customer: ${item.customer_name}</div>
+                                                    <div class="table-number">Table no. ${item.customer_table}</div>
+                                                    <div class="toggle-switch">
+                                                        <input type="checkbox" data-table-id="${item.customer_table}" data-order-id="${item.order_id}" checked>
+                                                        <span class="text-status">available</span>
+                                                    </div>
+                                                </div>`;
+                                        } else { // Inactive table
+                                            inactiveTablesHtml += `
+                                                <div class="item">
+                                                    <input type="hidden" name="customer_id" value="${item.order_id}">
+                                                    <div class="table-number">Customer: ${item.customer_name}</div>
+                                                    <div class="table-number">Table no. ${item.customer_table}</div>
+                                                    <div class="toggle-switch">
+                                                        <span class="text-status">unavailable</span>
+                                                        <i class="fa-solid fa-rotate-left btnReturn" data-table-id="${item.customer_table}" data-order-id="${item.order_id}"></i>
+                                                    </div>
+                                                </div>`;
+                                        }
+                                    });
+
+                                    // Update the HTML in the active and inactive panels
+                                    $('.active-panel').html(activeTablesHtml);
+                                    $('.inactive-panel').html(inactiveTablesHtml);
+
+                                    // Bind event handlers after content is loaded
+                                    bindTableActions();
+                                    updateTable();
+                                },
+                                error: function(xhr, status, error) {
+                                    alert('Error retrieving table status: ' + error);
+                                }
+                            });
+                        }
+
+                        // Function to bind actions for the checkboxes and return buttons
+                        function bindTableActions() {
+                            // Handle unchecking in the active panel (set table to inactive)
+                            $('.active-panel .toggle-switch input[type="checkbox"]').on('change', function() {
+                                var tableId = $(this).data('table-id');
+                                var orderId = $(this).data('order-id');
+                                var status = $(this).is(':checked') ? 1 : 0;
+
+                                // Update the table status in the database via AJAX
+                                updateTableStatus(orderId, tableId, status);
+                                updateTable();
+                            });
+
+                            // Handle the return button in the inactive panel (set table to active)
+                            $('.inactive-panel .btnReturn').on('click', function() {
+                                var tableId = $(this).data('table-id');
+                                var orderId = $(this).data('order-id');
+
+                                // Set the table as active (status = 1)
+                                updateTableStatus(orderId, tableId, 1);
+                                updateTable();
+                            });
+                        }
+
+                        // Function to update table status via AJAX
+                        function updateTableStatus(orderId, tableId, status) {
+                            $.ajax({
+                                url: '../php/update_table_status.php', // Your PHP script to update the table status
+                                type: 'POST',
+                                data: {
+                                    order_id: orderId,
+                                    table_id: tableId,
+                                    status: status
+                                },
+                                success: function(response) {
+                                    // Reload the table status after updating
+                                    loadTableStatus();
+                                    updateTable();
+                                },
+                                error: function(xhr, status, error) {
+                                    alert('Error updating table status: ' + error);
+                                }
+                            });
+                        }
+                    });
+
+
+
+                    function updateTable() {
+                        $.ajax({
+                            url: '../php/get_table_status.php', // PHP file that retrieves table status
+                            type: 'GET',
+                            dataType: 'json', // Expect JSON response from PHP
+                            success: function(response) {
+                                var occupiedTables = response.occupied_tables; // Access the 'occupied_tables' array from the response
+                                occupiedTables.forEach(function(table) {
+                                    $('#customer-table option[value="' + table + '"]').attr('disabled', 'disabled').addClass('disabled-table');
+                                });
+                            },
+                            error: function(xhr, status, error) {
+                                alert('Error retrieving table status: ' + error);
+                            }
+                        });
+                    }
+
+                    updateTable();
 
                 </script>
                 <div class="second-panel-section">
@@ -860,9 +1006,24 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>
             </div>
-            <script>
-        
-            </script>
+            <div class="popup-table-container" style="display: none;">
+                <h1 class="popup-table-title">Tables Status</h1>
+                <div class="popup-table-header-container">
+                    <h1 class="popup-table-header activeBtn">Active</h1>
+                    <h1 class="popup-table-header inactiveBtn">Inactive</h1>
+                </div>
+
+                <!-- Active Panel -->
+                <div class="popup-table-content active-panel">
+                    <!-- The content will be populated dynamically using AJAX -->
+                </div>
+
+                <!-- Inactive Panel -->
+                <div class="popup-table-content inactive-panel" style="display:none;">
+                    <!-- The content will be populated dynamically using AJAX -->
+                </div>
+            </div>
+
             <div id="popup-overlay" class="popup-overlay"></div>           
             <div class="delete-confirmation-overlay"></div>
             <div class="delete-confirmation-container">
@@ -890,12 +1051,11 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
 </div>
 <script src="../js/sidenav.js"></script>
-<!-- <script src="../js/menu_entry_panel.js"></script> -->
+<!-- <script src="../js/menu_entry_panel.js"></script>  -->
 <!-- <script src="../js/popup_forms.js"></script> -->
 <script src="../js/order_entry_panel.js"></script>
 <script src="../js/logout.js"></script>
-<script src="../js/alert_disappear.js"></script>
-<!-- <script src="../js/order_processing.js"></script> -->
+<!-- <script src="../js/alert_disappear.js"></script> -->
 </body>
 </html>
 

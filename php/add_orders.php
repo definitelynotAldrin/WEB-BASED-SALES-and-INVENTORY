@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Insert order into orders table
-            $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status) VALUES (?, ?, ?, ?, 'prepare')";
+            $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status, table_status) VALUES (?, ?, ?, ?, 'prepare', 1)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sssd", $customerName, $customerNote, $customerTable, $totalAmount);
             $stmt->execute();
