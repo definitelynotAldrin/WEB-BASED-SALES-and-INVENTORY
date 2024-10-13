@@ -81,6 +81,8 @@ document.addEventListener("DOMContentLoaded", function() {
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
     <script src="https://kit.fontawesome.com/39d1af4576.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../libs/jquery-3.6.0.min.js"></script>
 </head>
 
 <body id="html-body">
@@ -170,71 +172,69 @@ document.addEventListener("DOMContentLoaded", function() {
                     <h4>Let's take some orders and make sales...</h4>
                 </div>
                 <div class="header-profile">
-                <div class="notification">
-                        <?php 
-                            include_once "../includes/connection.php";
-
-                            $sql = "SELECT * FROM stocks";
-                            $result = $conn->query($sql);
-
-                            $low_stock_found = false; // Flag to track if any stock is low
-                        ?>
+                    <div class="notification">
                         <i class="fa-solid fa-bell notification-bell">
-                            <?php if ($result->num_rows > 0) { ?>
-                                <?php 
-                                    $low_stock_threshold = 10; // Define your low stock threshold here
-                                    while($row = $result->fetch_assoc()) {
-                                        $stock_quantity = $row['stock_quantity'];
-                                        $stock_name = $row['stock_name']; // Assuming stock name is stored in 'stock_name' column
-
-                                        // Check if stock is low
-                                        if ($stock_quantity < $low_stock_threshold) {
-                                            $low_stock_found = true; // Set flag if there's a low stock
-                                        }
-                                    }
-                                ?>
-                                <?php if ($low_stock_found) { ?>
-                                    <!-- Display fa-circle only if there's a low stock -->
-                                    <i class="fa-solid fa-circle"></i>
-                                <?php } ?>
-                            <?php } ?>
+                            <i class="fa-solid fa-circle notification-alert-icon" style="display: none;"></i>
                         </i>
 
                         <div class="notification-content-container">
                             <h1 class="notification-title">Notifications</h1>
-                            <div class="notification-card-container">
-                                <?php
-                                    if ($result->num_rows > 0) {
-                                        // Reset the result pointer for another loop
-                                        $result->data_seek(0); // Important to reset the result pointer for another loop
-
-                                        while($row = $result->fetch_assoc()) {
-                                            $stock_quantity = $row['stock_quantity'];
-                                            $stock_name = $row['stock_name']; // Assuming stock name is stored in 'stock_name' column
-
-                                            // Check if stock is low
-                                            if ($stock_quantity < $low_stock_threshold) {
-                                                // Display low stock notification
-                                ?>
-                                <div class="notification-content">
-                                    <div class="notification-img">
-                                        <img src="../assets/mark.png">
-                                    </div>
-                                    <div class="notification-details">
-                                        <h1 class="notification-details-title"><?php echo htmlspecialchars($stock_name); ?></h1>
-                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span><?php echo $stock_quantity; ?></span> available.</p>
-                                    </div>
-                                </div>
-                                <?php
-                                            }
-                                        }
-                                    } else {
-                                        echo "<p>Items are in stock!</p>";
-                                    }
-                                ?>
+                            <div class="notification-card-container" id="low-stock-notifications">
+                                <p>No low stock items currently.</p>
                             </div>
                         </div>
                     </div>
+                    <script>
+                        function fetchLowStockItems() {
+                            $.ajax({
+                                url: '../php/get_low_stock_items.php', // Adjust the path if needed
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(data) {
+                                    const notificationContainer = $('#low-stock-notifications');
+                                    const notificationBell = $('.notification-alert-icon');
+                                    
+                                    notificationContainer.empty(); // Clear the current content
+
+                                    if (data.length > 0) {
+                                        notificationBell.show(); // Show the notification alert icon
+                                        
+                                        // Loop through the low stock items and add to notification container
+                                        data.forEach(function(item) {
+                                            const notification = `
+                                                <div class="notification-content">
+                                                    <div class="notification-img">
+                                                        <img src="../assets/mark.png">
+                                                    </div>
+                                                    <div class="notification-details">
+                                                        <h1 class="notification-details-title">${item.stock_name}</h1>
+                                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span>${item.stock_quantity}</span> available.</p>
+                                                    </div>
+                                                </div>`;
+                                            notificationContainer.append(notification);
+                                        });
+                                    } else {
+                                        notificationBell.hide(); // Hide the notification alert icon if no low stock items
+                                        notificationContainer.html('<p>No low stock items currently.</p>');
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error fetching low stock items:', error);
+                                }
+                            });
+                        }
+
+                        // Fetch low stock items when the page loads
+                        $(document).ready(function() {
+                            fetchLowStockItems();
+
+                            // Optional: Set interval to refresh the notifications periodically
+                            setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
+                        });
+
+                        
+                    </script>
+
                     <div class="profile">
                         <img src="../assets/me.jpg">
                     </div>
@@ -243,33 +243,9 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="menu-section-container">
                 <div class="first-panel-section">
-                    <?php
-                    include_once "../includes/connection.php";
-
-                    // Fetch all unique menu items and their associated stock data, including inactive stocks
-                    $sql = "
-                        SELECT mi.*, 
-                            GROUP_CONCAT(s.stock_name) AS ingredients, 
-                            MAX(CASE WHEN s.stock_status = 1 THEN 0 ELSE 1 END) AS has_inactive_stock
-                        FROM menu_items mi
-                        LEFT JOIN menu_item_stocks mis ON mi.item_id = mis.menu_item_id
-                        LEFT JOIN stocks s ON mis.stock_id = s.stock_id
-                        GROUP BY mi.item_id";  // Group by item_id to avoid duplicates
-                    $result = $conn->query($sql);
-                    ?>
-
                     <div class="menu-header">
                         <div class="menu-header-content">
                             <h1 class="menu-header-title">Order Menu</h1>
-                            <!-- <div class="container">
-                                <input list="options" id="combo-input" placeholder="Customer's haha" />
-
-                                <datalist id="options">
-                                    <option value="Option 1"></option>
-                                    <option value="Option 2"></option>
-                                    <option value="Option 3"></option>
-                                </datalist>
-                            </div> -->
                         </div>
                         <div class="dropdown-category menu-category">
                             <select name="menu_order_category" id="menu_order_category">
@@ -282,53 +258,29 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div>
                     </div>
 
-                    <div class="first-panel-cards-container menu-cards-container">
-                        <?php
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                // $itemCategory = strtolower($row['item_category']); // Convert category to lowercase to match filter
-                                $inactiveClass = ($row['has_inactive_stock'] == 1) ? 'inactive-card' : '';
-
-                                ?>
-                                <div class="card menu-item-card <?php echo $inactiveClass; ?>"
-                                    data-category="<?php echo $row['item_category']; ?>"
-                                    data-item-id="<?php echo $row['item_id']; ?>"
-                                    data-item-name="<?php echo $row['item_name']; ?>"
-                                    data-item-price="<?php echo $row['item_price']; ?>">
-                                    <img src="../uploads/<?php echo $row['item_image']; ?>" class="card-img menu-img" alt="<?php echo $row['item_name']; ?>">
-                                    <div class="card-details menu-card-details">
-                                        <span class="card-name menu-name"><?php echo $row['item_name']; ?></span>
-                                    </div>
-                                    <!-- <input type="text" name="" id="" value="<?php echo $row['item_id']; ?>" style="position:absolute; z-index: 3; top: 30%;">
-                                    <input type="text" name="" id="" value="<?php echo $row['item_name']; ?>" style="position:absolute; z-index: 3;">
-                                    <input type="text" name="" id="" value="<?php echo $row['item_category']; ?>" style="position:absolute; z-index: 3; top: 40%;""> -->
-                                </div>
-
-                                <?php
-                            }
-                        } else {
-                            echo "<p>No menu items available.</p>";
-                        }
-                        ?>
+                    <div class="first-panel-cards-container menu-cards-container" id="menuCardsContainer">
+                        <!-- Menu items will be appended here via AJAX -->
                     </div>
                    
 
                     <script>
-                        document.getElementById('menu_order_category').addEventListener('change', function() {
-                            var selectedCategory = this.value.toLowerCase();
-                            var items = document.querySelectorAll('.menu-item-card');
+                        // document.getElementById('menu_order_category').addEventListener('change', function() {
+                        //     var selectedCategory = this.value.toLowerCase();
+                        //     var items = document.querySelectorAll('.menu-item-card');
 
-                            items.forEach(function(item) {
-                                var itemCategory = item.getAttribute('data-category').toLowerCase();
+                        //     items.forEach(function(item) {
+                        //         var itemCategory = item.getAttribute('data-category').toLowerCase();
                                 
-                                // Show or hide based on the selected category
-                                if (selectedCategory === 'all' || itemCategory === selectedCategory) {
-                                    item.style.display = 'flex';
-                                } else {
-                                    item.style.display = 'none';
-                                }
-                            });
-                        });
+                        //         // Show or hide based on the selected category
+                        //         if (selectedCategory === 'all' || itemCategory === selectedCategory) {
+                        //             item.style.display = 'flex';
+                        //         } else {
+                        //             item.style.display = 'none';
+                        //         }
+                        //     });
+                        // });
+
+                        
                     </script>
 
                     <div class="popup_order_quantity kilograms-quantity" id="kilograms-popup">
@@ -412,7 +364,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
 
                 </div>
-                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script>
                     $(document).ready(function() {
                         // Variables to store the current selected menu item data
@@ -423,38 +374,36 @@ document.addEventListener("DOMContentLoaded", function() {
                         let customer_id = null;
 
                         // Handle menu item card click
-                        $('.menu-item-card').on('click', function() {
+                        // Handle menu item card click using delegation
+                        $('#menuCardsContainer').on('click', '.menu-item-card', function() {
                             // Get menu item data from the clicked card
                             selectedMenuId = $(this).data('item-id');
                             selectedMenuName = $(this).data('item-name');
                             selectedMenuPrice = $(this).data('item-price');
                             ItemCategory = $(this).data('category');
-                            const itemCategory = $(this).data('category'); // Get item category
-
+                            
                             // Open appropriate popup based on category
-                            if (itemCategory === 'Main Course') {
+                            if (ItemCategory === 'Main Course') {
                                 // Set values for kilograms popup
                                 $('#menu_id_kg').val(selectedMenuId);
                                 $('#menu_name_kg').val(selectedMenuName);
-                                $('#menu_price_kg').val(selectedMenuPrice); // Ensure you set price here if needed
+                                $('#menu_price_kg').val(selectedMenuPrice);
                                 $('#menu_category_kg').val(ItemCategory);
                                 $('#kg-dish-name').text(selectedMenuName);
                                 $('#kilograms-popup').show(); // Show kilograms popup
                                 $('#popup-overlay').show();
-                                // $('body').css('overflow', 'hidden');
-
-                            } else if (itemCategory === 'Beverages' || itemCategory === 'Dessert') {
+                            } else if (ItemCategory === 'Beverages' || ItemCategory === 'Dessert') {
                                 // Set values for pieces popup
                                 $('#menu_id_pieces').val(selectedMenuId);
                                 $('#menu_name_pieces').val(selectedMenuName);
                                 $('#menu_price_pieces').val(selectedMenuPrice);
-                                $('#menu_category').val(ItemCategory); // Ensure you set price here if needed
+                                $('#menu_category').val(ItemCategory);
                                 $('#pieces-dish-name').text(selectedMenuName);
                                 $('#pieces-popup').show(); // Show pieces popup
                                 $('#popup-overlay').show();
-                                // $('body').css('overflow', 'hidden');
                             }
                         });
+
 
                         // Handle cancel button click in popups
                         $('.btn-cancel').on('click', function() {
@@ -520,6 +469,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         success: function(response) {
                                             const result = JSON.parse(response);
                                             if (result.status === 'success') {
+                                                fetchMenuItems(); 
                                                 updateOrderSummary();
                                                 $('#custom_kg').val('');
                                                 $('#kilograms-popup').hide();
@@ -565,6 +515,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         const result = JSON.parse(response);
                                         if (result.status === 'success') {
                                             // Update order summary table
+                                            fetchMenuItems();
                                             updateOrderSummary();
                                             $('#quantity_pieces').val('');
                                             $('#pieces-popup').hide();
@@ -584,47 +535,66 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
 
 
+                        function fetchMenuItems() {
+                                // Get selected category and search input
+                                const selectedCategory = $('#menu_order_category').val();
+                                const searchQuery = $('#search_menu').val();
 
-                       
+                                $.ajax({
+                                    url: '../php/fetch_menu.php', // Your PHP script
+                                    type: 'GET',
+                                    data: {
+                                        category: selectedCategory,  // Send category as a parameter
+                                        search: searchQuery          // Send search query as a parameter
+                                    },
+                                    dataType: 'json',
+                                    success: function(data) {
+                                        $('#menuCardsContainer').empty(); // Clear existing items
+                                        if (data.length > 0) {
+                                            $.each(data, function(index, item) {
+                                                $('#menuCardsContainer').append(`
+                                                    <div class="card menu-item-card ${item.inactive_class}"
+                                                        data-category="${item.item_category}" 
+                                                        data-item-id="${item.item_id}" 
+                                                        data-item-name="${item.item_name}" 
+                                                        data-item-price="${item.item_price}">
+                                                        <img src="../uploads/${item.item_image}" class="card-img menu-img" alt="${item.item_name}">
+                                                        <div class="card-details menu-card-details">
+                                                            <span class="card-name menu-name">${item.item_name}</span>
+                                                        </div>
+                                                    </div>
+                                                `);
+                                            });
+                                        } else {
+                                            $('#menuCardsContainer').append("<p>No menu items available.</p>");
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log("Error fetching menu items: " + textStatus, errorThrown);
+                                    }
+                                });
+                            }
+
+                            // Call fetchMenuItems on page load
+                            fetchMenuItems();
+
+                            // Fetch menu items when the category changes
+                            $('#menu_order_category').change(function() {
+                                fetchMenuItems();
+                            });
+
+                            // Fetch menu items when the search input changes
+                            $('#search_menu').on('input', function() {
+                                fetchMenuItems();
+                            });
 
 
+                        $(document).ready(function() {
+                                fetchMenuItems();
 
-                            // function getRow(id){
-                            //     $.ajax({
-                            //         type: 'POST',
-                            //         url: '../php/customer_row.php',
-                            //         data: {id: id},
-                            //         dataType: 'json',
-                            //         success: function(response) {
-                            //             let myvariable;
-
-                            //             // Check the status returned from the server
-                            //             if (response.status === 'success') {
-                            //                 $('#customer_name').val(response.customer_name);
-                            //                 $('#customer_note').val(response.note);
-
-                            //                 let num = response.customer_id || 0;  // If num is empty, default to 0
-                            //                 $('#customer_num').val(num);
-                            //                 $('#standByOrder').attr('name', 're-order');
-                            //                 $('#standByOrder').removeClass('enable-button').addClass('disable-button');
-                            //                 myvariable = 'success';  // Set myvariable to success
-                            //             } else {
-                            //                 $('#customer_name').val('');
-                            //                 $('#customer_note').val('');
-                            //                 $('#customer_num').val(0);
-                            //                 $('#standByOrder').attr('name', 'standByOrder');
-                            //                 $('#standByOrder').addClass('enable-button');
-                            //                 myvariable = 'failed';  // Set myvariable to failed
-                            //             }
-
-                            //             // Log the value of myvariable
-                                        
-                            //         },
-                            //         error: function(xhr, status, error) {
-                            //             console.log('AJAX Error: ' + error);
-                            //         }
-                            //     });
-                            // }
+                            // Optional: Set interval to refresh the notifications periodically
+                            setInterval(fetchMenuItems, 500); // Refresh every 30 seconds
+                        });
 
 
 
@@ -647,16 +617,16 @@ document.addEventListener("DOMContentLoaded", function() {
                                         if (jsonResponse.status === 'success') {
                                             updateOrderSummary(); // Refresh the order summary after deletion
                                         } else {
-                                            alert('Error: ' + jsonResponse.message); // Display error message if item not found
+                                            displayErrorMessage('Error: ' + jsonResponse.message); // Display error message if item not found
                                         }
                                     } catch (error) {
                                         console.error('Error parsing JSON:', error); // Log parsing error
-                                        alert('Error processing the request.'); // User-friendly message
+                                        displayErrorMessage('Error processing the request.'); // User-friendly message
                                     }
                                 },
                                 error: function(xhr, status, error) {
                                     console.error('AJAX Error:', error); // Log the error
-                                    alert('Error deleting order: ' + error); // Display error message
+                                    displayErrorMessage('Error deleting order: ' + error); // Display error message
                                 }
                             });
                         });
@@ -775,6 +745,16 @@ document.addEventListener("DOMContentLoaded", function() {
                         $('.btnTable').on('click', function() {
                             // Display the popup
                             $('.popup-table-container').fadeIn();
+                            $('#popup-overlay').fadeIn();
+
+                            // Load active and inactive tables for today
+                            loadTableStatus();
+                        });
+
+                        $('#popup-overlay').on('click', function() {
+                            // Display the popup
+                            $('.popup-table-container').hide();
+                            $('#popup-overlay').hide();
 
                             // Load active and inactive tables for today
                             loadTableStatus();
@@ -807,21 +787,21 @@ document.addEventListener("DOMContentLoaded", function() {
                                             activeTablesHtml += `
                                                 <div class="item">
                                                     <input type="hidden" name="customer_id" value="${item.order_id}">
-                                                    <div class="table-number">Customer: ${item.customer_name}</div>
-                                                    <div class="table-number">Table no. ${item.customer_table}</div>
+                                                    <div class="table-number">${item.customer_name}</div>
+                                                    <div class="table-number">${item.customer_table}</div>
                                                     <div class="toggle-switch">
                                                         <input type="checkbox" data-table-id="${item.customer_table}" data-order-id="${item.order_id}" checked>
-                                                        <span class="text-status">available</span>
+                                                        <span class="text-status">Occupied</span>
                                                     </div>
                                                 </div>`;
                                         } else { // Inactive table
                                             inactiveTablesHtml += `
                                                 <div class="item">
                                                     <input type="hidden" name="customer_id" value="${item.order_id}">
-                                                    <div class="table-number">Customer: ${item.customer_name}</div>
-                                                    <div class="table-number">Table no. ${item.customer_table}</div>
+                                                    <div class="table-number">${item.customer_name}</div>
+                                                    <div class="table-number">${item.customer_table}</div>
                                                     <div class="toggle-switch">
-                                                        <span class="text-status">unavailable</span>
+                                                        <span class="text-status">Unoccupied</span>
                                                         <i class="fa-solid fa-rotate-left btnReturn" data-table-id="${item.customer_table}" data-order-id="${item.order_id}"></i>
                                                     </div>
                                                 </div>`;
@@ -882,7 +862,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     updateTable();
                                 },
                                 error: function(xhr, status, error) {
-                                    alert('Error updating table status: ' + error);
+                                    displayErrorMessage('Error updating table status: ' + error);
                                 }
                             });
                         }
@@ -896,13 +876,19 @@ document.addEventListener("DOMContentLoaded", function() {
                             type: 'GET',
                             dataType: 'json', // Expect JSON response from PHP
                             success: function(response) {
-                                var occupiedTables = response.occupied_tables; // Access the 'occupied_tables' array from the response
-                                occupiedTables.forEach(function(table) {
-                                    $('#customer-table option[value="' + table + '"]').attr('disabled', 'disabled').addClass('disabled-table');
-                                });
+                                // Ensure the dropdown is reset before applying any disabled state
+                                $('#customer-table option').removeAttr('disabled').removeClass('disabled-table');
+
+                                // Check if the response has any occupied tables
+                                if (response.occupied_tables && response.occupied_tables.length > 0) {
+                                    var occupiedTables = response.occupied_tables; // Access the 'occupied_tables' array from the response
+                                    occupiedTables.forEach(function(table) {
+                                        $('#customer-table option[value="' + table + '"]').attr('disabled', 'disabled').addClass('disabled-table');
+                                    });
+                                }
                             },
                             error: function(xhr, status, error) {
-                                alert('Error retrieving table status: ' + error);
+                                displayErrorMessage('Error retrieving table status: ' + error);
                             }
                         });
                     }
@@ -991,7 +977,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     </select>
                                 </div>
                             </div>
-                            <button class="btnTable">Update tables</button>
+                            <button class="btnTable">Update tables availability</button>
                             <div class="button-section">
                                 <button type="button" id="place-order-button">
                                     <span>proceed to kitchen</span>
@@ -1011,6 +997,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="popup-table-header-container">
                     <h1 class="popup-table-header activeBtn">Active</h1>
                     <h1 class="popup-table-header inactiveBtn">Inactive</h1>
+                </div>
+                <div class="popup-table-content-header">
+                    <h1>customer</h1>
+                    <h1>table no</h1>
+                    <h1>availability</h1>
                 </div>
 
                 <!-- Active Panel -->

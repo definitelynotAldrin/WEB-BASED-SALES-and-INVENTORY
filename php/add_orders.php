@@ -30,7 +30,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Get the last inserted order ID
             $orderId = $conn->insert_id;
 
-            // Insert order details into order_details table
+            // First, add back the stock that was deducted during session
+            foreach ($_SESSION['order_details'] as $order) {
+                $menuItemId = $order['menu_item_id'];
+                $quantity = $order['quantity'];
+
+                // Fetch the required stocks for this menu item
+                $menuStockSql = "SELECT stock_id, quantity_required FROM menu_item_stocks WHERE menu_item_id = ?";
+                $menuStockStmt = $conn->prepare($menuStockSql);
+                $menuStockStmt->bind_param("i", $menuItemId);
+                $menuStockStmt->execute();
+                $menuStockResult = $menuStockStmt->get_result();
+
+                while ($menuStockRow = $menuStockResult->fetch_assoc()) {
+                    $stockId = $menuStockRow['stock_id'];
+                    $quantityRequired = $menuStockRow['quantity_required'];
+
+                    // Calculate total quantity previously deducted
+                    $totalQuantityRequired = $quantity * $quantityRequired;
+
+                    // Add back the stock that was deducted when order was added to session
+                    $updateStockSql = "UPDATE stocks SET stock_quantity = stock_quantity + ? WHERE stock_id = ?";
+                    $updateStockStmt = $conn->prepare($updateStockSql);
+                    $updateStockStmt->bind_param("di", $totalQuantityRequired, $stockId);
+                    $updateStockStmt->execute();
+                }
+            }
+
+            // Insert order details into order_details table and deduct the stock again correctly
             foreach ($_SESSION['order_details'] as $order) {
                 $menuItemId = $order['menu_item_id'];
                 $quantity = $order['quantity'];
@@ -42,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $detailStmt->bind_param("iidds", $orderId, $menuItemId, $quantity, $menuPrice, $subTotal);
                 $detailStmt->execute();
 
-                // After inserting order details, fetch required stocks and deduct quantity from stocks
+                // Fetch the required stocks and deduct stock after adding it back
                 $menuStockSql = "SELECT stock_id, quantity_required FROM menu_item_stocks WHERE menu_item_id = ?";
                 $menuStockStmt = $conn->prepare($menuStockSql);
                 $menuStockStmt->bind_param("i", $menuItemId);
@@ -56,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Calculate total quantity needed (menu quantity * quantity_required)
                     $totalQuantityRequired = $quantity * $quantityRequired;
 
-                    // Deduct stock quantity from stocks table
+                    // Deduct stock quantity from stocks table again
                     $updateStockSql = "UPDATE stocks SET stock_quantity = stock_quantity - ? WHERE stock_id = ?";
                     $updateStockStmt = $conn->prepare($updateStockSql);
                     $updateStockStmt->bind_param("di", $totalQuantityRequired, $stockId);
@@ -81,4 +108,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Not a POST request
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
 }
-?>

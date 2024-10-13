@@ -1068,6 +1068,7 @@ form{
     font-weight: 600;
     text-transform: capitalize;
     color: var(--dark);
+    cursor: pointer;
 }
 
 .popup-table-title{
@@ -1082,6 +1083,18 @@ form{
     background-color: var(--darker);
 }
 
+.popup-table-content-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.popup-table-content-header h1{
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
 .popup-table-content{
     display: flex;
     flex-direction: column;
@@ -1091,7 +1104,7 @@ form{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
+    padding: 10px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -1131,6 +1144,11 @@ form{
 }
 
 @media (max-width: 405px){
+
+    .first-panel-section, .second-panel-section{
+        padding: 1rem;
+    }
+
     .popup_order_quantity{
         width: 330px;
         padding: 15px;
@@ -1143,6 +1161,10 @@ form{
 
     .card-input-field{
         flex-basis: 142px;
+    }
+
+    .card-bottom-groups{
+        flex-direction: column;
     }
 
     
@@ -1162,7 +1184,65 @@ form{
     .card-input-field{
         flex-basis: 142px;
     }
+
 }
+
+@media (max-width: 310px){
+    .popup-table-container{
+        width: 280px;
+        padding: 5px;
+    }
+
+    .popup-table-container .item{
+        padding: 10px 0;
+    }
+
+}
+
+@media screen and (min-width: 310px) and (max-width: 350px){
+    .popup-table-container{
+        width: 300px;
+        padding: 5px;
+    }
+
+    .popup-table-container .item{
+        padding: 10px 0;
+    }
+
+}
+
+@media screen and (min-width: 350px) and (max-width: 390px){
+    .popup-table-container{
+        width: 350px;
+        padding: 5px;
+    }
+
+    .popup-table-container .item{
+        padding: 10px 0;
+    }
+
+}
+
+
+@media screen and (min-width: 390px) and (max-width: 475px){
+    .popup-table-container{
+        width: 380px;
+        padding: 10px;
+    }
+
+    .popup-table-container .item{
+        padding: 10px 0;
+    }
+
+}
+
+@media screen and (min-width: 475px) and (max-width: 540px){
+    
+    .popup-table-container{
+        width: 450px;
+    }
+}
+
 
 @media screen and (min-width: 430px) and (max-width: 475px){
     .popup_order_quantity{
@@ -1178,6 +1258,7 @@ form{
     .card-input-field{
         flex-basis: 130px;
     }
+
 }
 
 

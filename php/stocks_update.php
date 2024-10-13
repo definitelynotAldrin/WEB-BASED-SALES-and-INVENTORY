@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Format the stock name
         $formattedName = ucfirst(strtolower($stockName));
 
-        if (empty($stockName) || empty($stockQuantity) || empty($stockUnit)) {
+        if (empty($stockName) || empty($stockUnit)) {
             // Handle missing fields
             $errorMsg = "All fields are required";
             $data = "item_name=" . urlencode($stockName) . "&item_quantity=" . urlencode($stockQuantity) . "&stock_unit=" . urlencode($stockUnit) . "&submission_time=" . urlencode($submissionTime);
