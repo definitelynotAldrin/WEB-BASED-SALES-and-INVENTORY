@@ -638,6 +638,7 @@
     padding: 1.5rem;
     border-radius: 6px;
     height: 100%;
+    position: relative;
 }
 
 .second-panel-card-container{
@@ -730,14 +731,16 @@ form{
 .btnTable{
     text-align: center;
     padding: 0.8rem;
-    background-color: var(--semi-white);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--white);
+    background-color: var(--orange);
+    border: 1px solid var(--orange);
     border-radius: 4px;
     width: 100%;
 }
 
+
 .btnTable:active{
-    background-color: var(--dark-green);
+    background-color: #c55703;
     color: var(--white);
 }
 
@@ -789,7 +792,7 @@ form{
     gap: 0.5rem;
 }
 
-.button-section button{
+.button-section button, .button-view-orders{
     font-size: 1rem;
     font-weight: 500;
     text-transform: uppercase;
@@ -805,6 +808,11 @@ form{
     outline: none;
     border: none;
     cursor: pointer;
+}
+
+.button-section button:active,
+.button-view-orders:active{
+    background-color: var(--dark-green);
 }
 
 
@@ -1048,7 +1056,7 @@ form{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 500px;
+    width: 97%;
     background-color: var(--white);
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 6px;
@@ -1096,8 +1104,7 @@ form{
 }
 
 .popup-table-content{
-    display: flex;
-    flex-direction: column;
+    overflow: auto;
 }
 
 .popup-table-container .item{
@@ -1125,6 +1132,55 @@ form{
 
 
 
+.table-orders-container{
+    padding: 15px;
+    width: 95%;
+}
+
+.table-orders-second-container{
+    height: 100%;
+    max-height: 330px;
+    overflow: auto;
+}
+
+.table-orders-header-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.table-orders-header-container select, option{
+    width: 30%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    outline: none;
+    font-weight: 600;
+    color: var(--darker);
+    background-color: transparent;
+    font-size: 0.9rem;
+    text-transform: capitalize;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.table-orders-container th, .popup-table-content th{
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--darker);
+    white-space: nowrap;
+}
+
+.btnAdditional{
+    width: 50px;
+    text-align: center;
+}
+
+.btnAdditional i{
+    color: var(--light-green);
+    font-size: 1.2rem;
+}
+
+
 @media (max-width: 340px){
     .first-panel-section,
     .second-panel-section{
@@ -1140,7 +1196,6 @@ form{
         gap: 0.5rem;
         flex-direction: column;
     }
-    
 }
 
 @media (max-width: 405px){
@@ -1187,61 +1242,6 @@ form{
 
 }
 
-@media (max-width: 310px){
-    .popup-table-container{
-        width: 280px;
-        padding: 5px;
-    }
-
-    .popup-table-container .item{
-        padding: 10px 0;
-    }
-
-}
-
-@media screen and (min-width: 310px) and (max-width: 350px){
-    .popup-table-container{
-        width: 300px;
-        padding: 5px;
-    }
-
-    .popup-table-container .item{
-        padding: 10px 0;
-    }
-
-}
-
-@media screen and (min-width: 350px) and (max-width: 390px){
-    .popup-table-container{
-        width: 350px;
-        padding: 5px;
-    }
-
-    .popup-table-container .item{
-        padding: 10px 0;
-    }
-
-}
-
-
-@media screen and (min-width: 390px) and (max-width: 475px){
-    .popup-table-container{
-        width: 380px;
-        padding: 10px;
-    }
-
-    .popup-table-container .item{
-        padding: 10px 0;
-    }
-
-}
-
-@media screen and (min-width: 475px) and (max-width: 540px){
-    
-    .popup-table-container{
-        width: 450px;
-    }
-}
 
 
 @media screen and (min-width: 430px) and (max-width: 475px){
@@ -1300,6 +1300,18 @@ form{
     .button-section{
         display: flex;
         flex-direction: column;
+    }
+
+    .card-bottom-groups{
+        flex-direction: column;
+    }
+
+    .popup-table-container{
+        padding: 10px;
+    }
+
+    .popup-table-container .item{
+        padding: 10px 0;
     }
 }
 

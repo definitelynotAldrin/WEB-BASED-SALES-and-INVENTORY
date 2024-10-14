@@ -81,6 +81,8 @@ document.addEventListener("DOMContentLoaded", function() {
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
     <script src="https://kit.fontawesome.com/39d1af4576.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../libs/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -160,32 +162,66 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="header-profile">
                     <div class="notification">
                         <i class="fa-solid fa-bell notification-bell">
-                            <i class="fa-solid fa-circle"></i>
+                            <i class="fa-solid fa-circle notification-alert-icon" style="display: none;"></i>
                         </i>
+
                         <div class="notification-content-container">
                             <h1 class="notification-title">Notifications</h1>
-                           <div class="notification-card-container">
-                            <div class="notification-content">
-                                <div class="notification-img">
-                                    <img src="../assets/mark.png" alt="">
-                                </div>
-                                <div class="notification-details">
-                                    <h1 class="notification-details-title">coke</h1>
-                                    <p><span>Stock Alert:</span> This item is running low. <br>Only <span>20</span> available.</p>
-                                </div>
+                            <div class="notification-card-container" id="low-stock-notifications">
+                                <p>No low stock items currently.</p>
                             </div>
-                            <div class="notification-content">
-                                <div class="notification-img">
-                                    <img src="../assets/mark.png" alt="">
-                                </div>
-                                <div class="notification-details">
-                                    <h1 class="notification-details-title">shrimp</h1>
-                                    <p><span>Stock Alert:</span> This item is running low. <br>Only <span>20</span> kg available.</p>
-                                </div>
-                            </div>
-                           </div>
                         </div>
                     </div>
+                    <script>
+                        function fetchLowStockItems() {
+                            $.ajax({
+                                url: '../php/get_low_stock_items.php', // Adjust the path if needed
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(data) {
+                                    const notificationContainer = $('#low-stock-notifications');
+                                    const notificationBell = $('.notification-alert-icon');
+                                    
+                                    notificationContainer.empty(); // Clear the current content
+
+                                    if (data.length > 0) {
+                                        notificationBell.show(); // Show the notification alert icon
+                                        
+                                        // Loop through the low stock items and add to notification container
+                                        data.forEach(function(item) {
+                                            const notification = `
+                                                <div class="notification-content">
+                                                    <div class="notification-img">
+                                                        <img src="../assets/mark.png">
+                                                    </div>
+                                                    <div class="notification-details">
+                                                        <h1 class="notification-details-title">${item.stock_name}</h1>
+                                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span>${item.stock_quantity}</span> available.</p>
+                                                    </div>
+                                                </div>`;
+                                            notificationContainer.append(notification);
+                                        });
+                                    } else {
+                                        notificationBell.hide(); // Hide the notification alert icon if no low stock items
+                                        notificationContainer.html('<p>No low stock items currently.</p>');
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error fetching low stock items:', error);
+                                }
+                            });
+                        }
+
+                        // Fetch low stock items when the page loads
+                        $(document).ready(function() {
+                            fetchLowStockItems();
+
+                            // Optional: Set interval to refresh the notifications periodically
+                            setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
+                        });
+
+                        
+                    </script>
                     <div class="profile">
                         <img src="../assets/me.jpg">
                     </div>

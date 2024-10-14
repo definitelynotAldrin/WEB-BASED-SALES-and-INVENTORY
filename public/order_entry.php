@@ -589,12 +589,12 @@ document.addEventListener("DOMContentLoaded", function() {
                             });
 
 
-                        $(document).ready(function() {
-                                fetchMenuItems();
+                        // $(document).ready(function() {
+                        //         fetchMenuItems();
 
-                            // Optional: Set interval to refresh the notifications periodically
-                            setInterval(fetchMenuItems, 500); // Refresh every 30 seconds
-                        });
+                        //     // Optional: Set interval to refresh the notifications periodically
+                        //     setInterval(fetchMenuItems, 500); // Refresh every 30 seconds
+                        // });
 
 
 
@@ -781,36 +781,38 @@ document.addEventListener("DOMContentLoaded", function() {
                                     var activeTablesHtml = '';
                                     var inactiveTablesHtml = '';
 
-                                    // Loop through the response data to populate active and inactive panels
+                                    // Loop through the response data to populate active and inactive table rows
                                     data.forEach(function(item) {
                                         if (item.table_status == 1) { // Active table
                                             activeTablesHtml += `
-                                                <div class="item">
-                                                    <input type="hidden" name="customer_id" value="${item.order_id}">
-                                                    <div class="table-number">${item.customer_name}</div>
-                                                    <div class="table-number">${item.customer_table}</div>
-                                                    <div class="toggle-switch">
-                                                        <input type="checkbox" data-table-id="${item.customer_table}" data-order-id="${item.order_id}" checked>
-                                                        <span class="text-status">Occupied</span>
-                                                    </div>
-                                                </div>`;
+                                                <tr>
+                                                    <td>${item.customer_name}</td>
+                                                    <td>${item.customer_table}</td>
+                                                    <td>
+                                                        <div class="toggle-switch">
+                                                            <input type="checkbox" data-table-id="${item.customer_table}" data-order-id="${item.order_id}" checked>
+                                                            <span class="text-status">Occupied</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>`;
                                         } else { // Inactive table
                                             inactiveTablesHtml += `
-                                                <div class="item">
-                                                    <input type="hidden" name="customer_id" value="${item.order_id}">
-                                                    <div class="table-number">${item.customer_name}</div>
-                                                    <div class="table-number">${item.customer_table}</div>
-                                                    <div class="toggle-switch">
-                                                        <span class="text-status">Unoccupied</span>
-                                                        <i class="fa-solid fa-rotate-left btnReturn" data-table-id="${item.customer_table}" data-order-id="${item.order_id}"></i>
-                                                    </div>
-                                                </div>`;
+                                                <tr>
+                                                    <td>${item.customer_name}</td>
+                                                    <td>${item.customer_table}</td>
+                                                    <td>
+                                                        <div class="toggle-switch">
+                                                            <span class="text-status">Unoccupied</span>
+                                                            <i class="fa-solid fa-rotate-left btnReturn" data-table-id="${item.customer_table}" data-order-id="${item.order_id}"></i>
+                                                        </div>
+                                                    </td>
+                                                </tr>`;
                                         }
                                     });
 
-                                    // Update the HTML in the active and inactive panels
-                                    $('.active-panel').html(activeTablesHtml);
-                                    $('.inactive-panel').html(inactiveTablesHtml);
+                                    // Update the HTML in the active and inactive table bodies
+                                    $('.active-panel tbody').html(activeTablesHtml);
+                                    $('.inactive-panel tbody').html(inactiveTablesHtml);
 
                                     // Bind event handlers after content is loaded
                                     bindTableActions();
@@ -821,6 +823,73 @@ document.addEventListener("DOMContentLoaded", function() {
                                 }
                             });
                         }
+
+
+                        $(document).ready(function() {
+                            // Handle "View Orders" button click
+                            $('.button-view-orders').on('click', function() {
+                                // Send AJAX request to fetch unpaid orders
+                                $('.table-orders-container').fadeIn();
+                                $('#popup-overlay').fadeIn();
+                                $.ajax({
+                                    url: '../php/fetch_orders.php', // Your PHP file for fetching orders
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    success: function(response) {
+                                        console.log(JSON.stringify(response));
+
+                                        if (response.status === 'success') {
+                                            const tbody = $('.table-orders-container tbody');
+                                            tbody.empty(); // Clear the table before adding new data
+
+                                            // Loop through each order and append to the table
+                                            response.orders.forEach(function(order) {
+                                                const row = `
+                                                    <tr>
+                                                        <td>${order.customer_name}</td>
+                                                        <td>${order.customer_table}</td>
+                                                        <td class="btnAdditional">
+                                                            <i class="fa-regular fa-square-plus" 
+                                                            data-order-id="${order.order_id}" 
+                                                            data-customer-name="${order.customer_name}" 
+                                                            data-customer-table="${order.customer_table}">
+                                                            </i>
+                                                        </td>
+                                                    </tr>
+                                                `;
+                                                tbody.append(row);
+                                            });
+
+                                            // Add event listener to each add button for placing additional orders
+                                            $('.btnAdditional i').on('click', function() {
+                                                const customerName = $(this).data('customer-name');
+                                                const customerTable = $(this).data('customer-table');
+                                                const orderId = $(this).data('order-id');
+
+                                                // Populate the customer fields in the form
+                                                $('#customer-name').val(customerName);
+                                                $('#customer-table').val(customerTable);
+
+                                                // Optionally store the order ID in a hidden input
+                                                $('#order-id').val(orderId);
+                                            });
+
+                                        } else {
+                                            displayErrorMessage('No orders found');
+                                        }
+                                    },
+                                    error: function(xhr, status, error) {
+                                        displayErrorMessage('Error fetching unpaid orders: ' + error); // Handle error
+                                    }
+                                });
+                            });
+
+                            $('#popup-overlay').on('click', function() {
+                                $('.table-orders-container').hide();
+                                $('#popup-overlay').hide();
+                            });
+                        });
+
 
                         // Function to bind actions for the checkboxes and return buttons
                         function bindTableActions() {
@@ -934,40 +1003,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                             </div>
                             <div class="card-bottom-groups order-number-field">
-                                <div class="card-bottom-group order-number-field">
-                                        <?php 
-                                        //     $randomId = rand(100, 999);
-                                        //     // $randomId = uniqid();   // Generates a random 3-digit number between 100 and 999
-                                            
-                                        
-                                        // echo '
-                                        //     <select name="customer_id" value = "0" id="customer_id">
-
-                                                
-                                        //         <option value="'.$randomId.'" selected></option>
-                                        //         ';
-                                                
-                                            
-                                        //         $sql = "SELECT * FROM order_details WHERE status =  1 GROUP BY customer_id";
-                                        //         $query = $conn->query($sql);
-                                        //         while($row = $query->fetch_assoc()){
-                                        //         echo "
-                                        //         <option value=".$row['customer_id']." data-id=".$row['order_detail_id'].">".$row['customer_name']."</option>
-                                        //         ";
-                                        //         }
-
-                                        //     echo '
-                                            
-                                        //     </select>
-                                        // ';
-                                    ?>
-                                    <select name="" id="">
-                                        <option value=""></option>
-                                        <option value=""></option>
-                                        <option value=""></option>
-                                    </select>
-
-                                </div>
                                 <div class="card-bottom-group">
                                     <select name="customer_table" id="customer-table">
                                         <option value="" hidden>Select Customer Table</option>
@@ -976,8 +1011,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <?php endfor; ?>
                                     </select>
                                 </div>
+                                <button class="btnTable">tables availability</button>
                             </div>
-                            <button class="btnTable">Update tables availability</button>
+                            <button class="button-view-orders" id="button-view-orders">View orders</button>
                             <div class="button-section">
                                 <button type="button" id="place-order-button">
                                     <span>proceed to kitchen</span>
@@ -990,28 +1026,71 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="popup-table-container" style="display: none;">
-                <h1 class="popup-table-title">Tables Status</h1>
-                <div class="popup-table-header-container">
-                    <h1 class="popup-table-header activeBtn">Active</h1>
-                    <h1 class="popup-table-header inactiveBtn">Inactive</h1>
-                </div>
-                <div class="popup-table-content-header">
-                    <h1>customer</h1>
-                    <h1>table no</h1>
-                    <h1>availability</h1>
-                </div>
 
-                <!-- Active Panel -->
-                <div class="popup-table-content active-panel">
-                    <!-- The content will be populated dynamically using AJAX -->
-                </div>
+                    <!-- -------------------------------------View Orders for---------------------------------- -->
 
-                <!-- Inactive Panel -->
-                <div class="popup-table-content inactive-panel" style="display:none;">
-                    <!-- The content will be populated dynamically using AJAX -->
+                    <div class="pop-up-container table-orders-container">
+                        <div class="table-orders-header-container">
+                            <h1 class="popup-table-title">orders</h1>
+                            <!-- <select name="order_status" id="order_status">
+                                <option value="prepare">prepare</option>
+                                <option value="process">process</option>
+                                <option value="served">served</option>
+                            </select> -->
+                        </div>
+                        <div class="table-orders-second-container">
+                            <table>
+                                <thead>
+                                    <th>Customer name</th>
+                                    <th>Customer table</th>
+                                    <th>action</th>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ---------------------------------table availability--------------------------------- -->
+                    <div class="pop-up-container popup-table-container" style="display: none;">
+                        <h1 class="popup-table-title">Tables Status</h1>
+                        <div class="popup-table-header-container">
+                            <h1 class="popup-table-header activeBtn">Active</h1>
+                            <h1 class="popup-table-header inactiveBtn">Inactive</h1>
+                        </div>
+                        <!-- Active Panel -->
+                        <div class="popup-table-content active-panel">
+                            <!-- The content will be populated dynamically using AJAX -->
+                            <table>
+                                <thead>
+                                    <th>Customer name</th>
+                                    <th>Customer table</th>
+                                    <th>availability</th>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Inactive Panel -->
+                        <div class="popup-table-content inactive-panel" style="display:none;">
+                            <!-- The content will be populated dynamically using AJAX -->
+                            <table>
+                                <thead>
+                                    <th>Customer name</th>
+                                    <th>Customer table</th>
+                                    <th>availability</th>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
 

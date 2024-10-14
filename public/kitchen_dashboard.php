@@ -170,71 +170,68 @@ document.addEventListener("DOMContentLoaded", function() {
                     <h4>Let's cook orders and make sales...</h4>
                 </div>
                 <div class="header-profile">
-                <div class="notification">
-                        <?php 
-                            include_once "../includes/connection.php";
-
-                            $sql = "SELECT * FROM stocks";
-                            $result = $conn->query($sql);
-
-                            $low_stock_found = false; // Flag to track if any stock is low
-                        ?>
+                    <div class="notification">
                         <i class="fa-solid fa-bell notification-bell">
-                            <?php if ($result->num_rows > 0) { ?>
-                                <?php 
-                                    $low_stock_threshold = 10; // Define your low stock threshold here
-                                    while($row = $result->fetch_assoc()) {
-                                        $stock_quantity = $row['stock_quantity'];
-                                        $stock_name = $row['stock_name']; // Assuming stock name is stored in 'stock_name' column
-
-                                        // Check if stock is low
-                                        if ($stock_quantity < $low_stock_threshold) {
-                                            $low_stock_found = true; // Set flag if there's a low stock
-                                        }
-                                    }
-                                ?>
-                                <?php if ($low_stock_found) { ?>
-                                    <!-- Display fa-circle only if there's a low stock -->
-                                    <i class="fa-solid fa-circle"></i>
-                                <?php } ?>
-                            <?php } ?>
+                            <i class="fa-solid fa-circle notification-alert-icon" style="display: none;"></i>
                         </i>
 
                         <div class="notification-content-container">
                             <h1 class="notification-title">Notifications</h1>
-                            <div class="notification-card-container">
-                                <?php
-                                    if ($result->num_rows > 0) {
-                                        // Reset the result pointer for another loop
-                                        $result->data_seek(0); // Important to reset the result pointer for another loop
-
-                                        while($row = $result->fetch_assoc()) {
-                                            $stock_quantity = $row['stock_quantity'];
-                                            $stock_name = $row['stock_name']; // Assuming stock name is stored in 'stock_name' column
-
-                                            // Check if stock is low
-                                            if ($stock_quantity < $low_stock_threshold) {
-                                                // Display low stock notification
-                                ?>
-                                <div class="notification-content">
-                                    <div class="notification-img">
-                                        <img src="../assets/mark.png">
-                                    </div>
-                                    <div class="notification-details">
-                                        <h1 class="notification-details-title"><?php echo htmlspecialchars($stock_name); ?></h1>
-                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span><?php echo $stock_quantity; ?></span> available.</p>
-                                    </div>
-                                </div>
-                                <?php
-                                            }
-                                        }
-                                    } else {
-                                        echo "<p>Items are in stock!</p>";
-                                    }
-                                ?>
+                            <div class="notification-card-container" id="low-stock-notifications">
+                                <p>No low stock items currently.</p>
                             </div>
                         </div>
                     </div>
+                    <script>
+                        function fetchLowStockItems() {
+                            $.ajax({
+                                url: '../php/get_low_stock_items.php', // Adjust the path if needed
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(data) {
+                                    const notificationContainer = $('#low-stock-notifications');
+                                    const notificationBell = $('.notification-alert-icon');
+                                    
+                                    notificationContainer.empty(); // Clear the current content
+
+                                    if (data.length > 0) {
+                                        notificationBell.show(); // Show the notification alert icon
+                                        
+                                        // Loop through the low stock items and add to notification container
+                                        data.forEach(function(item) {
+                                            const notification = `
+                                                <div class="notification-content">
+                                                    <div class="notification-img">
+                                                        <img src="../assets/mark.png">
+                                                    </div>
+                                                    <div class="notification-details">
+                                                        <h1 class="notification-details-title">${item.stock_name}</h1>
+                                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span>${item.stock_quantity}</span> available.</p>
+                                                    </div>
+                                                </div>`;
+                                            notificationContainer.append(notification);
+                                        });
+                                    } else {
+                                        notificationBell.hide(); // Hide the notification alert icon if no low stock items
+                                        notificationContainer.html('<p>No low stock items currently.</p>');
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error fetching low stock items:', error);
+                                }
+                            });
+                        }
+
+                        // Fetch low stock items when the page loads
+                        $(document).ready(function() {
+                            fetchLowStockItems();
+
+                            // Optional: Set interval to refresh the notifications periodically
+                            setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
+                        });
+
+                        
+                    </script>
                     <div class="profile">
                         <img src="../assets/me.jpg">
                     </div>

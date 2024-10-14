@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Insert order into orders table
-            $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status, table_status) VALUES (?, ?, ?, ?, 'prepare', 1)";
+            $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status, table_status, payment_status) VALUES (?, ?, ?, ?, 'prepare', 1, 'Unpaid')";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sssd", $customerName, $customerNote, $customerTable, $totalAmount);
             $stmt->execute();
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $menuPrice = $order['menu_price'];
                 $subTotal = $order['sub_total'];
 
-                $detailSql = "INSERT INTO order_details (order_id, menu_item_stock_id, quantity, menu_price, sub_total) VALUES (?, ?, ?, ?, ?)";
+                $detailSql = "INSERT INTO order_details (order_id, menu_item_stock_id, quantity, menu_price, sub_total, order_item_status) VALUES (?, ?, ?, ?, ?, 'prepare')";
                 $detailStmt = $conn->prepare($detailSql);
                 $detailStmt->bind_param("iidds", $orderId, $menuItemId, $quantity, $menuPrice, $subTotal);
                 $detailStmt->execute();
