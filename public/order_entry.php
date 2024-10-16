@@ -589,14 +589,12 @@ document.addEventListener("DOMContentLoaded", function() {
                             });
 
 
-                        // $(document).ready(function() {
-                        //         fetchMenuItems();
+                        $(document).ready(function() {
+                                fetchMenuItems();
 
-                        //     // Optional: Set interval to refresh the notifications periodically
-                        //     setInterval(fetchMenuItems, 500); // Refresh every 30 seconds
-                        // });
-
-
+                            // Optional: Set interval to refresh the notifications periodically
+                            setInterval(fetchMenuItems, 3000); // Refresh every 30 seconds
+                        });
 
                     });
 
@@ -671,7 +669,8 @@ document.addEventListener("DOMContentLoaded", function() {
                             const customerData = {
                                 customer_name: $('#customer-name').val(),
                                 customer_note: $('#customer-note').val(),
-                                customer_table: $('#customer-table').val()
+                                customer_table: $('#customer-table').val(),
+                                hidden_order_id:  $('#order-id').val()
                             };
 
                             console.log(customerData);
@@ -693,6 +692,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         $('#customer-name').val('');
                                         $('#customer-note').val('');
                                         $('#customer-table').val('');
+                                        $('#order-id').val('');
 
                                         // Update the order summary or take any action for success here
                                         updateOrderSummary();
@@ -867,11 +867,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 const orderId = $(this).data('order-id');
 
                                                 // Populate the customer fields in the form
+                                                $('#customer-table option').removeAttr('disabled').removeClass('disabled-table');
                                                 $('#customer-name').val(customerName);
                                                 $('#customer-table').val(customerTable);
 
+
                                                 // Optionally store the order ID in a hidden input
                                                 $('#order-id').val(orderId);
+                                                
                                             });
 
                                         } else {
@@ -992,6 +995,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <h3>total</h3>
                                 <span>&#8369; <span id="total-amount"> 0.00</span></span>
                             </div>
+                            <input type="hidden" name="hidden_order_id" id="order-id">
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group customer-field">
                                     <h3>customer name</h3>

@@ -7,104 +7,219 @@ include_once "../includes/connection.php"; // Ensure your connection.php is corr
 // Check if POST data is received
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if customer info is provided and not empty
-    if (!empty($_POST['customer_name']) && isset($_POST['customer_note']) && !empty($_POST['customer_table'])) {
+    if (!empty($_POST['customer_name']) && !empty($_POST['customer_note']) && !empty($_POST['customer_table'])) {
         $customerName = $_POST['customer_name'];
         $customerNote = $_POST['customer_note'];
         $customerTable = $_POST['customer_table'];
-        
-        // Check if order details exist in the session
-        if (isset($_SESSION['order_details']) && !empty($_SESSION['order_details'])) {
-            $totalAmount = 0;
+        $orderId = isset($_POST['hidden_order_id']) ? $_POST['hidden_order_id'] : null;
 
-            // Calculate total amount
-            foreach ($_SESSION['order_details'] as $order) {
-                $totalAmount += $order['sub_total'];
-            }
+        // Check if there is an existing order using the order_id
+        if (!empty($orderId)) {
+            // Query to check if the order exists in the `orders` table
+            $checkOrderSql = "SELECT order_status FROM orders WHERE order_id = ?";
+            $checkOrderStmt = $conn->prepare($checkOrderSql);
+            $checkOrderStmt->bind_param("i", $orderId);
+            $checkOrderStmt->execute();
+            $checkOrderResult = $checkOrderStmt->get_result();
 
-            // Insert order into orders table
-            $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status, table_status, payment_status) VALUES (?, ?, ?, ?, 'prepare', 1, 'Unpaid')";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssd", $customerName, $customerNote, $customerTable, $totalAmount);
-            $stmt->execute();
+            if ($checkOrderResult->num_rows > 0) {
+                // Order exists, fetch the current status
+                $orderRow = $checkOrderResult->fetch_assoc();
+                $currentStatus = $orderRow['order_status'];
 
-            // Get the last inserted order ID
-            $orderId = $conn->insert_id;
-
-            // First, add back the stock that was deducted during session
-            foreach ($_SESSION['order_details'] as $order) {
-                $menuItemId = $order['menu_item_id'];
-                $quantity = $order['quantity'];
-
-                // Fetch the required stocks for this menu item
-                $menuStockSql = "SELECT stock_id, quantity_required FROM menu_item_stocks WHERE menu_item_id = ?";
-                $menuStockStmt = $conn->prepare($menuStockSql);
-                $menuStockStmt->bind_param("i", $menuItemId);
-                $menuStockStmt->execute();
-                $menuStockResult = $menuStockStmt->get_result();
-
-                while ($menuStockRow = $menuStockResult->fetch_assoc()) {
-                    $stockId = $menuStockRow['stock_id'];
-                    $quantityRequired = $menuStockRow['quantity_required'];
-
-                    // Calculate total quantity previously deducted
-                    $totalQuantityRequired = $quantity * $quantityRequired;
-
-                    // Add back the stock that was deducted when order was added to session
-                    $updateStockSql = "UPDATE stocks SET stock_quantity = stock_quantity + ? WHERE stock_id = ?";
-                    $updateStockStmt = $conn->prepare($updateStockSql);
-                    $updateStockStmt->bind_param("di", $totalQuantityRequired, $stockId);
-                    $updateStockStmt->execute();
+                // Check if there are order details in the session
+                if (empty($_SESSION['order_details'])) {
+                    // No items in the session
+                    echo json_encode(['status' => 'error', 'message' => 'No items in order.']);
+                    exit;  // Stop further execution
                 }
-            }
 
-            // Insert order details into order_details table and deduct the stock again correctly
-            foreach ($_SESSION['order_details'] as $order) {
-                $menuItemId = $order['menu_item_id'];
-                $quantity = $order['quantity'];
-                $menuPrice = $order['menu_price'];
-                $subTotal = $order['sub_total'];
-
-                $detailSql = "INSERT INTO order_details (order_id, menu_item_stock_id, quantity, menu_price, sub_total, order_item_status) VALUES (?, ?, ?, ?, ?, 'prepare')";
-                $detailStmt = $conn->prepare($detailSql);
-                $detailStmt->bind_param("iidds", $orderId, $menuItemId, $quantity, $menuPrice, $subTotal);
-                $detailStmt->execute();
-
-                // Fetch the required stocks and deduct stock after adding it back
-                $menuStockSql = "SELECT stock_id, quantity_required FROM menu_item_stocks WHERE menu_item_id = ?";
-                $menuStockStmt = $conn->prepare($menuStockSql);
-                $menuStockStmt->bind_param("i", $menuItemId);
-                $menuStockStmt->execute();
-                $menuStockResult = $menuStockStmt->get_result();
-
-                while ($menuStockRow = $menuStockResult->fetch_assoc()) {
-                    $stockId = $menuStockRow['stock_id'];
-                    $quantityRequired = $menuStockRow['quantity_required'];
-
-                    // Calculate total quantity needed (menu quantity * quantity_required)
-                    $totalQuantityRequired = $quantity * $quantityRequired;
-
-                    // Deduct stock quantity from stocks table again
-                    $updateStockSql = "UPDATE stocks SET stock_quantity = stock_quantity - ? WHERE stock_id = ?";
-                    $updateStockStmt = $conn->prepare($updateStockSql);
-                    $updateStockStmt->bind_param("di", $totalQuantityRequired, $stockId);
-                    $updateStockStmt->execute();
+                // Update order status if the current status is 'served'
+                $totalAmount = 0;
+                foreach ($_SESSION['order_details'] as $order) {
+                    $totalAmount += $order['sub_total'];
                 }
+                
+                // Fetch the current total amount before updating
+                $currentTotalSql = "SELECT total_amount FROM orders WHERE order_id = ?";
+                $currentTotalStmt = $conn->prepare($currentTotalSql);
+                $currentTotalStmt->bind_param("i", $orderId);
+                $currentTotalStmt->execute();
+                $currentTotalResult = $currentTotalStmt->get_result();
+                
+                if ($currentTotalResult->num_rows > 0) {
+                    $currentTotalRow = $currentTotalResult->fetch_assoc();
+                    $currentTotalAmount = $currentTotalRow['total_amount'];
+                
+                    // Calculate the new total amount
+                    $newTotalAmount = $currentTotalAmount + $totalAmount;
+                
+                    // Update the order
+                    $updateOrderSql = "UPDATE orders SET order_status = 'prepare', customer_note = CONCAT(customer_note, '\n\n', ?), total_amount = ? WHERE order_id = ?";
+                    $updateOrderStmt = $conn->prepare($updateOrderSql);
+                    $updateOrderStmt->bind_param("sdi", $customerNote, $newTotalAmount, $orderId);
+                    $updateOrderStmt->execute();
+                } else {
+                    // Handle the case where the order ID doesn't exist
+                    echo json_encode(['status' => 'error', 'message' => 'Order ID not found.']);
+                }
+                
+                
+
+                // First, add back the stock that was deducted during session
+                foreach ($_SESSION['order_details'] as $order) {
+                    $menuItemId = $order['menu_item_id'];
+                    $quantity = $order['quantity'];
+
+                    // Fetch the required stocks for this menu item
+                    $menuStockSql = "SELECT stock_id, quantity_required FROM menu_item_stocks WHERE menu_item_id = ?";
+                    $menuStockStmt = $conn->prepare($menuStockSql);
+                    $menuStockStmt->bind_param("i", $menuItemId);
+                    $menuStockStmt->execute();
+                    $menuStockResult = $menuStockStmt->get_result();
+
+                    while ($menuStockRow = $menuStockResult->fetch_assoc()) {
+                        $stockId = $menuStockRow['stock_id'];
+                        $quantityRequired = $menuStockRow['quantity_required'];
+
+                        // Calculate total quantity previously deducted
+                        $totalQuantityRequired = $quantity * $quantityRequired;
+
+                        // Add back the stock that was deducted when the order was added to the session
+                        $updateStockSql = "UPDATE stocks SET stock_quantity = stock_quantity + ? WHERE stock_id = ?";
+                        $updateStockStmt = $conn->prepare($updateStockSql);
+                        $updateStockStmt->bind_param("di", $totalQuantityRequired, $stockId);
+                        $updateStockStmt->execute();
+                    }
+                }
+
+                // Proceed to insert new order details for additional items
+                foreach ($_SESSION['order_details'] as $order) {
+                    $menuItemId = $order['menu_item_id'];
+                    $quantity = $order['quantity'];
+                    $menuPrice = $order['menu_price'];
+                    $subTotal = $order['sub_total'];
+
+                    // Insert new order details
+                    $detailSql = "INSERT INTO order_details (order_id, menu_item_stock_id, quantity, menu_price, sub_total, order_item_status) VALUES (?, ?, ?, ?, ?, 'prepare')";
+                    $detailStmt = $conn->prepare($detailSql);
+                    $detailStmt->bind_param("iidds", $orderId, $menuItemId, $quantity, $menuPrice, $subTotal);
+                    $detailStmt->execute();
+
+                    // Fetch related stock information from menu_item_stocks
+                    $menuStockSql = "SELECT stock_id, quantity_required FROM menu_item_stocks WHERE menu_item_id = ?";
+                    $menuStockStmt = $conn->prepare($menuStockSql);
+                    $menuStockStmt->bind_param("i", $menuItemId);
+                    $menuStockStmt->execute();
+                    $menuStockResult = $menuStockStmt->get_result();
+
+                    while ($menuStockRow = $menuStockResult->fetch_assoc()) {
+                        $stockId = $menuStockRow['stock_id'];
+                        $quantityRequired = $menuStockRow['quantity_required'];
+                        $totalQuantityRequired = $quantity * $quantityRequired;
+
+                        // Deduct stock quantity from stocks table again
+                        $updateStockSql = "UPDATE stocks SET stock_quantity = stock_quantity - ? WHERE stock_id = ?";
+                        $updateStockStmt = $conn->prepare($updateStockSql);
+                        $updateStockStmt->bind_param("di", $totalQuantityRequired, $stockId);
+                        $updateStockStmt->execute();
+                    }
+                }
+
+                // Clear session order details
+                unset($_SESSION['order_details']);
+                echo json_encode(['status' => 'success', 'message' => 'Additional order placed successfully.']);
+            } else {
+                // No order found with the provided order_id
+                echo json_encode(['status' => 'error', 'message' => 'Order ID not found.']);
             }
+        }else {
+            // No order ID provided, proceed with the regular new order logic
+            if (isset($_SESSION['order_details']) && !empty($_SESSION['order_details'])) {
+                $totalAmount = 0;
+                foreach ($_SESSION['order_details'] as $order) {
+                    $totalAmount += $order['sub_total'];
+                }
 
-            // Clear the session order details after successful insertion
-            unset($_SESSION['order_details']);
+                // Insert a new order
+                $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status, table_status, payment_status) VALUES (?, ?, ?, ?, 'prepare', 1, 'Unpaid')";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sssd", $customerName, $customerNote, $customerTable, $totalAmount);
+                $stmt->execute();
 
-            // Return success response
-            echo json_encode(['status' => 'success', 'message' => 'Order placed successfully.']);
-        } else {
-            // No order details in session
-            echo json_encode(['status' => 'error', 'message' => 'No items in the order.']);
+                // Get the newly inserted order ID
+                $orderId = $conn->insert_id;
+
+                // First, add back the stock that was deducted during session
+                foreach ($_SESSION['order_details'] as $order) {
+                    $menuItemId = $order['menu_item_id'];
+                    $quantity = $order['quantity'];
+
+                    // Fetch the required stocks for this menu item
+                    $menuStockSql = "SELECT stock_id, quantity_required FROM menu_item_stocks WHERE menu_item_id = ?";
+                    $menuStockStmt = $conn->prepare($menuStockSql);
+                    $menuStockStmt->bind_param("i", $menuItemId);
+                    $menuStockStmt->execute();
+                    $menuStockResult = $menuStockStmt->get_result();
+
+                    while ($menuStockRow = $menuStockResult->fetch_assoc()) {
+                        $stockId = $menuStockRow['stock_id'];
+                        $quantityRequired = $menuStockRow['quantity_required'];
+
+                        // Calculate total quantity previously deducted
+                        $totalQuantityRequired = $quantity * $quantityRequired;
+
+                        // Add back the stock that was deducted when the order was added to the session
+                        $updateStockSql = "UPDATE stocks SET stock_quantity = stock_quantity + ? WHERE stock_id = ?";
+                        $updateStockStmt = $conn->prepare($updateStockSql);
+                        $updateStockStmt->bind_param("di", $totalQuantityRequired, $stockId);
+                        $updateStockStmt->execute();
+                    }
+                }
+
+                // Insert order details as before and handle stock deduction
+                foreach ($_SESSION['order_details'] as $order) {
+                    $menuItemId = $order['menu_item_id'];
+                    $quantity = $order['quantity'];
+                    $menuPrice = $order['menu_price'];
+                    $subTotal = $order['sub_total'];
+
+                    $detailSql = "INSERT INTO order_details (order_id, menu_item_stock_id, quantity, menu_price, sub_total, order_item_status) VALUES (?, ?, ?, ?, ?, 'prepare')";
+                    $detailStmt = $conn->prepare($detailSql);
+                    $detailStmt->bind_param("iidds", $orderId, $menuItemId, $quantity, $menuPrice, $subTotal);
+                    $detailStmt->execute();
+
+                    // Fetch related stock information from menu_item_stocks
+                    $menuStockSql = "SELECT stock_id, quantity_required FROM menu_item_stocks WHERE menu_item_id = ?";
+                    $menuStockStmt = $conn->prepare($menuStockSql);
+                    $menuStockStmt->bind_param("i", $menuItemId);
+                    $menuStockStmt->execute();
+                    $menuStockResult = $menuStockStmt->get_result();
+
+                    while ($menuStockRow = $menuStockResult->fetch_assoc()) {
+                        $stockId = $menuStockRow['stock_id'];
+                        $quantityRequired = $menuStockRow['quantity_required'];
+                        $totalQuantityRequired = $quantity * $quantityRequired;
+
+                        // Deduct stock quantity from stocks table again
+                        $updateStockSql = "UPDATE stocks SET stock_quantity = stock_quantity - ? WHERE stock_id = ?";
+                        $updateStockStmt = $conn->prepare($updateStockSql);
+                        $updateStockStmt->bind_param("di", $totalQuantityRequired, $stockId);
+                        $updateStockStmt->execute();
+                    }
+                }
+
+                // Clear session order details
+                unset($_SESSION['order_details']);
+                echo json_encode(['status' => 'success', 'message' => 'Order placed successfully.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'No items in order.']);
+            }
         }
     } else {
-        // Missing or empty customer info
-        echo json_encode(['status' => 'error', 'message' => 'Customer information is missing or empty.']);
+        echo json_encode(['status' => 'error', 'message' => 'Missing or empty customer information.']);
     }
 } else {
-    // Not a POST request
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
 }
+?>
