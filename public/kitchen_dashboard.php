@@ -88,6 +88,8 @@ document.addEventListener("DOMContentLoaded", function() {
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
     <script src="https://kit.fontawesome.com/39d1af4576.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../libs/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -164,6 +166,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 <?php echo $_GET['success']; ?>
                 </div>
             <?php } ?>
+            <?php if(isset($_GET['error'])){ ?>
+                <div class="alert alert-danger" role="alert">
+                <?php echo $_GET['error']; ?>
+                </div>
+            <?php } ?>
+            <div class="alert error-message" id="error-container"></div>
+            <div class="success success-message" id="success-container"></div>
             <div class="content-header">
                 <div class="header-text">
                     <h1>Let's seize the day! <span></span></h1>
@@ -227,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             fetchLowStockItems();
 
                             // Optional: Set interval to refresh the notifications periodically
-                            setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
+                            setInterval(fetchLowStockItems, 30000); // Refresh every 30 seconds
                         });
 
                         
@@ -238,6 +247,430 @@ document.addEventListener("DOMContentLoaded", function() {
                     <i class="fa-solid fa-bars nav-bar"></i>
                 </div>
             </div>
+            <script>
+                function fetchPrepareOrders() {
+                    $.ajax({
+                        url: '../php/fetch_prepare_status.php', // PHP script to get today's orders
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(orders) {
+                            $('#prepare-card-container').empty(); // Clear existing orders
+                            if (orders.length > 0) {
+                                $.each(orders, function(index, order) {
+                                    $('#prepare-card-container').append(`
+                                        <div class="card order-item-card">
+                                            <div class="card-img-container">
+                                                <img src="../assets/Profile (1).png" class="card-img order-img">
+                                            </div>
+                                            <div class="card-details order-card-details">
+                                                <span class="card-name order-number">Table No. ${order.customer_table}</span>
+                                            </div>
+                                            <div class="card-buttons button-disable">
+                                                <button class="btn-cancel" data-order-id="${order.order_id}">Cancel</button>
+                                                <button class="btn-view view-prepare-orders" data-order-id="${order.order_id}">View Order</button>
+                                                <button class="btn-confirm" data-order-id="${order.order_id}">Confirm</button>
+                                            </div>
+                                        </div>
+                                    `);
+                                });
+                            } else {
+                                $('#prepare-card-container').append("<p>No orders available for today.</p>");
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log("Error fetching orders: " + textStatus, errorThrown);
+                        }
+                    });
+                }
+
+                function fetchProcessOrders() {
+                    $.ajax({
+                        url: '../php/fetch_process_status.php', // PHP script to get today's orders
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(orders) {
+                            $('#process-card-container').empty(); // Clear existing orders
+                            if (orders.length > 0) {
+                                $.each(orders, function(index, order) {
+                                    $('#process-card-container').append(`
+                                        <div class="card order-item-card">
+                                            <div class="card-img-container">
+                                                <img src="../assets/me2.jpg" class="card-img order-img">
+                                            </div>
+                                            <div class="card-details order-card-details">
+                                                <span class="card-name order-number">Table No. ${order.customer_table}</span>
+                                            </div>
+                                            <div class="card-buttons button-disable">
+                                                <button class="btn-view view-process-orders" data-order-id="${order.order_id}">View Order</button>
+                                                <button class="btn-serve" data-order-id="${order.order_id}">serve</button>
+                                            </div>
+                                        </div>
+                                    `);
+                                });
+                            } else {
+                                $('#process-card-container').append("<p>No orders available for today.</p>");
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log("Error fetching orders: " + textStatus, errorThrown);
+                        }
+                    });
+                }
+                function fetchServedOrders() {
+                    $.ajax({
+                        url: '../php/fetch_served_status.php', // PHP script to get today's orders
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(orders) {
+                            $('#served-card-container').empty(); // Clear existing orders
+                            if (orders.length > 0) {
+                                $.each(orders, function(index, order) {
+                                    $('#served-card-container').append(`
+                                        <div class="card order-item-card">
+                                            <div class="card-img-container">
+                                                <img src="../assets/me2.jpg" class="card-img order-img">
+                                            </div>
+                                            <div class="card-details order-card-details">
+                                                <span class="card-name order-number">Table No. ${order.customer_table}</span>
+                                            </div>
+                                            <div class="card-buttons button-disable">
+                                                <button class="btn-view view-served-orders" data-order-id="${order.order_id}">View Order</button>
+                                                <span class="serve-text" data-order-id="${order.order_id}">served</span>
+                                            </div>
+                                        </div>
+                                    `);
+                                });
+                            } else {
+                                $('#served-card-container').append("<p>No orders available for today.</p>");
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log("Error fetching orders: " + textStatus, errorThrown);
+                        }
+                    });
+                }
+
+                fetchPrepareOrders();
+                fetchProcessOrders();
+                fetchServedOrders();
+
+                $(document).ready(function() {
+                    // Function to fetch order details and show them in the popup
+                    function fetchPrepareOrderDetails(orderId) {
+                        $.ajax({
+                            url: '../php/fetch_order_detail_prepare.php',  // Adjust this PHP script path as needed
+                            type: 'GET',
+                            data: { order_id: orderId },
+                            dataType: 'json',
+                            success: function(order) {
+                                // Check if there was an error
+                                if (order.error) {
+                                    alert(order.error); // Show error message if there's an issue
+                                    return;
+                                }
+
+                                // Populate the order info in the popup
+                                $('#popup-order-id').text(order.order_id);
+                                $('#popup-customer-name').val(order.customer_name);
+                                $('#popup-customer-note').val(order.customer_note);
+
+                                // Populate order items in the table
+                                const orderItemsContainer = $('#popup-order-items');
+                                orderItemsContainer.empty(); // Clear previous items
+
+                                $.each(order.items, function(index, item) {
+                                    orderItemsContainer.append(`
+                                        <tr>
+                                            <td>${item.item_name}</td>
+                                            <td>${item.quantity}</td>
+                                        </tr>
+                                    `);
+                                });
+
+                                // Show the popup
+                                $('.popup-card-container.popup-order-view').fadeIn();
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log('Error fetching order details: ' + textStatus, errorThrown);
+                            }
+                        });
+                    }
+
+                    function fetchProcessOrderDetails(orderId) {
+                        $.ajax({
+                            url: '../php/fetch_order_detail_process.php',  // Adjust this PHP script path as needed
+                            type: 'GET',
+                            data: { order_id: orderId },
+                            dataType: 'json',
+                            success: function(order) {
+                                // Check if there was an error
+                                if (order.error) {
+                                    alert(order.error); // Show error message if there's an issue
+                                    return;
+                                }
+
+                                // Populate the order info in the popup
+                                $('#popup-order-id').text(order.order_id);
+                                $('#popup-customer-name').val(order.customer_name);
+                                $('#popup-customer-note').val(order.customer_note);
+
+                                // Populate order items in the table
+                                const orderItemsContainer = $('#popup-order-items');
+                                orderItemsContainer.empty(); // Clear previous items
+
+                                $.each(order.items, function(index, item) {
+                                    orderItemsContainer.append(`
+                                        <tr>
+                                            <td>${item.item_name}</td>
+                                            <td>${item.quantity}</td>
+                                        </tr>
+                                    `);
+                                });
+
+                                // Show the popup
+                                $('.popup-card-container.popup-order-view').fadeIn();
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log('Error fetching order details: ' + textStatus, errorThrown);
+                            }
+                        });
+                    }
+
+                    function fetchServedOrderDetails(orderId) {
+                        $.ajax({
+                            url: '../php/fetch_order_detail_served.php',  // Adjust this PHP script path as needed
+                            type: 'GET',
+                            data: { order_id: orderId },
+                            dataType: 'json',
+                            success: function(order) {
+                                // Check if there was an error
+                                if (order.error) {
+                                    alert(order.error); // Show error message if there's an issue
+                                    return;
+                                }
+
+                                // Populate the order info in the popup
+                                $('#popup-order-id').text(order.order_id);
+                                $('#popup-customer-name').val(order.customer_name);
+                                $('#popup-customer-note').val(order.customer_note);
+
+                                // Populate order items in the table
+                                const orderItemsContainer = $('#popup-order-items');
+                                orderItemsContainer.empty(); // Clear previous items
+
+                                $.each(order.items, function(index, item) {
+                                    orderItemsContainer.append(`
+                                        <tr>
+                                            <td>${item.item_name}</td>
+                                            <td>${item.quantity}</td>
+                                        </tr>
+                                    `);
+                                });
+
+                                // Show the popup
+                                $('.popup-card-container.popup-order-view').fadeIn();
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log('Error fetching order details: ' + textStatus, errorThrown);
+                            }
+                        });
+                    }
+
+                    // Bind click event to the btn-view
+                    $(document).on('click', '.view-prepare-orders', function() {
+                        const orderId = $(this).data('order-id');
+                        fetchPrepareOrderDetails(orderId); // Call the function to fetch and display order details
+                        $('.popup-overlay').fadeIn();
+                    });
+
+                    $(document).on('click', '.view-process-orders', function() {
+                        const orderId = $(this).data('order-id');
+                        fetchProcessOrderDetails(orderId); // Call the function to fetch and display order details
+                        $('.popup-overlay').fadeIn();
+                    });
+
+                    $(document).on('click', '.view-served-orders', function() {
+                        const orderId = $(this).data('order-id');
+                        fetchServedOrderDetails(orderId);
+                        $('.popup-overlay').fadeIn(); // Call the function to fetch and display order details
+                    });
+
+
+                    // Close the popup when the close button is clicked
+                    $(document).on('click', '.btn-close', function() {
+                        $('.popup-card-container.popup-order-view').hide(); // Hide the popup
+                        $('.popup-overlay').fadeOut();
+                    });
+
+                    $(document).on('click', '.popup-overlay', function() {
+                        $('.popup-card-container.popup-order-view').hide(); // Hide the popup
+                        $('.popup-overlay').fadeOut();
+                        $('.popup-confirmation-container').fadeOut();
+                    });
+                });
+
+
+                $(document).ready(function() {
+                    // Function to check stocks and delete order
+                    function cancelOrder(orderId) {
+                        $.ajax({
+                            url: '../php/cancel_order.php',  // Adjust this PHP script path as needed
+                            type: 'POST',
+                            data: { order_id: orderId },
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.success) {
+                                    alert('Order canceled successfully.');
+                                    // Refresh the order list or update UI as needed
+                                } else {
+                                    alert(response.error || 'Failed to cancel order.');
+                                }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log('Error canceling order: ' + textStatus, errorThrown);
+                            }
+                        });
+                    }
+
+                    // Bind click event to the btn-cancel
+                    $(document).on('click', '.btn-cancel', function() {
+                        const orderId = $(this).data('order-id');
+                        if (confirm('Are you sure you want to cancel this order?')) {
+                            cancelOrder(orderId); // Call the function to cancel the order
+                        }
+                    });
+                });
+
+
+                $(document).ready(function() {
+                    // When the confirm button is clicked
+                    $(document).on('click', '.btn-confirm', function() {
+                        var orderId = $(this).data('order-id'); // Get the order ID from the button
+
+                        // Show the custom confirmation popup
+                        $('.popup-confirmation-container').fadeIn(); // Show the popup
+                        $('.popup-overlay').fadeIn();
+
+                        // Handle confirmation (yes button)
+                        $('.btnConfirm').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+
+                            // Send AJAX request to update order status
+                            $.ajax({
+                                url: '../php/confirm_order.php',  // Path to your PHP script
+                                type: 'POST',
+                                data: { order_id: orderId },
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response.success) {
+                                        displaySuccessMessage('Order confirmed successfully.');
+                                        // You can refresh the page or update the UI as needed
+                                        fetchPrepareOrders();
+                                        fetchProcessOrders();
+                                        fetchServedOrders();
+                                    } else {
+                                        alert('Failed to confirm order: ' + response.error);
+                                    }
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.log('Error confirming order: ' + textStatus, errorThrown);
+                                }
+                            });
+
+                            // Hide the popup after confirming
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+
+                        // Handle cancellation (no button)
+                        $('.btnCancel').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+                            // Hide the popup if "no" is clicked
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+                    });
+                });
+
+
+                $(document).ready(function() {
+                    // When the confirm button is clicked
+                    $(document).on('click', '.btn-serve', function() {
+                        var orderId = $(this).data('order-id'); // Get the order ID from the button
+
+                        // Show the custom confirmation popup
+                        $('.popup-confirmation-container').fadeIn(); // Show the popup
+                        $('.popup-overlay').fadeIn();
+
+                        // Handle confirmation (yes button)
+                        $('.btnConfirm').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+
+                            // Send AJAX request to update order status
+                            $.ajax({
+                                url: '../php/served_order.php',  // Path to your PHP script
+                                type: 'POST',
+                                data: { order_id: orderId },
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response.success) {
+                                        displaySuccessMessage('Order served successfully.');
+                                        // You can refresh the page or update the UI as needed
+                                        fetchPrepareOrders();
+                                        fetchProcessOrders();
+                                        fetchServedOrders();
+                                    } else {
+                                        alert('Failed to confirm order: ' + response.error);
+                                    }
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.log('Error confirming order: ' + textStatus, errorThrown);
+                                }
+                            });
+
+                            // Hide the popup after confirming
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+
+                        // Handle cancellation (no button)
+                        $('.btnCancel').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+                            // Hide the popup if "no" is clicked
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+                    });
+                });
+                    function displaySuccessMessage(message1) {
+                        // Create a div to hold the success message
+                        const messageDiv = $('<div class="success-message"></div>').text(message1);
+                        
+                        // Append the message to a specific container in your HTML
+                        $('#success-container').html(messageDiv);
+                        $('#success-container').removeClass('fadeOut').addClass('fadeIn');
+
+                        // Optionally, remove the message after a few seconds
+                        setTimeout(() => {
+                            $('#success-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                        }, 3000); // Change the duration as needed
+                    }
+
+                    function displayErrorMessage(message2) {
+                        // Create a div to hold the success message
+                        const messageDiv = $('<div class="error-message"></div>').text(message2);
+                        
+                        // Append the message to a specific container in your HTML
+                        $('#error-container').html(messageDiv);
+                        $('#error-container').removeClass('fadeOut').addClass('fadeIn');
+
+                        // Optionally, remove the message after a few seconds
+                        setTimeout(() => {
+                            $('#error-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                        }, 3000); // Change the duration as needed
+                    }
+
+            </script>
             <div class="menu-section-container">
                 <div class="orders-panel first-panel-section">
                     <div class="menu-header">
@@ -248,33 +681,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <button class="button-tabs buttonServed">served</button>
                         </div>
                     </div>
-                    <div class="first-panel-cards-container order-cards-container">
-                        <div class="card order-item-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons button-disable">
-                                <button class="btn-cancel">cancel</button>
-                                <button class="btn-view">view order</button>
-                                <button class="btn-confirm">confirm</button>
-                            </div>
-                        </div>
-                        <div class="card order-item-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons button-disable">
-                                <button class="btn-cancel">cancel</button>
-                                <button class="btn-view">view order</button>
-                                <button class="btn-confirm">confirm</button>
-                            </div>
-                        </div>
+                    <div class="first-panel-cards-container order-cards-container" id="prepare-card-container">
                         
                     </div> 
                 </div>
@@ -290,19 +697,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <button class="button-tabs buttonServed">served</button>
                         </div>
                     </div>
-                    <div class="first-panel-cards-container order-cards-container">
-                        <div class="card order-item-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons button-disable">
-                                <button class="btn-view">view order</button>
-                                <button class="btn-serve">serve</button>
-                            </div>
-                        </div>
+                    <div class="first-panel-cards-container order-cards-container" id="process-card-container">
                         
                     </div> 
                 </div>
@@ -318,58 +713,15 @@ document.addEventListener("DOMContentLoaded", function() {
                             <button class="button-tabs buttonServed">served</button>
                         </div>
                     </div>
-                    <div class="third-panel-cards-container order-serve-section">
-                        <div class="card order-serve-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons">
-                                <span class="serve-text">served</span>
-                            </div>
-                        </div>
-                        <div class="card order-serve-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons">
-                                <span class="serve-text">served</span>
-                            </div>
-                        </div>
-                        <div class="card order-serve-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons">
-                                <span class="serve-text">served</span>
-                            </div>
-                        </div>
-                        <div class="card order-serve-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons">
-                                <span class="serve-text">served</span>
-                            </div>
-                        </div>
+                    <div class="third-panel-cards-container order-serve-section" id="served-card-container">
+                        
                     </div>
                 </div>
 
                 <!-- --------------------Popup View-------------------- -->
                 <div class="popup-card-container popup-order-view">
                     <div class="popup-card-header">
-                        <h1 class="popup-order-title">Order # 0000</h1>
+                        <!-- <h1 class="popup-order-title">Order # <span id="popup-order-id">0000</span></h1> -->
                         <i class="fa-regular fa-circle-xmark btn-close"></i>
                     </div>
                     <div class="popup-card-content">
@@ -378,53 +730,31 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <thead>
                                     <tr>
                                         <th>Order name</th>
-                                        <th>quantity</th>
+                                        <th>Quantity</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Bangus</td>
-                                        <td>2 Kilo (s)</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Rice</td>
-                                        <td>2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bangus</td>
-                                        <td>2 Kilo (s)</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Rice</td>
-                                        <td>2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bangus</td>
-                                        <td>2 Kilo (s)</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Rice</td>
-                                        <td>2</td>
-                                    </tr>
+                                <tbody id="popup-order-items">
+                                    <!-- Order items will be populated here -->
                                 </tbody>
                             </table>
                         </div>
                         <div class="popup-card-textarea">
                             <div class="card-textarea">
                                 <h3>Customer name</h3>
-                                <textarea name="" id="" disabled placeholder="John Doe"></textarea>
+                                <textarea class="customer-name" id="popup-customer-name" disabled></textarea>
                             </div>
                             <div class="card-textarea">
-                                <h3>note</h3>
-                                <textarea name="" id="" disabled placeholder="Lorem Ipsum"></textarea>
+                                <h3>Note</h3>
+                                <textarea id="popup-customer-note" disabled></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="pop-up-container popup-confirmation-container">
                     <div class="pop-up-content popup-confirmation-content">
                         <i class="fa-solid fa-question"></i>
-                        <h1>Is order ready to process?</h1>
+                        <h1>Click yes for confirmation!</h1>
                         <div class="pop-up-buttons logout-buttons">
                             <a href="#" class="btn-second btnCancel">no</a>
                             <a href="#" class="btn-first btnConfirm">yes</a>
@@ -450,7 +780,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <!-- <script src="../js/menu_entry_panel.js"></script>
 <script src="../js/popup_forms.js"></script>
 <script src="../js/order_entry_panel.js"></script> -->
-<script src="../js/kitchen_panel.js"></script>
+<!-- <script src="../js/kitchen_panel.js"></script> -->
 <script src="../js/logout.js"></script>
 <script src="../js/alert_disappear.js"></script>
 <script src="../js/order_tabs.js"></script>

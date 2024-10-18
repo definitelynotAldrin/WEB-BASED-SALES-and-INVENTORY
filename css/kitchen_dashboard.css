@@ -107,7 +107,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 18px 25px;
+    padding: 15px 25px;
     border-radius: 5px;
     text-transform: capitalize;
     text-decoration: none;
@@ -127,11 +127,11 @@
 }
 
 .nav-lists li a i{
-    font-size: 1.3rem;
+    font-size: 1.1rem;
 }
 
 .nav-lists li a span{
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 500;
     transition: 0.2s ease;
 }
@@ -162,6 +162,57 @@
     transform: translate(-50%, -50%);
     transition: 0.5s ease;
 }
+
+.alert{
+    color: var(--red);
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid rgba(215, 1, 1, 0.5);
+    background-color: rgba(250, 0, 0, 0.2);
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.5s ease;
+}
+
+#error-container{
+    opacity: 0;
+    top: 50%;
+    z-index: 6;
+    color: white;
+    background-color: rgb(134, 2, 2);
+}
+
+#error-container.fadeOut{
+    opacity: 0;
+}
+
+#error-container.fadeIn{
+    opacity: 1;
+}
+
+
+#success-container{
+    opacity: 0;
+    top: 50%;
+    z-index: 6;
+    color: white;
+    background-color: var(--light-green);
+}
+
+#success-container.fadeOut{
+    opacity: 0;
+}
+
+#success-container.fadeIn{
+    opacity: 1;
+}
+
+
 
 .content-header{
     display: flex;
@@ -393,9 +444,11 @@
 .third-panel-cards-container{
     display: flex;
     align-items: center;
+    justify-content: start;
     flex-wrap: wrap;
     max-height: 450px;
     overflow: auto;
+    flex-direction: row-reverse;
 }
 
 .card{
@@ -542,6 +595,10 @@
     color: rgba(0, 0, 0, 0.7);
 }
 
+.card-textarea .customer-name{
+    text-transform: capitalize;
+}
+
 .card-textarea textarea{
     width: 100%;
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -568,6 +625,7 @@ table {
 th, td {
     padding: 10px 0;
     text-align: left;
+    text-transform: capitalize;
 }
 
 th{

@@ -9,8 +9,10 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
 $sql = "
     SELECT mi.*,
     GROUP_CONCAT(s.stock_name) AS ingredients, 
-    SUM(CASE WHEN s.stock_status = 0 OR s.stock_quantity = 0 THEN 1 ELSE 0 END) AS low_stock_count,
-    SUM(s.stock_quantity) AS total_stock_quantity
+    SUM(CASE WHEN s.stock_status = 1 THEN 0 ELSE 1 END) AS inactive_stock_count,  -- Counts inactive stocks
+    SUM(CASE WHEN s.stock_quantity = 0 THEN 1 ELSE 0 END) AS low_quantity_count,   -- Counts stocks with quantity = 0
+    GROUP_CONCAT(CASE WHEN s.stock_status = 0 THEN 'inactive' ELSE 'active' END) AS stock_statuses,
+    GROUP_CONCAT(CASE WHEN s.stock_quantity = 0 THEN 'low' ELSE 'sufficient' END) AS quantity_statuses
 FROM menu_items mi
 LEFT JOIN menu_item_stocks mis ON mi.item_id = mis.menu_item_id
 LEFT JOIN stocks s ON mis.stock_id = s.stock_id
@@ -53,7 +55,7 @@ if ($result->num_rows > 0) {
         $itemCategory = !empty($row['item_category']) ? $row['item_category'] : 'undefined';
     
         // Mark menu item as inactive if any ingredient has low stock or is inactive
-        $inactiveClass = ($row['low_stock_count'] > 0) ? 'inactive-card' : '';
+        $inactiveClass = ($row['inactive_stock_count'] > 0 || $row['low_quantity_count'] > 0) ? 'inactive-card' : '';
     
         $menuItems[] = [
             'item_id' => $row['item_id'],
@@ -62,10 +64,12 @@ if ($result->num_rows > 0) {
             'item_price' => $row['item_price'],
             'item_image' => $row['item_image'],
             'inactive_class' => $inactiveClass,
-            'ingredients' => $row['ingredients']
+            'ingredients' => $row['ingredients'],
+            'stock_statuses' => $row['stock_statuses'],  // Include stock statuses
+            'quantity_statuses' => $row['quantity_statuses']  // Include quantity statuses
         ];
     }
 }
 
 echo json_encode($menuItems);
-?>
+

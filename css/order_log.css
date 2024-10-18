@@ -108,7 +108,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 18px 25px;
+    padding: 15px 25px;
     border-radius: 5px;
     text-transform: capitalize;
     text-decoration: none;
@@ -128,11 +128,11 @@
 }
 
 .nav-lists li a i{
-    font-size: 1.3rem;
+    font-size: 1.1rem;
 }
 
 .nav-lists li a span{
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 500;
     transition: 0.2s ease;
 }

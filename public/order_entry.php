@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                     </div>
                                                     <div class="notification-details">
                                                         <h1 class="notification-details-title">${item.stock_name}</h1>
-                                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span>${item.stock_quantity}</span> available.</p>
+                                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span>${item.stock_quantity} ${item.stock_unit}</span> available.</p>
                                                     </div>
                                                 </div>`;
                                             notificationContainer.append(notification);
@@ -867,9 +867,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 const orderId = $(this).data('order-id');
 
                                                 // Populate the customer fields in the form
-                                                $('#customer-table option').removeAttr('disabled').removeClass('disabled-table');
+                                                $('#occupied_table').removeAttr('disabled').removeAttr('hidden');
                                                 $('#customer-name').val(customerName);
-                                                $('#customer-table').val(customerTable);
+                                                $('#customer-table').val($('#occupied_table').val());
 
 
                                                 // Optionally store the order ID in a hidden input
@@ -1010,6 +1010,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <div class="card-bottom-group">
                                     <select name="customer_table" id="customer-table">
                                         <option value="" hidden>Select Customer Table</option>
+                                        <option value="occupied_table" id="occupied_table" hidden>Already have a table!</option>
                                         <?php for ($i = 1; $i <= 12; $i++): ?>
                                         <option value="<?php echo $i; ?>">Table <?php echo $i; ?></option>
                                         <?php endfor; ?>
