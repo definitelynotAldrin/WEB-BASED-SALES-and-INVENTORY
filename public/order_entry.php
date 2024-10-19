@@ -665,49 +665,73 @@ document.addEventListener("DOMContentLoaded", function() {
                     $(document).ready(function() {
                         // Handle place order button click
                         $('#place-order-button').on('click', function() {
-                            // Gather customer data
-                            const customerData = {
-                                customer_name: $('#customer-name').val(),
-                                customer_note: $('#customer-note').val(),
-                                customer_table: $('#customer-table').val(),
-                                hidden_order_id:  $('#order-id').val()
-                            };
+                            // Show the confirmation popup
+                            $('.popup-confirmation-container').fadeIn();
+                            $('.popup-overlay').fadeIn();
 
-                            console.log(customerData);
+                            // When the confirm button in the popup is clicked
+                            $('.btnConfirm').on('click', function(e) {
+                                e.preventDefault();  // Prevent any default behavior of the button
 
-                            // Send AJAX request to save customer info
-                            $.ajax({
-                                url: '../php/add_orders.php', // Your PHP file
-                                type: 'POST',
-                                data: customerData,
-                                success: function(response) {
-                                    // Log the entire response object for debugging
-                                    console.log(JSON.stringify(response));
+                                // Gather customer data
+                                const customerData = {
+                                    customer_name: $('#customer-name').val(),
+                                    customer_note: $('#customer-note').val(),
+                                    customer_table: $('#customer-table').val(),
+                                    hidden_order_id:  $('#order-id').val()
+                                };
 
-                                    // Check if response is successful
-                                    if (response.status === 'success') {
-                                        displaySuccessMessage('Order successfully placed!');
+                                console.log(customerData);
 
-                                        // Clear customer data fields
-                                        $('#customer-name').val('');
-                                        $('#customer-note').val('');
-                                        $('#customer-table').val('');
-                                        $('#order-id').val('');
+                                // Send AJAX request to save customer info
+                                $.ajax({
+                                    url: '../php/add_orders.php', // Your PHP file
+                                    type: 'POST',
+                                    data: customerData,
+                                    success: function(response) {
+                                        // Log the entire response object for debugging
+                                        console.log(JSON.stringify(response));
 
-                                        // Update the order summary or take any action for success here
-                                        updateOrderSummary();
-                                        updateTable();
-                                    } else {
-                                        // Handle error case
-                                        displayErrorMessage(response.message);
+                                        // Check if response is successful
+                                        if (response.status === 'success') {
+                                            displaySuccessMessage('Order successfully placed!');
+
+                                            // Clear customer data fields
+                                            $('#customer-name').val('');
+                                            $('#customer-note').val('');
+                                            $('#customer-table').val('');
+                                            $('#order-id').val('');
+
+                                            // Update the order summary or take any action for success here
+                                            updateOrderSummary();
+                                            updateTable();
+                                        } else {
+                                            // Handle error case
+                                            displayErrorMessage(response.message);
+                                        }
+
+                                        // Hide the popup after order is confirmed
+                                        $('.popup-confirmation-container').fadeOut();
+                                        $('.popup-overlay').fadeOut();
+                                    },
+                                    error: function(xhr, status, error) {
+                                        alert('Error submitting customer info: ' + error); // Handle error
+                                        // Hide the popup in case of an error as well
+                                        $('.popup-confirmation-container').hide();
                                     }
-                                },
-                                error: function(xhr, status, error) {
-                                    alert('Error submitting customer info: ' + error); // Handle error
-                                }
+                                });
+                            });
+
+                            // Handle cancel button in the popup
+                            $('.btnCancel').on('click', function(e) {
+                                e.preventDefault();  // Prevent default behavior
+                                // Hide the popup if the user cancels
+                                $('.popup-confirmation-container').fadeOut();
+                                $('.popup-overlay').fadeOut();
                             });
                         });
                     });
+
 
                     function displaySuccessMessage(message1) {
                         // Create a div to hold the success message
@@ -1024,10 +1048,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <span>proceed to kitchen</span>
                                     <i class="fa-solid fa-arrow-right-long"></i>
                                 </button>
-                                <button type="button" id="standByOrder" name="standByOrder">
+                                <!-- <button type="button" id="standByOrder" name="standByOrder">
                                     <span>stand by order</span>
                                     <i class="fa-solid fa-arrow-right-long"></i>
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>
@@ -1098,6 +1122,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 </div>
             </div>
+            
+<!-- -------------------Placing order Confirmation Popup------------------------ -->
+
+            <div class="pop-up-container popup-confirmation-container">
+                <div class="pop-up-content popup-confirmation-content">
+                    <i class="fa-solid fa-question"></i>
+                    <h1>Are you sure you want to place this order?</h1>
+                    <div class="pop-up-buttons logout-buttons">
+                        <a href="#" class="btn-second btnCancel">no</a>
+                        <a href="#" class="btn-first btnConfirm">yes</a>
+                    </div>
+                </div>
+            </div>
 
             <div id="popup-overlay" class="popup-overlay"></div>           
             <div class="delete-confirmation-overlay"></div>
@@ -1112,19 +1149,20 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="pop-up-overlay logout-confirmation-overlay"></div>
-        <div class="pop-up-container logout-confirmation-container">
-            <div class="pop-up-content logout-confirmation-content">
-                <i class="fa-solid fa-question"></i>
-                <h1>Are you sure you want log out?</h1>
-                <div class="pop-up-buttons logout-buttons">
-                    <a href="../public/logout.php" class="btn-first btn-yes">yes</a>
-                    <a href="#" class="btn-second btn-no">no</a>
+
+            <div class="pop-up-overlay logout-confirmation-overlay"></div>
+            <div class="pop-up-container logout-confirmation-container">
+                <div class="pop-up-content logout-confirmation-content">
+                    <i class="fa-solid fa-question"></i>
+                    <h1>Are you sure you want log out?</h1>
+                    <div class="pop-up-buttons logout-buttons">
+                        <a href="../public/logout.php" class="btn-first btn-yes">yes</a>
+                        <a href="#" class="btn-second btn-no">no</a>
+                    </div>
                 </div>
             </div>
         </div>
-</div>
+    </div>
 <script src="../js/sidenav.js"></script>
 <!-- <script src="../js/menu_entry_panel.js"></script>  -->
 <!-- <script src="../js/popup_forms.js"></script> -->

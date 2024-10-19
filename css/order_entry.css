@@ -974,6 +974,14 @@ form{
     display: none;
 }
 
+.popup-confirmation-container{
+    width: 450px;
+}
+
+/* .logout-confirmation-container{
+    display: block;
+} */
+
 .pop-up-content{
     display: flex;
     flex-direction: column;
@@ -982,7 +990,7 @@ form{
 }
 
 .pop-up-content i{
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     color: var(--red);
     width: 50px;
     height: 50px;
@@ -1035,6 +1043,29 @@ form{
     border: 1px solid var(--dark-green);
 }
 
+
+.btnCancel{
+    color: var(--darker);
+    font-weight: 500;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.btnConfirm{
+    background-color: #04c001;
+    color: var(--white);
+    border: 1px solid #04c001;
+}
+
+.btnConfirm:active{
+    background-color: #048f02;
+    border: 1px solid #048f02;
+}
+
+.btnCancel:active{
+    background-color: var(--red);
+    color: var(--white);
+    border: 1px solid var(--red);
+}
 
 #standByOrder.disable-button{
     display: none;
@@ -1179,6 +1210,16 @@ form{
     color: var(--light-green);
     font-size: 1.2rem;
 }
+
+
+
+
+
+
+
+
+
+
 
 
 @media (max-width: 340px){

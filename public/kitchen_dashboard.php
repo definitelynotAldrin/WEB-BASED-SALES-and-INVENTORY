@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 <span class="card-name order-number">Table No. ${order.customer_table}</span>
                                             </div>
                                             <div class="card-buttons button-disable">
-                                                <button class="btn-cancel" data-order-id="${order.order_id}">Cancel</button>
+                                                <button class="btn-cancel" id="cancel-order-button" data-order-id="${order.order_id}">Cancel</button>
                                                 <button class="btn-view view-prepare-orders" data-order-id="${order.order_id}">View Order</button>
                                                 <button class="btn-confirm" data-order-id="${order.order_id}">Confirm</button>
                                             </div>
@@ -301,6 +301,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 <span class="card-name order-number">Table No. ${order.customer_table}</span>
                                             </div>
                                             <div class="card-buttons button-disable">
+                                                <button class="btn-cancel" id="cancel-process-order" data-order-id="${order.order_id}">Cancel</button>
                                                 <button class="btn-view view-process-orders" data-order-id="${order.order_id}">View Order</button>
                                                 <button class="btn-serve" data-order-id="${order.order_id}">serve</button>
                                             </div>
@@ -510,36 +511,31 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
 
 
-                $(document).ready(function() {
-                    // Function to check stocks and delete order
-                    function cancelOrder(orderId) {
+                $('#cancel-order-button').on('click', function() {
+                    var orderId = $(this).data('order-id'); // Get order ID from button data attribute
+
+                    if (confirm('Are you sure you want to cancel this order?')) {
                         $.ajax({
-                            url: '../php/cancel_order.php',  // Adjust this PHP script path as needed
+                            url: '../php/cancel_order.php', // PHP script to handle cancellation
                             type: 'POST',
                             data: { order_id: orderId },
-                            dataType: 'json',
                             success: function(response) {
-                                if (response.success) {
-                                    alert('Order canceled successfully.');
-                                    // Refresh the order list or update UI as needed
+                                var data = JSON.parse(response);
+                                if (data.status === 'success') {
+                                    alert(data.message); // Display success message
+                                    // Optionally refresh the page or update the UI to reflect the canceled order
+                                    location.reload();
                                 } else {
-                                    alert(response.error || 'Failed to cancel order.');
+                                    alert(data.message); // Display error message
                                 }
                             },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                console.log('Error canceling order: ' + textStatus, errorThrown);
+                            error: function(xhr, status, error) {
+                                alert('Error: ' + error); // Handle AJAX errors
                             }
                         });
                     }
-
-                    // Bind click event to the btn-cancel
-                    $(document).on('click', '.btn-cancel', function() {
-                        const orderId = $(this).data('order-id');
-                        if (confirm('Are you sure you want to cancel this order?')) {
-                            cancelOrder(orderId); // Call the function to cancel the order
-                        }
-                    });
                 });
+
 
 
                 $(document).ready(function() {
@@ -564,6 +560,57 @@ document.addEventListener("DOMContentLoaded", function() {
                                 success: function(response) {
                                     if (response.success) {
                                         displaySuccessMessage('Order confirmed successfully.');
+                                        // You can refresh the page or update the UI as needed
+                                        fetchPrepareOrders();
+                                        fetchProcessOrders();
+                                        fetchServedOrders();
+                                    } else {
+                                        alert('Failed to confirm order: ' + response.error);
+                                    }
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.log('Error confirming order: ' + textStatus, errorThrown);
+                                }
+                            });
+
+                            // Hide the popup after confirming
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+
+                        // Handle cancellation (no button)
+                        $('.btnCancel').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+                            // Hide the popup if "no" is clicked
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+                    });
+                });
+
+                $(document).ready(function() {
+                    // When the confirm button is clicked
+                    $(document).on('click', '#cancel-process-order', function() {
+                        var orderId = $(this).data('order-id'); // Get the order ID from the button
+
+                        // Show the custom confirmation popup
+                        $('#question').text('Are you sure you want to cancel processing this order?');
+                        $('.popup-confirmation-container').fadeIn(); // Show the popup
+                        $('.popup-overlay').fadeIn();
+
+                        // Handle confirmation (yes button)
+                        $('.btnConfirm').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+
+                            // Send AJAX request to update order status
+                            $.ajax({
+                                url: '../php/cancel_process_order.php',  // Path to your PHP script
+                                type: 'POST',
+                                data: { order_id: orderId },
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response.success) {
+                                        displaySuccessMessage('Process order cancelled!.');
                                         // You can refresh the page or update the UI as needed
                                         fetchPrepareOrders();
                                         fetchProcessOrders();
@@ -754,7 +801,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="pop-up-container popup-confirmation-container">
                     <div class="pop-up-content popup-confirmation-content">
                         <i class="fa-solid fa-question"></i>
-                        <h1>Click yes for confirmation!</h1>
+                        <h1 id="question">Are you want to process this order?</h1>
                         <div class="pop-up-buttons logout-buttons">
                             <a href="#" class="btn-second btnCancel">no</a>
                             <a href="#" class="btn-first btnConfirm">yes</a>

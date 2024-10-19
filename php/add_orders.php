@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Insert new order details
                     $detailSql = "INSERT INTO order_details (order_id, menu_item_stock_id, quantity, menu_price, sub_total, order_item_status) VALUES (?, ?, ?, ?, ?, 'prepare')";
                     $detailStmt = $conn->prepare($detailSql);
-                    $detailStmt->bind_param("iidds", $orderId, $menuItemId, $quantity, $menuPrice, $subTotal);
+                    $detailStmt->bind_param("iiddd", $orderId, $menuItemId, $quantity, $menuPrice, $subTotal);
                     $detailStmt->execute();
 
                     // Fetch related stock information from menu_item_stocks
