@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 $current_date = date('Y-m-d');
 
 // Fetch unpaid orders for the current date
-$query = "SELECT * FROM orders WHERE table_status = 1 AND payment_status = 'Unpaid' AND order_date = '$current_date'";
+$query = "SELECT * FROM orders WHERE table_status = 1 AND payment_status = 'unpaid' AND order_date = '$current_date'";
 $result = mysqli_query($conn, $query);
 
 // Check if any unpaid orders exist

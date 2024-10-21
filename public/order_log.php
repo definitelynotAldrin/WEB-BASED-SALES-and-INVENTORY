@@ -231,31 +231,22 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="menu-section-container order-log-section">
                 <div class="first-panel-section order-log-content">
-                        <div class="first-panel-header">
-                            <input type="text" placeholder="search customer" id="search_customer" name="search_customer">
-                            <input type="date" name="search_date" id="search_date">
-                        </div>
-                        <div class="bottom-card-content customer-card-container">
-                            <div class="bottom-cards customers-cards">
-                                <div class="bottom-cards-group customer-details">
-                                    <h1 class="bottom-cards-customer">christian campbell</h1>
-                                </div>
-                                <div class="bottom-cards-group settlement">
-                                    <h3>order date & time</h3>
-                                    <span class="date-time">08/8/2024 12:12 PM</span>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    
+                    <div class="first-panel-header">
+                        <input type="text" placeholder="Search customer" id="search_customer" name="search_customer">
+                        <input type="date" name="search_date" id="search_date">
+                    </div>
+                    <div class="bottom-card-content customer-card-container">
+                        <!-- Orders will be dynamically inserted here -->
+                    </div>
                 </div>
+
                 <div class="second-panel-section order-log-content">
                     <div class="second-panel-header">
-                        <h1 class="header-title customer-name">John Doe</h1>
+                        <h1 class="header-title customer-name"></h1>
                         <h1 class="header-title customer-order-datetime">
                             order date & time:
-                            <span class="order-date">08/10/2024</span>
-                            <span class="order-time">11:24 AM</span>
+                            <span class="order-date"></span>
+                            <span class="order-time"></span>
                         </h1>
                     </div>
                     <div class="second-panel-card-container order-summary-section">
@@ -266,44 +257,13 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <th class="order-header">order</th>
                                         <th class="quantity-header">quantity</th>
                                         <th class="subtotal-header">sub-total</th>
-                                        <!-- <th class="action-header"></th> -->
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
                                     <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lambing</td>
-                                        <td>5 Kilo (s)</td>
-                                        <td>&#8369;800.00</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -312,11 +272,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group total-field">
                                     <h3>order status</h3>
-                                    <span>process</span>
+                                    <span></span>
                                 </div>
                                 <div class="card-bottom-group total-field">
                                     <h3>total</h3>
-                                    <span>&#8369; 1000.00</span>
+                                    <span></span>
                                 </div>
                             </div>
                             <div class="card-bottom-groups">
@@ -327,54 +287,107 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
 
                         </div>
-                        <!-- <div class="button-section">
-                            <button>
-                                <span>proceed to kitchen</span>
-                                <i class="fa-solid fa-arrow-right-long"></i>
-                            </button>
-                        </div> -->
                     </div>
                 </div>
             </div>
-            <div class="popup-overlay"></div>
+            <script>
+                $(document).ready(function() {
+                    function fetchOrdersHistory() {
+                        const searchCustomer = $('#search_customer').val();
+                        const searchDate = $('#search_date').val();
 
-            <!-- <div class="popup-overlay"></div>
-            <div class="popup-form-container">
-                <div class="popup-form-header">
-                    <h1>update item / add new stock</h1>
-                    <i class="fa-regular fa-circle-xmark btn-close"></i>
-                </div>
-                <div class="popup-content">
-                    <form action="" class="popup-form">
-                        <div class="form-groups popup-form-groups">
-                            <div class="form-group">
-                                <label for="">item name</label>
-                                <input type="text" id="item_name" name="item_name">
-                            </div>
-                            <div class="form-group">
-                                <label for="">stocks quantity</label>
-                                <input type="number" id="stock_quantity" name="stock_quantity" step="1" min="0">
-                            </div>
-                        </div>
-                        <div class="menu-category item-category">
-                            <select name="item_category" id="">
-                                <option value="" hidden>select menu category</option>
-                                <option value="Main Course">main course</option>
-                                <option value="Dessert">Dessert</option>
-                                <option value="Beverages">beverages</option>
-                            </select>
-                        </div>
-                        <div class="form-groups button-group">
-                            <button class="btn-save">
-                                <i class="fa-regular fa-floppy-disk"></i>
-                                <span>save menu</span>
-                            </button>
-                        </div>
-                    </form> 
-                </div>
-            </div> -->
-        <div class="delete-confirmation-overlay"></div>
-        <div class="delete-confirmation-container">
+                        $.ajax({
+                            url: '../php/fetch_orders_log.php', // Your PHP script
+                            type: 'GET',
+                            data: {
+                                search_customer: searchCustomer,
+                                search_date: searchDate
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                $('.customer-card-container').empty(); // Clear previous results
+                                if (data.success && data.orders.length > 0) {
+                                    $.each(data.orders, function(index, order) {
+                                        $('.customer-card-container').append(`
+                                            <div class="bottom-cards customers-cards" data-order-id="${order.order_id}">
+                                                <div class="bottom-cards-group customer-details">
+                                                    <h1 class="bottom-cards-customer">${order.customer_name}</h1>
+                                                </div>
+                                                <div class="bottom-cards-group settlement">
+                                                    <h3>Order Date & Time</h3>
+                                                    <span class="date-time">${order.order_date} ${order.order_time}</span>
+                                                </div>
+                                            </div>
+                                        `);
+                                    });
+                                } else {
+                                    $('.customer-card-container').append('<p>No orders found.</p>');
+                                }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log("Error fetching orders: " + textStatus, errorThrown);
+                            }
+                        });
+                    }
+
+                    // Trigger fetchOrdersHistory on input
+                    $('#search_customer, #search_date').on('input', fetchOrdersHistory);
+
+                    // Initial load
+                    fetchOrdersHistory();
+                });
+
+
+                $(document).on('click', '.customers-cards', function() {
+                    var orderId = $(this).data('order-id'); // Get the order ID from the clicked card
+                    console.log(orderId); 
+                    // AJAX request to fetch the order details
+                    $.ajax({
+                        url: '../php/fetch_order_log_details.php', // PHP script to handle fetching order details
+                        type: 'GET',
+                        data: { order_id: orderId }, // Send the order ID
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                // Update customer name and order date/time
+                                $('.customer-name').text(response.customer_name);
+                                $('.order-date').text(response.order_date);
+                                $('.order-time').text(response.order_time);
+
+                                // Clear the existing table data
+                                $('.table-body').empty();
+
+                                // Populate the table with the order details
+                                $.each(response.order_details, function(index, detail) {
+                                    $('.table-body').append(`
+                                        <tr>
+                                            <td>${detail.item_name}</td>
+                                            <td>${detail.quantity}</td>
+                                            <td>&#8369; ${detail.sub_total}</td>
+                                        </tr>
+                                    `);
+                                });
+
+                                // Update total, order status, and note
+                                $('.total-section .total-field span').html(`&#8369; ${response.total_amount}`);
+                                $('.total-section .total-field:first-of-type span').text(response.order_status);
+                                $('#customer_note').val(response.customer_note);
+                            } else {
+                                console.log("Error fetching order details.");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log("AJAX Error: " + status + error);
+                        }
+                    });
+                });
+
+
+
+            </script>
+            <div class="popup-overlay"></div>
+            <div class="delete-confirmation-overlay"></div>
+            <div class="delete-confirmation-container">
             <div class="delete-confirmation-content">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <h1>Are you sure you want?</h1>

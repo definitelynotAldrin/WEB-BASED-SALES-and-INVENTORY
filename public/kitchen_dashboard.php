@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             fetchLowStockItems();
 
                             // Optional: Set interval to refresh the notifications periodically
-                            setInterval(fetchLowStockItems, 30000); // Refresh every 30 seconds
+                            setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
                         });
 
                         
@@ -511,30 +511,57 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
 
 
-                $('#cancel-order-button').on('click', function() {
-                    var orderId = $(this).data('order-id'); // Get order ID from button data attribute
+                // Assuming jQuery is being used for the AJAX call
+                $(document).on('click', '#cancel-order-button', function() {
+                    var orderId = $(this).data('order-id');
+                    $('#question').text('Are you sure you want to cancel this order?');
+                    $('.popup-confirmation-container').fadeIn(); // Show the popup
+                    $('.popup-overlay').fadeIn();
 
-                    if (confirm('Are you sure you want to cancel this order?')) {
+                    $('.btnConfirm').off('click').on('click', function(e) {
+                        e.preventDefault(); // Prevent default link behavior
+
+                        // Send AJAX request to update order status
                         $.ajax({
-                            url: '../php/cancel_order.php', // PHP script to handle cancellation
+                            url: '../php/cancel_order.php', // Ensure this path is correct
                             type: 'POST',
                             data: { order_id: orderId },
                             success: function(response) {
-                                var data = JSON.parse(response);
-                                if (data.status === 'success') {
-                                    alert(data.message); // Display success message
-                                    // Optionally refresh the page or update the UI to reflect the canceled order
-                                    location.reload();
+                                // Parse JSON response
+                                var res = JSON.parse(response);
+
+                                if (res.success) {
+                                    // Handle success: You can display a message or reload the page
+                                    displaySuccessMessage('Order canceled successfully.');
+                                    fetchPrepareOrders();
                                 } else {
-                                    alert(data.message); // Display error message
+                                    // Handle error
+                                    alert('Error: ' + res.message);
                                 }
                             },
                             error: function(xhr, status, error) {
-                                alert('Error: ' + error); // Handle AJAX errors
+                                // Handle AJAX error
+                                console.error('AJAX Error: ' + status + ' - ' + error);
+                                alert('Failed to cancel the order.');
                             }
                         });
-                    }
+
+                        // Hide the popup after confirming
+                        $('.popup-confirmation-container').fadeOut();
+                        $('.popup-overlay').fadeOut();
+                    });
+
+                        // Handle cancellation (no button)
+                        $('.btnCancel').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+                            // Hide the popup if "no" is clicked
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+
                 });
+
+
 
 
 

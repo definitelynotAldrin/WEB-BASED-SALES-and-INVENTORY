@@ -51,9 +51,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $fileName = basename($_FILES["item_photo"]["name"]);
                 $filePath = "../uploads/" . $fileName;
 
-                $sql = "UPDATE menu_items SET item_name = ?, item_price = ?, item_category = ?, item_image = ? WHERE item_id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssssi", $itemName, $itemPrice, $itemCat, $fileName, $itemId);
+                // Move the new uploaded image
+                if (move_uploaded_file($_FILES["item_photo"]["tmp_name"], $filePath)) {
+                    // Delete the old image
+                    if (!empty($_POST['current_image']) && file_exists("../uploads/" . $_POST['current_image'])) {
+                        unlink("../uploads/" . $_POST['current_image']);
+                    }
+
+                    // Update the database with new image
+                    $sql = "UPDATE menu_items SET item_name = ?, item_price = ?, item_category = ?, item_image = ? WHERE item_id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ssssi", $itemName, $itemPrice, $itemCat, $fileName, $itemId);
+                } else {
+                    $errorMsg = "Failed to upload image";
+                    header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
+                    exit;
+                }
             } else {
                 $errorMsg = "Invalid file type. Only JPG, PNG, and GIF allowed.";
                 header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
@@ -65,6 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sssi", $itemName, $itemPrice, $itemCat, $itemId);
         }
+
 
         if ($stmt->execute()) {
             $stmt->close();

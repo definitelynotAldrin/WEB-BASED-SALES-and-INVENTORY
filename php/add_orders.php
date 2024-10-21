@@ -7,7 +7,7 @@ include_once "../includes/connection.php"; // Ensure your connection.php is corr
 // Check if POST data is received
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if customer info is provided and not empty
-    if (!empty($_POST['customer_name']) && !empty($_POST['customer_note']) && !empty($_POST['customer_table'])) {
+    if (!empty($_POST['customer_name']) && !empty($_POST['customer_note']) && isset($_POST['customer_table'])) {
         $customerName = $_POST['customer_name'];
         $customerNote = $_POST['customer_note'];
         $customerTable = $_POST['customer_table'];
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 // Insert a new order
-                $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status, table_status, payment_status) VALUES (?, ?, ?, ?, 'prepare', 1, 'Unpaid')";
+                $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status, table_status, payment_status) VALUES (?, ?, ?, ?, 'prepare', 1, 'unpaid')";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("sssd", $customerName, $customerNote, $customerTable, $totalAmount);
                 $stmt->execute();

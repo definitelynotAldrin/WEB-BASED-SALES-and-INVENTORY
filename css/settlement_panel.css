@@ -488,8 +488,7 @@
     flex-direction: column;
 }
 
-.popup-order-name,
-.popup-order-number{
+.popup-card-header-col h1{
     text-transform: capitalize;
     font-size: 1rem;
     font-weight: 600;

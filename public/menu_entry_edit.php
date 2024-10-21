@@ -20,7 +20,7 @@ if ($user_role !== 'user_admin') {
 include_once "../includes/connection.php";
 
 if (!isset($_GET['item_id'])) {
-    $errorMsg = 'Action';
+    $errorMsg = 'Something went wrong!';
     header("Location: ../public/menu_entry.php?error=$errorMsg");
     exit();
 }

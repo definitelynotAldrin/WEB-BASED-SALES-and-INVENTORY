@@ -535,7 +535,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
 
 
-                        function fetchMenuItems() {
+                            function fetchMenuItems() {
                                 // Get selected category and search input
                                 const selectedCategory = $('#menu_order_category').val();
                                 const searchQuery = $('#search_menu').val();
@@ -889,6 +889,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 const customerName = $(this).data('customer-name');
                                                 const customerTable = $(this).data('customer-table');
                                                 const orderId = $(this).data('order-id');
+
+                                                $('.table-orders-container').fadeOut();
+                                                $('#popup-overlay').fadeOut();
 
                                                 // Populate the customer fields in the form
                                                 $('#occupied_table').removeAttr('disabled').removeAttr('hidden');

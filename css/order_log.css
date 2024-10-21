@@ -309,7 +309,7 @@
     width: 50%;
     border: 1px solid rgba(0, 0, 0, 0.1);
     background: var(--secondary-white);
-    padding: 1.5rem 2rem;
+    padding: 1.5rem;
     border-radius: 6px;
     position: relative;
 }
@@ -360,7 +360,7 @@
 .bottom-cards{
     display: flex;
     align-items: center;
-    /* justify-content: space-between; */
+    justify-content: space-between;
     gap: 1.5rem;
     border: 1px solid rgba(0, 0, 0, 0.1);
     background: var(--semi-white);
@@ -389,7 +389,7 @@
 }
 
 .settlement{
-    width: 210px;
+    width: 180px;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     padding-left: 1rem;
     
@@ -413,7 +413,7 @@
     width: 50%;
     border: 1px solid rgba(0, 0, 0, 0.1);
     background: var(--secondary-white);
-    padding: 1.5rem 2rem;
+    padding: 1.5rem;
     border-radius: 6px;
 }
 
@@ -451,8 +451,9 @@
 }
 
 .table-container{
-    max-height: 350px;
     overflow: auto;
+    height: 100vh;
+    max-height: 250px;
 }
 
 table {

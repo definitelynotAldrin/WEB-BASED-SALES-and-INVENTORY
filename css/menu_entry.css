@@ -1132,6 +1132,8 @@ select{
     }
 }
 
+
+
 @media screen and (min-width: 1030px) and (max-width: 1190px){
 
     .menu-card-content{
@@ -1155,6 +1157,17 @@ select{
 
     .menu-cards-buttons{
         flex-direction: row;
+    }
+
+    .menu-card-img{
+        width: 100%;
+    }
+}
+
+@media (max-width: 1200px){
+
+    .menu-card-img{
+        width: 100%;
     }
 }
 

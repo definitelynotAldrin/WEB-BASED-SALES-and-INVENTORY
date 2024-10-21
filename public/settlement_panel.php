@@ -238,43 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <img src="../assets/fish haha.jpg" class="card-img order-img">
                             </div>
                             <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons">
-                                <button class="btn-settle">settle</button>
-                                <button class="btn-credit">credit</button>
-                            </div>
-                        </div>
-                        <div class="card order-item-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons">
-                                <button class="btn-settle">settle</button>
-                                <button class="btn-credit">credit</button>
-                            </div>
-                        </div>
-                        <div class="card order-item-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons">
-                                <button class="btn-settle">settle</button>
-                                <button class="btn-credit">credit</button>
-                            </div>
-                        </div>
-                        <div class="card order-item-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
+                                <span class="card-name table-number">Table # </span>
                             </div>
                             <div class="card-buttons">
                                 <button class="btn-settle">settle</button>
@@ -290,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <i class="fa-regular fa-circle-xmark btn-close"></i>
                        </div>
                        <div class="popup-card-header-col">
-                            <h1 class="popup-order-number">Order # 0000</h1>
+                            <h1 class="popup-table-number">table # 0000</h1>
                             <h1 class="popup-order-name">Customer name: <span>John Doe</span></h1>
                        </div>
                     </div>

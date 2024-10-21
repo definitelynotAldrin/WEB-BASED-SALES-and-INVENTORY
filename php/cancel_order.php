@@ -1,58 +1,80 @@
 <?php
-session_start();
-
-include_once "../includes/connection.php"; // Database connection
+include_once "../includes/connection.php";
 
 if (isset($_POST['order_id'])) {
-    $order_id = intval($_POST['order_id']);
-    
-    // Step 1: Retrieve the order items and associated stocks for the given order ID
-    $stmt = $conn->prepare("
-        SELECT oi.menu_item_id, oi.quantity, ms.stock_id, ms.quantity_required
-        FROM order_items oi
-        JOIN menu_item_stocks ms ON oi.menu_item_id = ms.menu_item_id
-        WHERE oi.order_id = ?
-    ");
-    $stmt->bind_param("i", $order_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $orderID = $_POST['order_id'];
 
-    $order_items = $result->fetch_all(MYSQLI_ASSOC);
-
-    if (empty($order_items)) {
-        echo json_encode(array('status' => 'error', 'message' => 'Order not found.'));
-        exit;
-    }
-
-    // Step 2: Begin a transaction to ensure everything happens atomically
+    // Begin a transaction
     $conn->begin_transaction();
 
     try {
-        // Step 3: Loop through the order items and restore the corresponding stock quantities
-        foreach ($order_items as $item) {
-            $stock_id = $item['stock_id'];
-            $quantity_to_restore = $item['quantity'] * $item['quantity_required'];  // Total stock to restore
+        // 1. Fetch all order details for the given order_id
+        $sql = "SELECT od.quantity, mis.menu_item_id, mis.stock_id, mis.quantity_required 
+                FROM order_details od 
+                JOIN menu_item_stocks mis ON od.menu_item_stock_id = mis.menu_item_id
+                WHERE od.order_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $orderID);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-            // Update stock quantity in the stocks table
-            $update_stock_stmt = $conn->prepare("UPDATE stocks SET stock_quantity = stock_quantity + ? WHERE stock_id = ?");
-            $update_stock_stmt->bind_param("di", $quantity_to_restore, $stock_id);
-            $update_stock_stmt->execute();
+        if ($result->num_rows > 0) {
+            // Array to hold stock adjustments
+            $stockAdjustments = [];
+
+            // 2. Loop through order details and handle stock adjustments
+            while ($row = $result->fetch_assoc()) {
+                $menuItemID = $row['menu_item_id']; // Use menu_item_id instead of menu_item_stock_id
+                $stockID = $row['stock_id']; // The stock item to be updated
+                $quantityOrdered = $row['quantity']; // Quantity ordered
+                $quantityRequired = $row['quantity_required']; // Quantity required per item in the recipe
+
+                // Calculate the total quantity to return to stock
+                $totalQuantityToReturn = $quantityOrdered * $quantityRequired;
+
+                // Store stock adjustments (group by stock_id)
+                if (isset($stockAdjustments[$stockID])) {
+                    $stockAdjustments[$stockID] += $totalQuantityToReturn;
+                } else {
+                    $stockAdjustments[$stockID] = $totalQuantityToReturn;
+                }
+            }
+
+            // 3. Update the stock quantities in the stocks table
+            foreach ($stockAdjustments as $stockID => $quantityToAdd) {
+                $updateStockSQL = "UPDATE stocks SET stock_quantity = stock_quantity + ? WHERE stock_id = ?";
+                $updateStockStmt = $conn->prepare($updateStockSQL);
+                $updateStockStmt->bind_param("ii", $quantityToAdd, $stockID);
+                $updateStockStmt->execute();
+            }
+
+            // 4. Delete the order from orders and order_details tables
+            $deleteOrderSQL = "DELETE FROM orders WHERE order_id = ?";
+            $deleteOrderStmt = $conn->prepare($deleteOrderSQL);
+            $deleteOrderStmt->bind_param("i", $orderID);
+            $deleteOrderStmt->execute();
+
+            $deleteOrderDetailsSQL = "DELETE FROM order_details WHERE order_id = ?";
+            $deleteOrderDetailsStmt = $conn->prepare($deleteOrderDetailsSQL);
+            $deleteOrderDetailsStmt->bind_param("i", $orderID);
+            $deleteOrderDetailsStmt->execute();
+
+            // Commit the transaction
+            $conn->commit();
+
+            // Send success response
+            echo json_encode(['success' => true]);
+        } else {
+            throw new Exception('No order details found for the given order ID.');
         }
-
-        // // Step 4: Mark the order as canceled in the orders table
-        // $update_order_stmt = $conn->prepare("UPDATE orders SET order_status = 'canceled' WHERE order_id = ?");
-        // $update_order_stmt->bind_param("i", $order_id);
-        // $update_order_stmt->execute();
-
-        // // Step 5: Commit the transaction
-        // $conn->commit();
-
-        echo json_encode(array('status' => 'success', 'message' => 'Order canceled and stock restored.'));
     } catch (Exception $e) {
-        // Step 6: If something goes wrong, roll back the transaction
+        // Rollback on error
         $conn->rollback();
-        echo json_encode(array('status' => 'error', 'message' => 'Failed to cancel order: ' . $e->getMessage()));
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
+
+    $stmt->close();
+    $conn->close();
 } else {
-    echo json_encode(array('status' => 'error', 'message' => 'Invalid request.'));
+    echo json_encode(['success' => false, 'message' => 'Invalid request']);
 }
