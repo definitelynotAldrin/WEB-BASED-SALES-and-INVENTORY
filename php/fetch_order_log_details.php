@@ -20,7 +20,7 @@ FROM
 JOIN 
     order_details od ON o.order_id = od.order_id 
 JOIN 
-    menu_items mi ON od.menu_item_stock_id = mi.item_id -- Corrected join condition to get the item name directly
+    menu_items mi ON od.menu_item_stock_id = mi.item_id 
 WHERE 
     o.order_id = ?";
 
@@ -33,11 +33,14 @@ WHERE
         // Fetch the first row
         $firstRow = $result->fetch_assoc();
 
+        // Convert order_time to 12-hour format with AM/PM
+        $formattedTime = date('h:i A', strtotime($firstRow['order_time']));
+
         // Store static order data once (only from the first row)
         $orderData = [
             'customer_name' => $firstRow['customer_name'],
             'order_date' => $firstRow['order_date'],
-            'order_time' => $firstRow['order_time'],
+            'order_time' => $formattedTime,  // Use formatted time here
             'customer_note' => $firstRow['customer_note'],
             'total_amount' => $firstRow['total_amount'],
             'order_status' => $firstRow['order_status']
@@ -60,7 +63,7 @@ WHERE
             'success' => true,
             'customer_name' => $orderData['customer_name'],
             'order_date' => $orderData['order_date'],
-            'order_time' => $orderData['order_time'],
+            'order_time' => $orderData['order_time'],  // Send the formatted time
             'customer_note' => $orderData['customer_note'],
             'total_amount' => $orderData['total_amount'],
             'order_status' => $orderData['order_status'],

@@ -1064,11 +1064,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="pop-up-container table-orders-container">
                         <div class="table-orders-header-container">
                             <h1 class="popup-table-title">orders</h1>
-                            <!-- <select name="order_status" id="order_status">
-                                <option value="prepare">prepare</option>
-                                <option value="process">process</option>
-                                <option value="served">served</option>
-                            </select> -->
                         </div>
                         <div class="table-orders-second-container">
                             <table>

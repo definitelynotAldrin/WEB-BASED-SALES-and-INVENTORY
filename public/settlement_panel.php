@@ -153,6 +153,8 @@ document.addEventListener("DOMContentLoaded", function() {
             </nav>
         </div>
         <div class="content-container">
+        <div class="alert error-message" id="error-container"></div>
+        <div class="success success-message" id="success-container"></div>
             <div class="content-header">
                 <div class="header-text">
                     <h1>Let's seize the day! <span></span></h1>
@@ -216,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             fetchLowStockItems();
 
                             // Optional: Set interval to refresh the notifications periodically
-                            setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
+                            setInterval(fetchLowStockItems, 30000); // Refresh every 30 seconds
                         });
 
                         
@@ -227,35 +229,336 @@ document.addEventListener("DOMContentLoaded", function() {
                     <i class="fa-solid fa-bars nav-bar"></i>
                 </div>
             </div>
+            <script>
+                function fetchOrders() {
+                    $.ajax({
+                        url: '../php/fetch_settlement_order.php', // PHP script to get today's orders
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(orders) {
+                            $('.orders-cards-container').empty(); // Clear existing orders
+                            if (orders.length > 0) {
+                                $.each(orders, function(index, order) {
+                                    $('.orders-cards-container').append(`
+                                        <div class="card order-item-card">
+                                            <div class="card-img-container">
+                                                <img src="../assets/Profile (1).png" class="card-img order-img">
+                                            </div>
+                                            <div class="card-details order-card-details">
+                                                <span class="card-name order-number">Table No. ${order.customer_table}</span>
+                                            </div>
+                                            <div class="card-buttons button-disable">
+                                                <button class="btn-settle" data-order-id="${order.order_id}">settle</button>
+                                                <button class="btn-credit" data-order-id="${order.order_id}">credit</button>
+                                            </div>
+                                        </div>
+                                    `);
+                                });
+                            } else {
+                                $('.orders-cards-container').append("<p>No orders available for today.</p>");
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log("Error fetching orders: " + textStatus, errorThrown);
+                        }
+                    });
+                }
+                fetchOrders();
+
+
+                $(document).ready(function() {
+                    // Handle "Settle" button click
+                    $(document).on('click', '.btn-settle', function() {
+                        const orderId = $(this).data('order-id'); // Get the order ID from the button
+
+                        // Send AJAX request to fetch the specific order details
+                        $.ajax({
+                            url: '../php/fetch_settlement_order_details.php', // Your PHP file for fetching order details
+                            type: 'GET',
+                            data: { order_id: orderId }, // Pass the order ID
+                            dataType: 'json',
+                            success: function(response) {
+                                console.log(JSON.stringify(response)); // Debugging log
+                            
+
+                                if (response.success) {
+
+                                    $('#order-id').val(orderId); // Set the value of the hidden input
+
+                                    console.log(orderId);
+                                    // Show the popup
+                                    $('.popup-settlement-paid').fadeIn();
+                                    $('.popup-overlay').fadeIn();
+
+                                    // Populate the popup with the order data
+                                    $('.popup-order-name span').text(response.customer_name);
+                                    $('.popup-table-number').text(`Table No. ${response.table_number}`);
+
+
+                                    // Empty the order summary table body before adding new data
+                                    const tbody = $('.popup-card-table tbody');
+                                    tbody.empty();
+
+                                    // Loop through each order detail and append to the table
+                                    response.order_details.forEach(function(orderDetail) {
+                                        const row = `
+                                            <tr>
+                                                <td>${orderDetail.item_name}</td>
+                                                <td>${orderDetail.quantity}</td>
+                                                <td>&#x20B1;${orderDetail.sub_total}</td>
+                                            </tr>
+                                        `;
+                                        tbody.append(row);
+                                    });
+
+                                    // Populate the total amount field
+                                    let totalAmount = parseFloat(response.total_amount);
+                                    $('#total-amount').val(totalAmount);
+                                    $('#hidden-total-amount').val(totalAmount);
+                                    
+
+                                    // Handle discount checkbox
+                                    $('#discount_box').on('change', function() {
+                                        if ($(this).is(':checked')) {
+                                            const discountedAmount = totalAmount * 0.80; // Apply 20% discount
+                                            $('#total-amount').val(discountedAmount.toFixed(2));
+                                            $('#discounted-amount').val(discountedAmount.toFixed(2));
+                                        } else {
+                                            $('#total-amount').val(totalAmount.toFixed(2)); // Reset to original total amount
+                                            $('#discounted-amount').val('');
+                                        }
+                                    });
+
+                                    // Calculate change on cash tendered input
+                                    $('.popup-card-input-group input').on('input', function() {
+                                        const cashTendered = parseFloat($(this).val()) || 0;
+                                        const currentTotalAmount = parseFloat($('#total-amount').val());
+                                        const change = (cashTendered - currentTotalAmount);
+                                        $('#total-change').val(change > 0 ? change : 0);
+                                    });
+
+                                } else {
+                                    alert('Failed to retrieve order details.');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error fetching order details:', error);
+                            }
+                        });
+                    });
+
+                    // Close the popup when overlay is clicked
+                    $('.popup-overlay').on('click', function() {
+                        $('.popup-settlement-paid').fadeOut();
+                        $('.popup-view-settled-orders').fadeOut();
+                        $('.popup-overlay').fadeOut();
+                    });
+
+                
+
+                    $(document).on('click', '.button-pay', function() {
+                         // Get the order_id from the hidden input field
+                        const orderId = $('#order-id').val();
+                        const totalAmount = $('#hidden-total-amount').val();
+                        const discountedAmount = $('#discounted-amount').val(); // Retrieve already calculated discount
+                        const cashTendered = $('#cash-tendered').val(); 
+                        const changeDue = $('#total-change').val();
+                        const paymentStatus = 'paid';
+
+                        // Log the data to console for debugging
+                        console.log("Order ID:", orderId);
+                        console.log("Total Amount:", totalAmount);
+                        console.log("Discounted Amount:", discountedAmount); // Now directly retrieved
+                        console.log("Cash Tendered:", cashTendered);
+                        console.log("Change Due:", changeDue);
+
+                        $('#question').text('Are you sure this order already paid?');
+                        $('.popup-confirmation-container').fadeIn(); // Show the popup
+                        $('.popup-overlay').fadeIn();
+
+                        $('.btnConfirm').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+
+                             // Send the payment data via AJAX to save
+                            $.ajax({
+                                url: '../php/save_payment.php', // Your PHP file for saving the payment
+                                type: 'POST',
+                                data: {
+                                    order_id: orderId, // Send the order ID from the hidden input
+                                    hidden_total_amount: totalAmount,
+                                    discounted_amount: discountedAmount,
+                                    cash_tendered: cashTendered,
+                                    change_due: changeDue,
+                                    payment_status: paymentStatus
+                                },
+                                success: function(response) {
+                                    displaySuccessMessage('Payment successfully saved!');
+                                    fetchOrders();
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error saving payment:', error);
+                                }
+                            });
+                            // Hide the popup after confirming
+                            $('.popup-settlement-paid').fadeOut();
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+
+                        // Handle cancellation (no button)
+                        $('.btnCancel').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+                            // Hide the popup if "no" is clicked
+                            $('.popup-confirmation-container').fadeOut();
+                        });
+
+                    });
+
+                });
+
+
+                function fetchSettledOrders() {
+                    $.ajax({
+                        url: '../php/fetch_settled_order.php', // PHP script to get today's orders
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(orders) {
+                            $('.orders-cards-container').empty(); // Clear existing orders
+                            if (orders.length > 0) {
+                                $.each(orders, function(index, order) {
+                                    $('.settled-orders-container').append(`
+                                        <div class="card order-serve-card">
+                                            <div class="card-img-container">
+                                                <img src="../assets/fish haha.jpg" class="card-img order-img">
+                                            </div>
+                                            <div class="card-details order-card-details">
+                                                <span class="card-name order-number">Table No. ${order.customer_table}</span>
+                                            </div>
+                                            <div class="card-buttons text-indicator">
+                                                <button class="btn-view" data-order-id="${order.order_id}">view orders</button>
+                                                <h3 class="card-text paid">
+                                                    <i class="fa-regular fa-circle-check"></i>
+                                                    <span>paid</span>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    `);
+                                });
+                            } else {
+                                $('.settled-orders-container').append("<p>No orders available for today.</p>");
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log("Error fetching orders: " + textStatus, errorThrown);
+                        }
+                    });
+                }
+                fetchSettledOrders();
+
+                $(document).on('click', '.btn-view', function() {
+                    const orderId = $(this).data('order-id'); // Get the order ID from the button
+
+                    // Send AJAX request to fetch the specific order details
+                    $.ajax({
+                        url: '../php/fetch_settled_order_details.php', // Your PHP file for fetching order details
+                        type: 'GET',
+                        data: { order_id: orderId }, // Pass the order ID
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log(JSON.stringify(response)); // Debugging log
+                        
+
+                            if (response.success) {
+
+                                $('#order-id').val(orderId); // Set the value of the hidden input
+
+                                console.log(orderId);
+                                // Show the popup
+                                $('.popup-view-settled-orders').fadeIn();
+                                $('.popup-overlay').fadeIn();
+
+                                // Populate the popup with the order data
+                                $('.popup-order-name span').text(response.customer_name);
+                                $('.popup-table-number').text(`Table No. ${response.table_number}`);
+
+
+                                // Empty the order summary table body before adding new data
+                                const tbody = $('.popup-card-table tbody');
+                                tbody.empty();
+
+                                // Loop through each order detail and append to the table
+                                response.order_details.forEach(function(orderDetail) {
+                                    const row = `
+                                        <tr>
+                                            <td>${orderDetail.item_name}</td>
+                                            <td>${orderDetail.quantity}</td>
+                                            <td>&#x20B1;${orderDetail.sub_total}</td>
+                                        </tr>
+                                    `;
+                                    tbody.append(row);
+                                });
+
+
+                            } else {
+                                alert('Failed to retrieve order details.');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error fetching order details:', error);
+                        }
+                    });
+                });
+
+
+
+                function displaySuccessMessage(message1) {
+                    // Create a div to hold the success message
+                    const messageDiv = $('<div class="success-message"></div>').text(message1);
+                        
+                    // Append the message to a specific container in your HTML
+                    $('#success-container').html(messageDiv);
+                    $('#success-container').removeClass('fadeOut').addClass('fadeIn');
+
+                    // Optionally, remove the message after a few seconds
+                    setTimeout(() => {
+                        $('#success-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                    }, 3000); // Change the duration as needed
+                }
+
+                function displayErrorMessage(message2) {
+                    // Create a div to hold the success message
+                    const messageDiv = $('<div class="error-message"></div>').text(message2);
+                        
+                    // Append the message to a specific container in your HTML
+                    $('#error-container').html(messageDiv);
+                    $('#error-container').removeClass('fadeOut').addClass('fadeIn');
+
+                    // Optionally, remove the message after a few seconds
+                    setTimeout(() => {
+                        $('#error-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                    }, 3000); // Change the duration as needed
+                }
+            </script>
             <div class="menu-section-container">
                 <div class="first-panel-section">
                     <div class="menu-header">
                         <h1 class="menu-header-title">unpaid</h1>
                     </div>
-                    <div class="first-panel-cards-container order-cards-container">
-                        <div class="card order-item-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name table-number">Table # </span>
-                            </div>
-                            <div class="card-buttons">
-                                <button class="btn-settle">settle</button>
-                                <button class="btn-credit">credit</button>
-                            </div>
-                        </div>
+                    <div class="first-panel-cards-container orders-cards-container">
+                        
                     </div> 
                 </div>
                 <div class="popup-card-container popup-settlement-paid">
                     <div class="popup-card-header">
                        <div class="popup-card-header-row">
                             <h1 class="popup-order-title">Checkout</h1>
-                            <i class="fa-regular fa-circle-xmark btn-close"></i>
                        </div>
                        <div class="popup-card-header-col">
-                            <h1 class="popup-table-number">table # 0000</h1>
-                            <h1 class="popup-order-name">Customer name: <span>John Doe</span></h1>
+                            <h1 class="popup-table-number">table No.</h1>
+                            <h1 class="popup-order-name">Customer name: <span></span></h1>
+                            <input type="hidden" name="order_id" id="order-id" value="">
+                            <input type="hidden" name="discounted_amount" id="discounted-amount">
+                            <input type="hidden" name="hidden_total_amount" id="hidden-total-amount">
                        </div>
                     </div>
                     <div class="popup-card-content">
@@ -271,41 +574,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Bangus</td>
-                                            <td>2 Kilo (s)</td>
-                                            <td>700</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                            <td>130</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Shrimp</td>
-                                            <td>2 Kilo (s)</td>
-                                            <td>800</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                            <td>130</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                            <td>130</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                            <td>130</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                            <td>130</td>
-                                        </tr>
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -313,31 +582,39 @@ document.addEventListener("DOMContentLoaded", function() {
                         <div class="popup-card-payment-container">
                             <h1 class="popup-card-content-title">order summary</h1>
                             <div class="popup-card-group-container">
-                                <div class="popup-card-group">
-                                    <label for="">total</label>
-                                    <div class="popup-card-input-group">
-                                        <span>&#x20B1;</span>
-                                        <input type="number" step="1" min="0" disabled>
+                                <div class="popup-card-groups">
+                                    <div class="popup-card-group">
+                                        <div class="popup-card-label">
+                                            <label>Total</label>
+                                            <div class="popup-card-label-discount">
+                                                <label>apply discount</label>
+                                                <input type="checkbox" name="discount_box" id="discount_box">
+                                            </div>
+                                        </div>
+                                        <div class="popup-card-input-group">
+                                            <span>&#x20B1;</span>
+                                            <input type="number" step="1" min="0" disabled id="total-amount">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="popup-card-groups">
                                     <div class="popup-card-group">
-                                        <label for="">cash tender</label>
+                                        <label>Cash Tendered</label>
                                         <div class="popup-card-input-group">
                                             <span>&#x20B1;</span>
-                                            <input type="number" step="1" min="0">
+                                            <input type="number" step="1" min="0" id="cash-tendered">
                                         </div>
                                     </div>
                                     <div class="popup-card-group">
-                                        <label for="">change</label>
+                                        <label>Change</label>
                                         <div class="popup-card-input-group">
                                             <span>&#x20B1;</span>
-                                            <input type="number" step="1" min="0">
+                                            <input type="number" step="1" min="0" disabled id="total-change">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="popup-card-button">
-                                    <button>
+                                    <button class="button-pay">
                                         <span>pay & save</span>
                                         <i class="fa-solid fa-arrow-right"></i>
                                     </button>
@@ -370,31 +647,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Bangus</td>
-                                            <td>2 Kilo (s)</td>
-                                            <td>700</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                            <td>130</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Shrimp</td>
-                                            <td>2 Kilo (s)</td>
-                                            <td>800</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                            <td>130</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rice</td>
-                                            <td>2</td>
-                                            <td>130</td>
-                                        </tr>
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -426,46 +679,54 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="second-panel-section">
                     <div class="menu-header">
                         <h1 class="menu-header-title">paid / credit</h1>
-                        <!-- <div class="dropdown-category menu-category">
-                            <select name="menu_category" id="">
-                                <option value="" hidden>select menu category</option>
-                                <option value="Main Course">main course</option>
-                                <option value="Dessert">Dessert</option>s
-                                <option value="Beverages">beverages</option>
-                            </select>
-                        </div> -->
                     </div>
-                    <div class="second-panel-card-container order-serve-section">
-                        <div class="card order-serve-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons text-indicator">
-                                <h3 class="card-text paid">
-                                    <i class="fa-regular fa-circle-check"></i>
-                                    <span>paid</span>
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="card order-serve-card">
-                            <div class="card-img-container">
-                                <img src="../assets/fish haha.jpg" class="card-img order-img">
-                            </div>
-                            <div class="card-details order-card-details">
-                                <span class="card-name order-number">Order # 0001</span>
-                            </div>
-                            <div class="card-buttons text-indicator">
-                                <h3 class="card-text credit">
-                                    <i class="fa-regular fa-circle-check"></i>
-                                    <span>Saved as Credit</span>
-                                </h3>
-                            </div>
-                        </div>                   
+                    <div class="second-panel-card-container settled-orders-container">
+                                           
                     </div>
                 </div>
+
+                <div class="popup-card-container popup-view-settled-orders">
+                    <div class="popup-card-header">
+                       <div class="popup-card-header-row">
+                            <h1 class="popup-order-title">Checkout</h1>
+                       </div>
+                       <div class="popup-card-header-col">
+                            <h1 class="popup-table-number">table No.</h1>
+                            <h1 class="popup-order-name">Customer name: <span></span></h1>
+                       </div>
+                    </div>
+                    <div class="popup-card-content">
+                        <div class="popup-card-table-container">
+                            <h1 class="popup-card-content-title">order summary</h1>
+                            <div class="popup-card-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Order name</th>
+                                            <th>quantity</th>
+                                            <th>sub-total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pop-up-container popup-confirmation-container">
+                    <div class="pop-up-content popup-confirmation-content">
+                        <i class="fa-solid fa-question"></i>
+                        <h1 id="question"></h1>
+                        <div class="pop-up-buttons logout-buttons">
+                            <a href="#" class="btn-second btnCancel">no</a>
+                            <a href="#" class="btn-first btnConfirm">yes</a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="popup-overlay"></div>
@@ -485,7 +746,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <!-- <script src="../js/menu_entry_panel.js"></script>
 <script src="../js/popup_forms.js"></script>
 <script src="../js/order_entry_panel.js"></script> -->
-<script src="../js/settlement_panel.js"></script>
+<!-- <script src="../js/settlement_panel.js"></script> -->
 <script src="../js/logout.js"></script>
 </body>
 </html>

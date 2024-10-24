@@ -10,6 +10,10 @@ $currentDate = date('Y-m-d');
 // SQL query with optional filters for customer name and search date
 $sql = "SELECT * FROM orders WHERE 1=1";
 
+// Prepare parameters and types
+$params = [];
+$types = "";
+
 // If no search date is provided, default to the current date
 if (empty($searchDate)) {
     $sql .= " AND order_date = ?";
@@ -41,11 +45,14 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $orders = [];
     while ($row = $result->fetch_assoc()) {
+        // Convert order_time to 12-hour format with AM/PM
+        $formattedTime = date('h:i A', strtotime($row['order_time']));
+
         $orders[] = [
             'order_id' => $row['order_id'],
             'customer_name' => $row['customer_name'],
             'order_date' => $row['order_date'],
-            'order_time' => $row['order_time']
+            'order_time' => $formattedTime  // Use formatted time here
         ];
     }
 

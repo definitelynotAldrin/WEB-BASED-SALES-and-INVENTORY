@@ -366,7 +366,11 @@
     background: var(--semi-white);
     padding: 10px;
     border-radius: 4px;
-  
+    cursor: pointer;
+}
+
+.bottom-cards:active{
+    opacity: 0.5;
 }
 
 .bottom-cards-group h1{

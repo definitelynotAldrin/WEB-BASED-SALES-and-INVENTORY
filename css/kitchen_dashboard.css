@@ -448,7 +448,6 @@
     flex-wrap: wrap;
     max-height: 450px;
     overflow: auto;
-    flex-direction: row-reverse;
 }
 
 .card{
