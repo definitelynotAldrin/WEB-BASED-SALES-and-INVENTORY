@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             fetchLowStockItems();
 
                             // Optional: Set interval to refresh the notifications periodically
-                            setInterval(fetchLowStockItems, 30000); // Refresh every 30 seconds
+                            setInterval(fetchLowStockItems, 10000); // Refresh every 30 seconds
                         });
 
                         
@@ -236,10 +236,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         type: 'GET',
                         dataType: 'json',
                         success: function(orders) {
-                            $('.orders-cards-container').empty(); // Clear existing orders
+                            $('#orders-settlement').empty();
                             if (orders.length > 0) {
                                 $.each(orders, function(index, order) {
-                                    $('.orders-cards-container').append(`
+                                    $('#orders-settlement').append(`
                                         <div class="card order-item-card">
                                             <div class="card-img-container">
                                                 <img src="../assets/Profile (1).png" class="card-img order-img">
@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     `);
                                 });
                             } else {
-                                $('.orders-cards-container').append("<p>No orders available for today.</p>");
+                                $('#orders-settlement').append("<p>No orders available for today.</p>");
                             }
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
@@ -263,7 +263,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                     });
                 }
-                fetchOrders();
+                $(document).ready(function() {
+                    fetchOrders();
+                });
+
 
 
                 $(document).ready(function() {
@@ -347,9 +350,67 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
                     });
 
+                    $(document).on('click', '.btn-credit', function() {
+                        const orderId = $(this).data('order-id'); // Get the order ID from the button
+
+                        // Send AJAX request to fetch the specific order details
+                        $.ajax({
+                            url: '../php/fetch_settlement_order_details.php', // Your PHP file for fetching order details
+                            type: 'GET',
+                            data: { order_id: orderId }, // Pass the order ID
+                            dataType: 'json',
+                            success: function(response) {
+                                console.log(JSON.stringify(response)); // Debugging log
+                            
+
+                                if (response.success) {
+
+                                    $('#credit-order-id').val(orderId); // Set the value of the hidden input
+
+                                    console.log(orderId);
+                                    // Show the popup
+                                    $('.popup-settlement-credit').fadeIn();
+                                    $('.popup-overlay').fadeIn();
+
+                                    // Populate the popup with the order data
+                                    $('.popup-order-name span').text(response.customer_name);
+                                    $('.popup-table-number').text(`Table No. ${response.table_number}`);
+
+
+                                    // Empty the order summary table body before adding new data
+                                    const tbody = $('.popup-card-table tbody');
+                                    tbody.empty();
+
+                                    // Loop through each order detail and append to the table
+                                    response.order_details.forEach(function(orderDetail) {
+                                        const row = `
+                                            <tr>
+                                                <td>${orderDetail.item_name}</td>
+                                                <td>${orderDetail.quantity}</td>
+                                                <td>&#x20B1;${orderDetail.sub_total}</td>
+                                            </tr>
+                                        `;
+                                        tbody.append(row);
+                                    });
+
+                                    // Populate the total amount field
+                                    let totalAmount = parseFloat(response.total_amount);
+                                    $('#credit-total-amount').val(totalAmount);
+
+                                } else {
+                                    alert('Failed to retrieve order details.');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error fetching order details:', error);
+                            }
+                        });
+                    });
+
                     // Close the popup when overlay is clicked
                     $('.popup-overlay').on('click', function() {
                         $('.popup-settlement-paid').fadeOut();
+                        $('.popup-settlement-credit').fadeOut();
                         $('.popup-view-settled-orders').fadeOut();
                         $('.popup-overlay').fadeOut();
                     });
@@ -357,7 +418,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 
 
                     $(document).on('click', '.button-pay', function() {
-                         // Get the order_id from the hidden input field
+                        // Get the order_id from the hidden input field
                         const orderId = $('#order-id').val();
                         const totalAmount = $('#hidden-total-amount').val();
                         const discountedAmount = $('#discounted-amount').val(); // Retrieve already calculated discount
@@ -368,23 +429,25 @@ document.addEventListener("DOMContentLoaded", function() {
                         // Log the data to console for debugging
                         console.log("Order ID:", orderId);
                         console.log("Total Amount:", totalAmount);
-                        console.log("Discounted Amount:", discountedAmount); // Now directly retrieved
+                        console.log("Discounted Amount:", discountedAmount);
                         console.log("Cash Tendered:", cashTendered);
                         console.log("Change Due:", changeDue);
 
-                        $('#question').text('Are you sure this order already paid?');
+                        $('#question').text('Are you sure settling this order?');
                         $('.popup-confirmation-container').fadeIn(); // Show the popup
                         $('.popup-overlay').fadeIn();
+                        $('.popup-overlay').css('pointer-events', 'none');
 
                         $('.btnConfirm').off('click').on('click', function(e) {
                             e.preventDefault(); // Prevent default link behavior
 
-                             // Send the payment data via AJAX to save
+                            // Send the payment data via AJAX to save
                             $.ajax({
-                                url: '../php/save_payment.php', // Your PHP file for saving the payment
+                                url: '../php/save_payment_as_paid.php',
                                 type: 'POST',
+                                dataType: 'json', // Specify that the response should be JSON
                                 data: {
-                                    order_id: orderId, // Send the order ID from the hidden input
+                                    order_id: orderId,
                                     hidden_total_amount: totalAmount,
                                     discounted_amount: discountedAmount,
                                     cash_tendered: cashTendered,
@@ -392,17 +455,26 @@ document.addEventListener("DOMContentLoaded", function() {
                                     payment_status: paymentStatus
                                 },
                                 success: function(response) {
-                                    displaySuccessMessage('Payment successfully saved!');
-                                    fetchOrders();
+                                    if (response.status === 'success') {
+                                        displaySuccessMessage('Payment successfully saved!');
+                                        $('.popup-settlement-paid').fadeOut();
+                                        $('.popup-confirmation-container').fadeOut();
+                                        $('.popup-overlay').fadeOut();
+                                        fetchOrders();
+                                        fetchSettledOrders();
+                                    } else {
+                                        displayErrorMessage(response.message);
+                                        $('.popup-confirmation-container').fadeOut();
+                                    }
                                 },
                                 error: function(xhr, status, error) {
-                                    console.error('Error saving payment:', error);
+                                    // This will help debug any server errors
+                                    console.log("AJAX Error:", error);
+                                    displayErrorMessage('An unexpected error occurred.');
+                                    $('.popup-confirmation-container').fadeOut();
                                 }
                             });
-                            // Hide the popup after confirming
-                            $('.popup-settlement-paid').fadeOut();
-                            $('.popup-confirmation-container').fadeOut();
-                            $('.popup-overlay').fadeOut();
+
                         });
 
                         // Handle cancellation (no button)
@@ -410,11 +482,78 @@ document.addEventListener("DOMContentLoaded", function() {
                             e.preventDefault(); // Prevent default link behavior
                             // Hide the popup if "no" is clicked
                             $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').css('pointer-events', 'auto');
                         });
 
                     });
 
+                    $(document).on('click', '.button-credit', function() {
+                        // Get the order_id from the hidden input field
+                        const orderId = $('#credit-order-id').val();
+                        const totalAmount = $('#credit-total-amount').val();
+                        const creditNote = $('#credit-note').val();
+                        const paymentStatus = 'credit';
+
+                        // Log the data to console for debugging
+                        console.log("Order ID:", orderId);
+                        
+
+                        $('#question').text('Are you sure you want to save this order as credit?');
+                        $('.popup-confirmation-container').fadeIn(); // Show the popup
+                        $('.popup-overlay').fadeIn();
+                        $('.popup-overlay').css('pointer-events', 'none');
+
+                        $('.btnConfirm').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+
+                            // Send the payment data via AJAX to save
+                            $.ajax({
+                                url: '../php/save_payment_as_credit.php',
+                                type: 'POST',
+                                dataType: 'json', // Specify that the response should be JSON
+                                data: {
+                                    order_id: orderId,
+                                    total_amount: totalAmount,
+                                    credit_note: creditNote,
+                                    payment_status: paymentStatus
+                                },
+                                success: function(response) {
+                                    if (response.status === 'success') {
+                                        displaySuccessMessage('Order successfully saved as credit!');
+                                        $('.popup-settlement-credit').fadeOut();
+                                        $('.popup-confirmation-container').fadeOut();
+                                        $('.popup-overlay').fadeOut();
+                                        fetchOrders();
+                                        fetchSettledOrders();
+                                    } else {
+                                        displayErrorMessage(response.message);
+                                        $('.popup-confirmation-container').fadeOut();
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    // This will help debug any server errors
+                                    console.log("AJAX Error:", error);
+                                    displayErrorMessage('An unexpected error occurred.');
+                                    $('.popup-confirmation-container').fadeOut();
+                                }
+                            });
+
+                        });
+
+                        // Handle cancellation (no button)
+                        $('.btnCancel').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+                            // Hide the popup if "no" is clicked
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').css('pointer-events', 'auto');
+                        });
+
+                    });
+
+
                 });
+
+                
 
 
                 function fetchSettledOrders() {
@@ -426,6 +565,26 @@ document.addEventListener("DOMContentLoaded", function() {
                             $('.orders-cards-container').empty(); // Clear existing orders
                             if (orders.length > 0) {
                                 $.each(orders, function(index, order) {
+                                    let indicatorText = ''; // Initialize indicator text
+
+                                    // Determine which indicator to show
+                                    if (order.payment_status === 'paid') {
+                                        indicatorText = `
+                                            <h3 class="card-text paid">
+                                                <i class="fa-regular fa-circle-check"></i>
+                                                <span>Paid</span>
+                                            </h3>
+                                        `;
+                                    } else if (order.payment_status === 'credit') {
+                                        indicatorText = `
+                                            <h3 class="card-text credit">
+                                                <i class="fa-regular fa-circle-check"></i>
+                                                <span>Credit</span>
+                                            </h3>
+                                        `;
+                                    }
+
+                                    // Append the card with the relevant indicator text
                                     $('.settled-orders-container').append(`
                                         <div class="card order-serve-card">
                                             <div class="card-img-container">
@@ -435,11 +594,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 <span class="card-name order-number">Table No. ${order.customer_table}</span>
                                             </div>
                                             <div class="card-buttons text-indicator">
-                                                <button class="btn-view" data-order-id="${order.order_id}">view orders</button>
-                                                <h3 class="card-text paid">
-                                                    <i class="fa-regular fa-circle-check"></i>
-                                                    <span>paid</span>
-                                                </h3>
+                                                <button class="btn-view" data-order-id="${order.order_id}">View Orders</button>
+                                                ${indicatorText} <!-- Insert the indicator here -->
                                             </div>
                                         </div>
                                     `);
@@ -453,40 +609,30 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                     });
                 }
+
                 fetchSettledOrders();
 
                 $(document).on('click', '.btn-view', function() {
-                    const orderId = $(this).data('order-id'); // Get the order ID from the button
+                    const orderId = $(this).data('order-id');
 
-                    // Send AJAX request to fetch the specific order details
                     $.ajax({
-                        url: '../php/fetch_settled_order_details.php', // Your PHP file for fetching order details
+                        url: '../php/fetch_settled_order_details.php',
                         type: 'GET',
-                        data: { order_id: orderId }, // Pass the order ID
+                        data: { order_id: orderId },
                         dataType: 'json',
                         success: function(response) {
-                            console.log(JSON.stringify(response)); // Debugging log
-                        
-
                             if (response.success) {
+                                $('#order-id').val(orderId);
 
-                                $('#order-id').val(orderId); // Set the value of the hidden input
-
-                                console.log(orderId);
-                                // Show the popup
                                 $('.popup-view-settled-orders').fadeIn();
                                 $('.popup-overlay').fadeIn();
 
-                                // Populate the popup with the order data
                                 $('.popup-order-name span').text(response.customer_name);
                                 $('.popup-table-number').text(`Table No. ${response.table_number}`);
 
-
-                                // Empty the order summary table body before adding new data
                                 const tbody = $('.popup-card-table tbody');
                                 tbody.empty();
 
-                                // Loop through each order detail and append to the table
                                 response.order_details.forEach(function(orderDetail) {
                                     const row = `
                                         <tr>
@@ -498,9 +644,27 @@ document.addEventListener("DOMContentLoaded", function() {
                                     tbody.append(row);
                                 });
 
+                                // Set the values in the payment fields
+                                $('#display-total-amount').val(response.total_amount);
+                                $('#display-total-discounted-amount').val(response.discounted_amount);
+                                $('#display-cash-tendered').val(response.cash_tendered);
+                                $('#display-total-change').val(response.change_due);
+                                $('#display-credit-note').val(response.credit_note);
 
+                                // Check payment status and toggle field visibility
+                                if (response.payment_status === 'credit') {
+                                    $('#display-cash-tendered').closest('.popup-card-group').hide();
+                                    $('#display-total-change').closest('.popup-card-group').hide();
+                                    $('#display-total-discounted-amount').closest('.popup-card-group').hide();
+                                    $('#display-credit-note').closest('.popup-card-group').show();
+                                } else if (response.payment_status === 'paid') {
+                                    $('#display-cash-tendered').closest('.popup-card-group').show();
+                                    $('#display-total-change').closest('.popup-card-group').show();
+                                    $('#display-total-discounted-amount').closest('.popup-card-group').show();
+                                    $('#display-credit-note').closest('.popup-card-group').hide();
+                                }
                             } else {
-                                alert('Failed to retrieve order details.');
+                                displayErrorMessage('Failed to retrieve order details.');
                             }
                         },
                         error: function(xhr, status, error) {
@@ -508,6 +672,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                     });
                 });
+
+
+
 
 
 
@@ -544,7 +711,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="menu-header">
                         <h1 class="menu-header-title">unpaid</h1>
                     </div>
-                    <div class="first-panel-cards-container orders-cards-container">
+                    <div class="first-panel-cards-container orders-cards-container" id="orders-settlement">
                         
                     </div> 
                 </div>
@@ -623,15 +790,18 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div>
                     </div>
                 </div>
+
+<!-- -------------------------credit settlement-------------------------------------- -->
+
                 <div class="popup-card-container popup-settlement-credit">
                     <div class="popup-card-header">
                        <div class="popup-card-header-row">
                             <h1 class="popup-order-title">credit process</h1>
-                            <i class="fa-regular fa-circle-xmark btn-close"></i>
                        </div>
                        <div class="popup-card-header-col">
-                            <h1 class="popup-order-number">Order # 0000</h1>
-                            <h1 class="popup-order-name">Customer name: <span>John Doe</span></h1>
+                            <h1 class="popup-table-number"></h1>
+                            <h1 class="popup-order-name">Customer name: <span></span></h1>
+                            <input type="hidden" name="order_id" id="credit-order-id">
                        </div>
                     </div>
                     <div class="popup-card-content">
@@ -659,16 +829,16 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <label for="">total</label>
                                     <div class="popup-card-input-group">
                                         <span>&#x20B1;</span>
-                                        <input type="number" step="1" min="0">
+                                        <input type="number" step="1" min="0" id="credit-total-amount">
                                     </div>
                                 </div>
                                 <div class="popup-card-group">
                                     <label for="">additional note</label>
-                                    <textarea name="" id="" cols="20"></textarea>
+                                    <textarea name="credit_note" id="credit-note" cols="20"></textarea>
                                 </div>
                                 <div class="popup-card-button">
-                                    <button>
-                                        <span>save credit</span>
+                                    <button class="button-credit">
+                                        <span>save as credit</span>
                                         <i class="fa-solid fa-arrow-right"></i>
                                     </button>
                                 </div>
@@ -711,6 +881,47 @@ document.addEventListener("DOMContentLoaded", function() {
                                         
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                        <div class="popup-card-payment-container">
+                            <h1 class="popup-card-content-title">order summary</h1>
+                            <div class="popup-card-group-container">
+                                <div class="popup-card-groups">
+                                    <div class="popup-card-group">
+                                        <label>Total</label>
+                                        <div class="popup-card-input-group">
+                                            <span>&#x20B1;</span>
+                                            <input type="number" step="1" min="0" disabled id="display-total-amount">
+                                        </div>
+                                    </div>
+                                    <div class="popup-card-group">
+                                        <label>Discounted Amount</label>
+                                        <div class="popup-card-input-group">
+                                            <span>&#x20B1;</span>
+                                            <input type="number" step="1" min="0" disabled id="display-total-discounted-amount">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="popup-card-groups">
+                                    <div class="popup-card-group">
+                                        <label>Cash Tendered</label>
+                                        <div class="popup-card-input-group">
+                                            <span>&#x20B1;</span>
+                                            <input type="number" step="1" min="0" id="display-cash-tendered" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="popup-card-group">
+                                        <label>Change</label>
+                                        <div class="popup-card-input-group">
+                                            <span>&#x20B1;</span>
+                                            <input type="number" step="1" min="0" disabled id="display-total-change">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="popup-card-group" style="display: none;">
+                                    <label for="">additional note</label>
+                                    <textarea name="credit_note" id="display-credit-note" cols="20"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>

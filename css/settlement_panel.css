@@ -587,9 +587,6 @@
     padding: 20px;
 }
 
-.popup-card-payment-container{
-    max-width: 400px;
-}
 
 .popup-card-table{
     max-height: 240px;
@@ -626,7 +623,9 @@ td{
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    width: 100%;
 }
+
 
 .popup-card-group{
     display: flex;
@@ -755,6 +754,10 @@ td{
     box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 3;
     display: none;
+}
+
+.popup-confirmation-container{
+    width: 500px;
 }
 
 .pop-up-content{
@@ -898,6 +901,11 @@ td{
     .popup-card-content{
         flex-direction: column;
     }
+
+    .popup-card-groups{
+        flex-direction: column;
+    }
+    
 }
 
 

@@ -3,6 +3,8 @@
 header('Content-Type: application/json');
 include_once "../includes/connection.php";
 
+date_default_timezone_set('Asia/Manila');
+
 // Get the current date
 $current_date = date('Y-m-d');
 

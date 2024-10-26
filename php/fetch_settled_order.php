@@ -3,7 +3,7 @@ include_once "../includes/connection.php";
 
 $today = date('Y-m-d');
 
-$sql = "SELECT order_id, customer_table, customer_name FROM orders WHERE payment_status = 'paid' AND order_date = '$today'";
+$sql = "SELECT order_id, customer_table, customer_name, payment_status FROM orders WHERE (payment_status = 'paid' OR payment_status = 'credit') AND order_date = '$today'";
 $result = $conn->query($sql);
 
 $orders = array();
