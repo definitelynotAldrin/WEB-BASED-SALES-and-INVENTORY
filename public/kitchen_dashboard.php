@@ -351,9 +351,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
                 }
 
-                fetchPrepareOrders();
-                fetchProcessOrders();
-                fetchServedOrders();
+                $(document).ready(function() {
+                    fetchPrepareOrders();
+                    fetchProcessOrders();
+                    fetchServedOrders();
+
+                    setInterval(fetchPrepareOrders, 1000);
+                    setInterval(fetchProcessOrders, 1000);
+                    setInterval(fetchServedOrders, 1000);
+                });
+
 
                 $(document).ready(function() {
                     // Function to fetch order details and show them in the popup

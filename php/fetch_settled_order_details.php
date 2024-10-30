@@ -4,14 +4,15 @@ include_once "../includes/connection.php";
 if (isset($_GET['order_id'])) {
     $orderId = $_GET['order_id'];
 
-    // Fetch order details from 'orders', 'order_details', and 'payments'
+    // Updated SQL query to group items by item_name and order_item_status
     $sql = "SELECT 
             o.customer_name, 
             o.customer_table,
             o.total_amount, 
-            o.payment_status, -- Add this line
-            od.quantity, 
-            od.sub_total, 
+            o.payment_status, 
+            SUM(od.quantity) AS quantity,  -- Sum quantity for grouped items
+            SUM(od.sub_total) AS sub_total,  -- Sum sub_total for grouped items
+            od.order_item_status, 
             mi.item_name,
             p.cash_tendered, 
             p.change_due,
@@ -22,13 +23,14 @@ if (isset($_GET['order_id'])) {
         JOIN order_details od ON o.order_id = od.order_id
         JOIN menu_items mi ON od.menu_item_stock_id = mi.item_id
         JOIN payments p ON o.order_id = p.order_id
-        WHERE o.order_id = ?";
+        WHERE o.order_id = ?
+        GROUP BY mi.item_name, od.order_item_status";  // Group by item name and order item status
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $orderId);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $orderDetails = [];
         $firstRow = $result->fetch_assoc();
@@ -45,12 +47,13 @@ if (isset($_GET['order_id'])) {
             'credit_note' => $firstRow['credit_note']
         ];
 
-        // Fetch all order details in a loop
+        // Store the first item's details
         do {
             $orderDetails[] = [
                 'item_name' => $firstRow['item_name'],
                 'quantity' => $firstRow['quantity'],
-                'sub_total' => $firstRow['sub_total']
+                'sub_total' => $firstRow['sub_total'],
+                'order_item_status' => $firstRow['order_item_status'] // Include order item status
             ];
         } while ($firstRow = $result->fetch_assoc());
 
@@ -60,13 +63,13 @@ if (isset($_GET['order_id'])) {
             'customer_name' => $orderData['customer_name'],
             'table_number' => $orderData['table_number'],
             'total_amount' => $orderData['total_amount'],
-            'payment_status' => $orderData['payment_status'], // Include payment status
+            'payment_status' => $orderData['payment_status'],
             'cash_tendered' => $orderData['cash_tendered'],
             'change_due' => $orderData['change_due'],
             'discounted_amount' => $orderData['discounted_amount'],
             'credit_note' => $orderData['credit_note'],
             'order_details' => $orderDetails
-        ]);      
+        ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'No order found']);
     }
@@ -76,3 +79,4 @@ if (isset($_GET['order_id'])) {
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);
 }
+?>

@@ -18,25 +18,42 @@ if (isset($_GET['order_id'])) {
         if ($result->num_rows > 0) {
             $order = $result->fetch_assoc();
 
-            // Query to fetch order items with the status 'prepare'
+            // Initialize an array for items with the 'process' status
+            $order['items'] = [];
+
+            // Query to fetch order items with the 'process' status
             $sql_items = "
-                SELECT mi.item_name, od.quantity 
+                SELECT mi.item_name, od.quantity, od.order_item_status 
                 FROM order_details od 
                 JOIN menu_items mi ON od.menu_item_stock_id = mi.item_id 
                 WHERE od.order_id = ? AND od.order_item_status = 'served'";
-                
+
             if ($stmt_items = $conn->prepare($sql_items)) {
                 $stmt_items->bind_param("i", $order_id);
                 $stmt_items->execute();
                 $result_items = $stmt_items->get_result();
 
-                $items = array();
+                // Temporary array to store item counts by name and status
+                $itemCounts = [];
+
                 while ($row = $result_items->fetch_assoc()) {
-                    $items[] = $row;
+                    $itemName = $row['item_name'];
+
+                    // If item and status combination already exists, increase quantity
+                    if (isset($itemCounts[$itemName])) {
+                        $itemCounts[$itemName]['quantity'] += $row['quantity'];
+                    } else {
+                        // Otherwise, initialize entry for this item and status
+                        $itemCounts[$itemName] = [
+                            'item_name' => $itemName,
+                            'quantity' => $row['quantity'],
+                            'order_item_status' => $row['order_item_status']
+                        ];
+                    }
                 }
 
-                // Add items to the order array
-                $order['items'] = $items;
+                // Add grouped items to the order array
+                $order['items'] = array_values($itemCounts);
             }
         } else {
             echo json_encode(['error' => 'Order not found']);

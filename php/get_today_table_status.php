@@ -2,6 +2,7 @@
 
 include_once "../includes/connection.php";
 
+date_default_timezone_set('Asia/Manila');
 // Get today's date
 $today = date('Y-m-d');
 

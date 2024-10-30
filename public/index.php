@@ -236,33 +236,33 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
             <div class="header-cards-container">
-                <div class="header-card sales-card">
-                    <div class="header-card-group">
+                <div class="header-card sales-card-container">
+                    <div class="header-card-group sales-card">
                         <h3>sales</h3>
-                        <select name="" id="">
-                            <option value="Annually">overall</option>
-                            <option value="Monthly">this month</option>
-                            <option value="Weekly">this week</option>
+                        <select name="sales_timeframe" id="sales_timeframe">
+                            <option value="overall">Overall</option>
+                            <option value="monthly">This Month</option>
+                            <option value="weekly">This Week</option>
                         </select>
                     </div>
-                    <h1 class="header-card-value">&#x20B1;<span>234,555.90</span></h1>
+                    <h1 class="header-card-value">&#x20B1;<span id="total_sales">0.00</span></h1>
                     <i class="fa-solid fa-arrow-up-right-from-square sales-link"></i>
                 </div>
-                <div class="header-card collectibles-card">
-                    <div class="header-card-group">
+                <div class="header-card collectibles-card-container">
+                    <div class="header-card-group collectibles-card">
                         <h3>collectibles</h3>
-                        <select name="" id="">
-                            <option value="Annually">overall</option>
-                            <option value="Monthly">this month</option>
-                            <option value="Weekly">this week</option>
+                        <select name="collectibles_timeframe" id="collectibles_timeframe">
+                            <option value="overall">overall</option>
+                            <option value="monthly">this month</option>
+                            <option value="weekly">this week</option>
                         </select>
                     </div>
-                    <h1 class="header-card-value">&#x20B1;<span>100,789.00</span></h1>
+                    <h1 class="header-card-value">&#x20B1;<span id="total_collectibles">0.00</span></h1>
                     <i class="fa-solid fa-arrow-up-right-from-square collectibles-link"></i>
                 </div>
             </div>
             <div class="bottom-cards-container">
-                <div class="bottom-card sellers">
+                <div class="bottom-card menu-hierarchy">
                    <div class="bottom-header">
                         <h1 class="bottom-cards-title">best seller</h1>
                         <div class="menu-category">
@@ -274,110 +274,20 @@ document.addEventListener("DOMContentLoaded", function() {
                             </select>
                         </div>
                    </div>
-                    <div class="bottom-card-content">
-                        <div class="bottom-cards">
-                            <div class="bottom-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="bottom-cards-group menu-details">
-                                <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
-                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
-                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
-                            </div>
-                        </div>
-                        <div class="bottom-cards">
-                            <div class="bottom-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="bottom-cards-group menu-details">
-                                <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
-                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
-                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
-                            </div>
-                        </div>
-                        <div class="bottom-cards">
-                            <div class="bottom-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="bottom-cards-group menu-details">
-                                <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
-                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
-                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
-                            </div>
-                        </div>
-                        <div class="bottom-cards">
-                            <div class="bottom-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="bottom-cards-group menu-details">
-                                <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
-                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
-                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
-                            </div>
-                        </div>
-                        <div class="bottom-cards">
-                            <div class="bottom-card-img">
-                                <img src="../assets/shrimp.jpg" alt="">
-                            </div>
-                            <div class="bottom-cards-group menu-details">
-                                <h1 class="bottom-cards-menu-title">Shrimp hahah</h1>
-                                <!-- <p class="bottom-cards-menu-desc">Lorem ipsum dolor sit amet consectetur adipisicing
-                                    elit. Laudantium adipisci nemo perspiciatis</p> -->
-                            </div>
-                        </div>
+                    <div class="bottom-card-content menu-seller-card">
+                        
                     </div>
                 </div>
-                <div class="bottom-card customers">
-                    <h1 class="bottom-cards-title">valued customers</h1>
+                <div class="bottom-card customers-total-sales">
+                    <h1 class="bottom-cards-title">Valued Customers</h1>
                     <div class="bottom-card-content customer-card-container">
                         <div class="bottom-cards customers-cards">
                             <div class="bottom-cards-group customer-details">
-                                <h1 class="bottom-cards-customer">christian campbell</h1>
-                                <!-- <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p> -->
+                                <h1 class="bottom-cards-customer customer-name">Loading...</h1>
                             </div>
                             <div class="bottom-cards-group settlement">
-                                <h3>life time sales</h3>
-                                <span class="settlement-value">&#x20B1; 56,356.00</span>
-                            </div>
-                        </div>
-                        <div class="bottom-cards customers-cards">
-                            <div class="bottom-cards-group customer-details">
-                                <h1 class="bottom-cards-customer">christian campbell</h1>
-                                <!-- <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p> -->
-                            </div>
-                            <div class="bottom-cards-group settlement">
-                                <h3>life time sales</h3>
-                                <span class="settlement-value">&#x20B1; 56,356.00</span>
-                            </div>
-                        </div>
-                        <div class="bottom-cards customers-cards">
-                            <div class="bottom-cards-group customer-details">
-                                <h1 class="bottom-cards-customer">christian campbell</h1>
-                                <!-- <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p> -->
-                            </div>
-                            <div class="bottom-cards-group settlement">
-                                <h3>life time sales</h3>
-                                <span class="settlement-value">&#x20B1; 56,356.00</span>
-                            </div>
-                        </div>
-                        <div class="bottom-cards customers-cards">
-                            <div class="bottom-cards-group customer-details">
-                                <h1 class="bottom-cards-customer">christian campbell</h1>
-                                <!-- <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p> -->
-                            </div>
-                            <div class="bottom-cards-group settlement">
-                                <h3>life time sales</h3>
-                                <span class="settlement-value">&#x20B1; 56,356.00</span>
-                            </div>
-                        </div>
-                        <div class="bottom-cards customers-cards">
-                            <div class="bottom-cards-group customer-details">
-                                <h1 class="bottom-cards-customer">christian campbell</h1>
-                                <!-- <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p> -->
-                            </div>
-                            <div class="bottom-cards-group settlement">
-                                <h3>life time sales</h3>
-                                <span class="settlement-value">&#x20B1; 56,356.00</span>
+                                <h3>Lifetime Sales</h3>
+                                <span class="settlement-value">&#x20B1; 0.00</span>
                             </div>
                         </div>
                     </div>
@@ -397,6 +307,142 @@ document.addEventListener("DOMContentLoaded", function() {
                 <canvas id="sales_chart"></canvas>
             </div>
         </div>
+        <script>
+            function fetchBestSellers(category = 'all') {
+                $.ajax({
+                    url: '../php/get_best_seller_menu.php', // Adjust the path if needed
+                    type: 'GET',
+                    data: { category: category }, // Send selected category as data
+                    dataType: 'json',
+                    success: function(data) {
+                        const bottomCardsContainer = $('.menu-seller-card');
+                        bottomCardsContainer.empty(); // Clear existing content
+
+                        if (data.length > 0) {
+                            // Loop through the best seller items and create HTML
+                            data.forEach(function(item) {
+                                const card = `
+                                    <div class="bottom-cards">
+                                        <div class="bottom-card-img">
+                                            <img src="../uploads/${item.item_image}" alt="${item.item_name}"> <!-- Change image source as necessary -->
+                                        </div>
+                                        <div class="bottom-cards-group menu-details">
+                                            <h1 class="bottom-cards-menu-title">${item.item_name}</h1>
+                                        </div>
+                                    </div>`;
+                                bottomCardsContainer.append(card);
+                            });
+                        } else {
+                            bottomCardsContainer.html('<p>No best sellers available.</p>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching best sellers:', error);
+                    }
+                });
+            }
+
+            function fetchValuedCustomers() {
+                $.ajax({
+                    url: '../php/get_valued_customer.php', // Adjust the path if needed
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        const customerContainer = $('.customer-card-container');
+                        customerContainer.empty(); // Clear existing content
+
+                        if (data.length > 0) {
+                            // Loop through each customer and create HTML
+                            data.forEach(function(customer) {
+                                const customerCard = `
+                                    <div class="bottom-cards customers-cards">
+                                        <div class="bottom-cards-group customer-details">
+                                            <h1 class="bottom-cards-customer customer-name">${customer.customer_name}</h1>
+                                        </div>
+                                        <div class="bottom-cards-group settlement">
+                                            <h3>Lifetime Sales</h3>
+                                            <span class="settlement-value">&#x20B1; ${customer.total_amount_spent}</span>
+                                        </div>
+                                    </div>`;
+                                customerContainer.append(customerCard);
+                            });
+                        } else {
+                            customerContainer.html('<p>No valued customers available.</p>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching valued customers:', error);
+                    }
+                });
+            }
+
+            $(document).ready(function() {
+                function fetchSalesData(timeframe) {
+                    $.ajax({
+                        url: '../php/get_sales_data.php', // Adjust the path to your PHP script
+                        type: 'GET',
+                        data: { timeframe: timeframe },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#total_sales').text(data.total_sales); // Update the total sales amount
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error fetching sales data:', error);
+                        }
+                    });
+                }
+
+                // Fetch sales data when the page loads
+                fetchSalesData('overall');
+
+                // Fetch sales data based on selected timeframe
+                $('#sales_timeframe').change(function() {
+                    const selectedTimeFrame = $(this).val(); // Get the selected value
+                    fetchSalesData(selectedTimeFrame); // Pass the selected timeframe to the function
+                });
+            });
+
+            $(document).ready(function() {
+                function fetchCollectiblesData(timeframe) {
+                    $.ajax({
+                        url: '../php/get_collectibles_data.php', // Adjust the path to your PHP script
+                        type: 'GET',
+                        data: { timeframe: timeframe },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#total_collectibles').text(data.total_collectibles); // Update the total sales amount
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error fetching sales data:', error);
+                        }
+                    });
+                }
+
+                // Fetch sales data when the page loads
+                fetchCollectiblesData('overall');
+
+                // Fetch sales data based on selected timeframe
+                $('#collectibles_timeframe').change(function() {
+                    const selectedTimeFrame = $(this).val(); // Get the selected value
+                    fetchCollectiblesData(selectedTimeFrame); // Pass the selected timeframe to the function
+                });
+            });
+
+
+            // Call the function on page load
+            $(document).ready(function() {
+                fetchBestSellers(); // Fetch all best sellers on page load
+                fetchValuedCustomers();
+
+                // Fetch best sellers based on selected category
+                $('#menu_categories').change(function() {
+                    const selectedCategory = $(this).val(); // Get the selected value
+                    fetchBestSellers(selectedCategory); // Pass the selected category to the function
+                });
+            });
+
+
+        </script>
         <div class="pop-up-overlay logout-confirmation-overlay"></div>
         <div class="pop-up-container logout-confirmation-container">
             <div class="pop-up-content logout-confirmation-content">

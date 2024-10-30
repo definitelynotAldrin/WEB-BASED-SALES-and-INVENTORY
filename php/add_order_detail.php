@@ -13,7 +13,7 @@ if (isset($_POST['menu_id']) && isset($_POST['quantity']) && isset($_POST['menu_
     $sub_total = $quantity * $menu_price;
 
     // Check if the category is 'Beverage' or 'Dessert' and ensure quantity is an integer
-    if (($menu_category === 'Beverage' || $menu_category === 'Dessert') && floor($quantity) != $quantity) {
+    if (($menu_category === 'Beverages' || $menu_category === 'Dessert') && floor($quantity) != $quantity) {
         echo json_encode(array('status' => 'error', 'message' => 'Quantity for beverages and desserts must be a whole number.'));
         exit;
     }

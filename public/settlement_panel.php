@@ -265,7 +265,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 $(document).ready(function() {
                     fetchOrders();
+
+                    setInterval(fetchOrders, 500);
                 });
+                
 
 
 
@@ -462,6 +465,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                         $('.popup-overlay').fadeOut();
                                         fetchOrders();
                                         fetchSettledOrders();
+                                        $('#total-change').val('');
+                                        $('#cash-tendered').val(''); 
+                                        ('#discounted-amount').val('')
                                     } else {
                                         displayErrorMessage(response.message);
                                         $('.popup-confirmation-container').fadeOut();
@@ -562,7 +568,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         type: 'GET',
                         dataType: 'json',
                         success: function(orders) {
-                            $('.orders-cards-container').empty(); // Clear existing orders
+                            $('.settled-orders-container').empty(); // Clear existing orders
                             if (orders.length > 0) {
                                 $.each(orders, function(index, order) {
                                     let indicatorText = ''; // Initialize indicator text
@@ -610,7 +616,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
                 }
 
-                fetchSettledOrders();
+                $(document).ready(function() {
+                    fetchSettledOrders();
+                    
+                });
+
 
                 $(document).on('click', '.btn-view', function() {
                     const orderId = $(this).data('order-id');

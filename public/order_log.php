@@ -256,6 +256,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <tr>
                                         <th class="order-header">order</th>
                                         <th class="quantity-header">quantity</th>
+                                        <th>order status</th>
                                         <th class="subtotal-header">sub-total</th>
                                     </tr>
                                 </thead>
@@ -333,8 +334,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     // Trigger fetchOrdersHistory on input
                     $('#search_customer, #search_date').on('input', fetchOrdersHistory);
 
-                    // Initial load
-                    fetchOrdersHistory();
+                    $(document).ready(function () {
+                        fetchOrdersHistory();
+
+                        setInterval(fetchOrdersHistory, 1000)
+                    });
                 });
 
 
@@ -363,6 +367,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <tr>
                                             <td>${detail.item_name}</td>
                                             <td>${detail.quantity}</td>
+                                            <td>${detail.order_item_status}</td>
                                             <td>&#8369; ${detail.sub_total}</td>
                                         </tr>
                                     `);

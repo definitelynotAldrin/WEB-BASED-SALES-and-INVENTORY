@@ -4,6 +4,7 @@ include_once "../includes/connection.php";
 $searchCustomer = isset($_GET['search_customer']) ? $_GET['search_customer'] : '';
 $searchDate = isset($_GET['search_date']) ? $_GET['search_date'] : '';
 
+date_default_timezone_set('Asia/Manila');
 // Get the current date
 $currentDate = date('Y-m-d');
 

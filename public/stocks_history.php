@@ -251,6 +251,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="table-container">
                         <?php
                         include_once "../includes/connection.php";
+                        date_default_timezone_set('Asia/Manila');
 
                         // Get the selected date from the input field
                         $search_date = isset($_GET['search_item']) ? $_GET['search_item'] : '';
