@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice Receipt</title>
+    <style>
+        /* Styles for a 3" or 4" wide receipt */
+        body { font-family: Arial, sans-serif; width: 250px; margin: 0 auto; }
+        h2, p { text-align: center; margin: 5px 0; }
+        .receipt { border-top: 1px dashed #333; padding: 10px 0; }
+        .header, .footer { text-align: center; }
+        .content { margin-top: 10px; }
+        .item-list { width: 100%; }
+        .item-list th, .item-list td { text-align: left; padding: 4px; }
+        .item-list th { font-weight: bold; }
+        .summary { margin-top: 10px; }
+        .summary td { padding: 4px; text-align: right; }
+        .thank-you { margin-top: 15px; text-align: center; font-size: 0.9em; }
+
+        @media print {
+            .print-button { display: none; } /* Hide print button in print view */
+            body { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Kan-anan by the Sea</h2>
+        <p>123 Beachside Ave, Cebu City</p>
+        <p>Phone: (123) 456-7890</p>
+    </div>
+
+    <div class="receipt">
+        <p><strong>Date:</strong> 10/17/2024</p>
+        <p><strong>Order ID:</strong> 12345</p>
+        <p><strong>Customer:</strong> John Doe</p>
+    </div>
+
+    <div class="content">
+        <table class="item-list">
+            <tr><th>Item</th><th>Qty</th><th>Total</th></tr>
+            <tr><td>Grilled Fish</td><td>1</td><td>₱150.00</td></tr>
+            <tr><td>Rice</td><td>2</td><td>₱40.00</td></tr>
+            <tr><td>Lemonade</td><td>1</td><td>₱30.00</td></tr>
+        </table>
+        
+        <table class="summary" width="100%">
+            <tr><td><strong>Subtotal</strong></td><td>₱220.00</td></tr>
+            <tr><td><strong>Tax (5%)</strong></td><td>₱11.00</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>₱231.00</strong></td></tr>
+            <tr><td><strong>Payment Method</strong></td><td>Cash</td></tr>
+            <tr><td><strong>Amount Paid</strong></td><td>₱231.00</td></tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for dining with us!</p>
+        <p>Have a great day!</p>
+    </div>
+
+    <div class="thank-you">
+        <p>For feedback, visit kanananbythesea.com</p>
+    </div>
+
+    <button onclick="window.print()" class="print-button">Print Invoice</button>
+    
+</body>
+</html>

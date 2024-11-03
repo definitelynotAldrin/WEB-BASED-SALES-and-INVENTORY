@@ -467,7 +467,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                         fetchSettledOrders();
                                         $('#total-change').val('');
                                         $('#cash-tendered').val(''); 
-                                        ('#discounted-amount').val('')
+                                        $('#discounted-amount').val('')
+                                        const orderId = $('#order-id').val();
+                                        window.location.href = `../reports/invoice.php?order_id=${orderId}`;
                                     } else {
                                         displayErrorMessage(response.message);
                                         $('.popup-confirmation-container').fadeOut();
