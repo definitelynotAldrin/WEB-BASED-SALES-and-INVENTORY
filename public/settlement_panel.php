@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <h4>Let's settle payments and make sales...</h4>
                 </div>
                 <div class="header-profile">
-                <div class="notification">
+                    <div class="notification">
                         <i class="fa-solid fa-bell notification-bell">
                             <i class="fa-solid fa-circle notification-alert-icon" style="display: none;"></i>
                         </i>
@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     $('#orders-settlement').append(`
                                         <div class="card order-item-card">
                                             <div class="card-img-container">
-                                                <img src="../assets/Profile (1).png" class="card-img order-img">
+                                                <img src="../assets/fish haha.jpg" class="card-img order-img">
                                             </div>
                                             <div class="card-details order-card-details">
                                                 <span class="card-name order-number">Table No. ${order.customer_table}</span>
@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 $(document).ready(function() {
                     fetchOrders();
 
-                    setInterval(fetchOrders, 500);
+                    setInterval(fetchOrders, 30000);
                 });
                 
 
@@ -618,6 +618,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 $(document).ready(function() {
                     fetchSettledOrders();
+                    $('.orders-settlement').css('color', '#0B60B0');
                     
                 });
 
@@ -715,7 +716,35 @@ document.addEventListener("DOMContentLoaded", function() {
                         $('#error-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
                     }, 3000); // Change the duration as needed
                 }
+
+                $(document).on('click', '.collectibles-settlement', function() {
+                    
+                    $('.first-panel-section').hide();
+                    $('.second-panel-section').hide();
+                    $('.third-panel-section').show();
+                    $('.fourth-panel-section').show();
+                    $('.orders-settlement').css('color', '#363636');
+                    $('.collectibles-settlement').css('color', '#0B60B0');
+                });
+
+                $(document).on('click', '.orders-settlement', function() {
+                    
+                    $('.first-panel-section').show();
+                    $('.second-panel-section').show();
+                    $('.third-panel-section').hide();
+                    $('.fourth-panel-section').hide();
+                    $('.orders-settlement').css('color', '#0B60B0');
+                    $('.collectibles-settlement').css('color', '#363636');
+                });
+
+
+
+
             </script>
+            <div class="nav-buttons">
+                <button class="orders-settlement">Orders</button>
+                <button class="collectibles-settlement">Collectibles</button>
+            </div>
             <div class="menu-section-container">
                 <div class="first-panel-section">
                     <div class="menu-header">
@@ -932,6 +961,294 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <label for="">additional note</label>
                                     <textarea name="credit_note" id="display-credit-note" cols="20"></textarea>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    $(document).ready(function () {
+                        function fetchOrdersHistory() {
+                            const searchCustomer = $('#search_customer').val();
+                            $.ajax({
+                                url: '../php/fetch_credit_orders.php', // Your existing PHP script
+                                type: 'GET',
+                                data: {
+                                    search_customer: searchCustomer
+                                },
+                                dataType: 'json',
+                                success: function (data) {
+                                    $('.customer-card-container').empty(); // Clear previous results
+                                    if (data.success && data.orders.length > 0) {
+                                        $.each(data.orders, function (index, order) {
+                                            $('.customer-card-container').append(`
+                                                <div class="bottom-cards customers-cards" data-order-id="${order.order_id}">
+                                                    <div class="bottom-cards-group customer-details">
+                                                        <input type="checkbox" class="merge-checkbox" value="${order.order_id}">
+                                                        <h1 class="bottom-cards-customer">${order.customer_name}</h1>
+                                                    </div>
+                                                    <div class="bottom-cards-group settlement">
+                                                        <h3>Debt</h3>
+                                                        <span class="settlement-value">&#x20B1; ${order.total_amount}</span>
+                                                    </div>
+                                                </div>
+                                            `);
+                                        });
+                                    } else {
+                                        $('.customer-card-container').append('<p>No credit orders found.</p>');
+                                    }
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    console.log("Error fetching orders: " + textStatus, errorThrown);
+                                }
+                            });
+                        }
+
+                        $('#search_customer').on('input', fetchOrdersHistory);
+
+                        // AJAX request whenever checkbox is checked or unchecked
+                        $(document).on('change', '.merge-checkbox', function () {
+                            const selectedOrderIds = $('.merge-checkbox:checked').map(function () {
+                                return $(this).val();
+                            }).get();
+
+                            // Send AJAX request if at least one checkbox is selected, otherwise clear table
+                            if (selectedOrderIds.length > 0) {
+                                $.ajax({
+                                    url: '../php/merge_credit_orders.php', // New PHP script
+                                    type: 'POST',
+                                    data: {
+                                        order_ids: selectedOrderIds
+                                    },
+                                    dataType: 'json',
+                                    success: function (response) {
+                                        if (response.success) {
+                                            $('.customer-name').text(response.customer_name);
+                                            $('.order-date').text(response.order_date);
+                                            $('.order-time').text(response.order_time);
+
+                                            $('.table-body').empty(); // Clear existing table data
+                                            $.each(response.order_details, function (index, detail) {
+                                                $('.table-body').append(`
+                                                    <tr>
+                                                        <td>${detail.item_name}</td>
+                                                        <td>${detail.quantity}</td>
+                                                        <td>${detail.order_item_status}</td>
+                                                        <td>&#8369; ${detail.sub_total}</td>
+                                                    </tr>
+                                                `);
+                                            });
+
+                                            $('.total-section .total-field span').html(`&#8369; ${response.total_amount}`);
+                                            $('.total-section .payment-field:first-of-type span').text(response.payment_status);
+                                            $('#customer_note').val(response.customer_note);
+
+                                            let totalAmountCredit = parseFloat(response.total_amount);
+                                            $('.total-amount-credit').text(totalAmountCredit);
+
+
+                                            $('#cash-tendered-credit').on('input', function() {
+                                                const cashTenderedCredit = parseFloat($('#cash-tendered-credit').val()) || 0;
+                                                const currentTotalAmountCredit = parseFloat($('.total-amount-credit').text()) || 0; // Use .text() here
+                                                const creditChange = (cashTenderedCredit - currentTotalAmountCredit);
+                                                $('#total-change-credit').val(creditChange > 0 ? creditChange : 0);
+                                            });
+                                        } else {
+                                            console.log("Error merging orders.");
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.log("AJAX Error: " + status + error);
+                                    }
+                                });
+                            } else {
+                                // Clear the table if no orders are selected
+                                $('.customer-name').text("");
+                                $('.order-date').text("");
+                                $('.order-time').text("");
+                                $('.table-body').empty();
+                                $('.total-section .total-field span').html("");
+                                $('.total-section .payment-field:first-of-type span').text("");
+                                $('#customer_note').val("");
+                            }
+                        });
+
+                        fetchOrdersHistory(); // Initial fetch on page load
+
+                        $(document).on('click', '#pay-credit-button', function() {
+                            // Get all selected order IDs with credit status
+                            const selectedOrderIds = [];
+                            $('.merge-checkbox:checked').each(function() {
+                                selectedOrderIds.push($(this).closest('.bottom-cards').data('order-id'));
+                            });
+
+                            function generateRandomString(length) {
+                                const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                                let result = '';
+                                for (let i = 0; i < length; i++) {
+                                    result += characters.charAt(Math.floor(Math.random() * characters.length));
+                                }
+                                return result;
+                            }
+
+                            const cashTenderedCredit = parseFloat($('#cash-tendered-credit').val());
+                            const totalAmountCredit = parseFloat($('.total-amount-credit').text());
+                            const changeDueCredit = parseFloat($('#total-change-credit').val());
+                            const paymentStatus = 'paid';
+
+
+                            const groupId = generateRandomString(8);
+
+                            // Log to console for debugging
+                            console.log("Selected Order IDs:", selectedOrderIds);
+                            console.log("Total Amount (Credit):", totalAmountCredit);
+                            console.log("Cash Tendered (Credit):", cashTenderedCredit);
+                            console.log("Change Due (Credit):", changeDueCredit);
+
+                            console.log("Generated Group ID:", groupId);
+
+                            if (selectedOrderIds.length === 0) {
+                                alert("Please select at least one order to proceed.");
+                                return;
+                            }
+
+                            // Confirm payment action
+                            $('#question').text('Are you sure you want to settle these credit orders as paid?');
+                            $('.popup-confirmation-container').fadeIn();
+                            $('.popup-overlay').fadeIn();
+
+                            // Confirmation event
+                            $('.btnConfirm').off('click').on('click', function(e) {
+                                e.preventDefault();
+                                
+                                // AJAX request to update payment status
+                                $.ajax({
+                                    url: '../php/save_credit_payment.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        order_ids: selectedOrderIds,
+                                        cash_tendered: cashTenderedCredit,
+                                        change_due: changeDueCredit,
+                                        payment_status: paymentStatus,
+                                        group_id: groupId
+                                    },
+                                    success: function(response) {
+                                        if (response.status === 'success') {
+                                            displaySuccessMessage('Payments successfully saved!');
+                                            fetchOrdersHistory();
+                                            $('#total-change-credit').val('');
+                                            $('#cash-tendered-credit').val('');
+                                            $('.customer-name').text("");
+                                            $('.order-date').text("");
+                                            $('.order-time').text("");
+                                            $('.table-body').empty();
+                                            $('.total-section .total-field span').html("");
+                                            $('.total-section .payment-field:first-of-type span').text("");
+                                            $('#customer_note').val("");
+                                            $('.popup-confirmation-container').fadeOut();
+                                            $('.popup-overlay').fadeOut();
+                                        } else {
+                                            displayErrorMessage(response.message);
+                                        }
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.log("AJAX Error:", error);
+                                        displayErrorMessage('An unexpected error occurred.');
+                                    }
+                                });
+                            });
+                            $('.btnCancel').off('click').on('click', function(e) {
+                                e.preventDefault(); // Prevent default link behavior
+                                // Hide the popup if "no" is clicked
+                                $('.popup-confirmation-container').fadeOut();
+                                $('.popup-overlay').fadeOut();
+                            });
+                        });
+                    });
+
+
+
+
+
+                </script>
+                <div class="third-panel-section" style="display: none;">
+                    <div class="menu-header">
+                        <h1 class="menu-header-title">Collectibles</h1>
+                        <input type="search" name="search_customer" id="search_customer">
+                    </div>
+                    <div class="bottom-cards-container">
+                        <div class="bottom-card customers">
+                            <div class="bottom-card-content customer-card-container">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fourth-panel-section" style="display: none;">
+                    <div class="fourth-panel-header">
+                        <h1 class="header-title customer-name"></h1>
+                        <h1 class="header-title customer-order-datetime">
+                            order date & time:
+                            <span class="order-date"></span>
+                            <span class="order-time"></span>
+                        </h1>
+                    </div>
+                    <div class="fourth-panel-card-container order-summary-section">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="order-header">order</th>
+                                        <th class="quantity-header">qty</th>
+                                        <th>order status</th>
+                                        <th class="subtotal-header">sub-total</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-body">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-bottom-container total-section">
+                            <div class="card-bottom-groups">
+                                <div class="card-bottom-group payment-field">
+                                    <h3>payment status</h3>
+                                    <span></span>
+                                </div>
+                                <div class="card-bottom-group total-field">
+                                    <h3>total</h3>
+                                    <span class="total-amount-credit"></span>
+                                </div>
+                            </div>
+                            <div class="card-bottom-groups">
+                                <div class="card-bottom-group note-field">
+                                    <h3>note</h3>
+                                    <textarea name="" id="customer_note" disabled></textarea>
+                                </div>
+                            </div>
+                            <div class="popup-card-groups">
+                                <div class="popup-card-group">
+                                    <label>Cash Tendered</label>
+                                    <div class="popup-card-input-group">
+                                        <span>&#x20B1;</span>
+                                        <input type="number" step="1" min="0" id="cash-tendered-credit" >
+                                    </div>
+                                </div>
+                                <div class="popup-card-group">
+                                    <label>Change</label>
+                                    <div class="popup-card-input-group">
+                                        <span>&#x20B1;</span>
+                                        <input type="number" step="1" min="0" disabled id="total-change-credit">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="button-section">
+                                <button type="button" id="pay-credit-button">
+                                    <span>pay</span>
+                                    <i class="fa-solid fa-arrow-right-long"></i>
+                                </button>
                             </div>
                         </div>
                     </div>

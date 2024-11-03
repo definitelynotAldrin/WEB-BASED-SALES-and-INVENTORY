@@ -1,6 +1,7 @@
 <?php
 // Database connection
 include_once "../includes/connection.php";
+date_default_timezone_set('Asia/Manila');
 
 $timeframe = isset($_GET['timeframe']) ? $_GET['timeframe'] : 'overall';
 $totalSales = 0.00;

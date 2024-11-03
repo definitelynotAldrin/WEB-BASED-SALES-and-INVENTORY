@@ -259,7 +259,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         <div class="bottom-cards customers-cards">
                             <div class="bottom-cards-group customer-details">
                                 <h1 class="bottom-cards-customer">christian campbell</h1>
-                                <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p>
                             </div>
                             <div class="bottom-cards-group settlement">
                                 <h3>Debt</h3>
@@ -275,7 +274,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         <div class="bottom-cards customers-cards">
                             <div class="bottom-cards-group customer-details">
                                 <h1 class="bottom-cards-customer">christian campbell</h1>
-                                <p class="bottom-cards-customer-desc">Purok 1, barangay san jose, talisayan, misamis oriental</p>
                             </div>
                             <div class="bottom-cards-group settlement">
                                 <h3>debt</h3>

@@ -1006,7 +1006,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <tr>
                                         <th class="order-details-id" style="display:none;">ID</th>
                                         <th class="order-header">Order</th>
-                                        <th class="quantity-header">Quantity</th>
+                                        <th class="quantity-header">Qty</th>
                                         <th class="price-header">Price</th>
                                         <th class="subtotal-header">Sub-total</th>
                                         <th class="action-header">Action</th>

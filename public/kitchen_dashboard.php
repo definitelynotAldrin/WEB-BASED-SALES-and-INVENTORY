@@ -679,6 +679,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     $(document).on('click', '.btn-serve', function() {
                         var orderId = $(this).data('order-id'); // Get the order ID from the button
 
+                        $('#question').text('Are you sure you want to serve this order?');
                         // Show the custom confirmation popup
                         $('.popup-confirmation-container').fadeIn(); // Show the popup
                         $('.popup-overlay').fadeIn();

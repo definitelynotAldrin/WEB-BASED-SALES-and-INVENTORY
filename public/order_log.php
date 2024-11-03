@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <thead>
                                     <tr>
                                         <th class="order-header">order</th>
-                                        <th class="quantity-header">quantity</th>
+                                        <th class="quantity-header">qty</th>
                                         <th>order status</th>
                                         <th class="subtotal-header">sub-total</th>
                                     </tr>
