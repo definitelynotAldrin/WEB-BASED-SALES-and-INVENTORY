@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         
                     </script>
                     <div class="profile">
-                        <img src="../assets/me.jpg">
+                        <img src="../assets/me.jpg" class="admin-profile">
                     </div>
                     <i class="fa-solid fa-bars nav-bar"></i>
                 </div>
@@ -317,31 +317,43 @@ document.addEventListener("DOMContentLoaded", function() {
                                         tbody.append(row);
                                     });
 
-                                    // Populate the total amount field
-                                    let totalAmount = parseFloat(response.total_amount);
-                                    $('#total-amount').val(totalAmount);
-                                    $('#hidden-total-amount').val(totalAmount);
-                                    
+                                    $(document).ready(function() {
+                                        // Populate the total amount fields
+                                        let totalAmount = parseFloat(response.total_amount);
+                                        $('#total-amount').val(totalAmount.toFixed(2));
+                                        $('#hidden-total-amount').val(totalAmount); // Store original total for reference
 
-                                    // Handle discount checkbox
-                                    $('#discount_box').on('change', function() {
-                                        if ($(this).is(':checked')) {
-                                            const discountedAmount = totalAmount * 0.80; // Apply 20% discount
+                                        // Calculate and update the total amount based on discount status
+                                        const updateTotalWithDiscount = () => {
+                                            const isDiscounted = $('#discount_box').is(':checked');
+                                            const discountRate = 0.20; // 20% discount
+                                            const discountedAmount = isDiscounted ? totalAmount * (1 - discountRate) : totalAmount;
+
                                             $('#total-amount').val(discountedAmount.toFixed(2));
-                                            $('#discounted-amount').val(discountedAmount.toFixed(2));
-                                        } else {
-                                            $('#total-amount').val(totalAmount.toFixed(2)); // Reset to original total amount
-                                            $('#discounted-amount').val('');
-                                        }
+                                            $('#discounted-amount').val(isDiscounted ? discountedAmount.toFixed(2) : '');
+                                        };
+
+                                        // Calculate and update the change based on cash tendered
+                                        const updateChange = () => {
+                                            const cashTendered = parseFloat($('#cash-tendered').val()) || 0;
+                                            const currentTotalAmount = parseFloat($('#total-amount').val());
+                                            const change = cashTendered - currentTotalAmount;
+
+                                            $('#total-change').val(change > 0 ? change.toFixed(2) : '0.00');
+                                        };
+
+                                        // Event listeners for real-time updates
+                                        $('#discount_box').on('change', () => {
+                                            updateTotalWithDiscount();
+                                            updateChange(); // Recalculate change whenever discount changes
+                                        });
+
+                                        $('#cash-tendered').on('input', updateChange); // Trigger change calculation on cash tendered input
+
+                                        // Initial calculation to set values based on loaded data
+                                        updateTotalWithDiscount();
                                     });
 
-                                    // Calculate change on cash tendered input
-                                    $('.popup-card-input-group input').on('input', function() {
-                                        const cashTendered = parseFloat($(this).val()) || 0;
-                                        const currentTotalAmount = parseFloat($('#total-amount').val());
-                                        const change = (cashTendered - currentTotalAmount);
-                                        $('#total-change').val(change > 0 ? change : 0);
-                                    });
 
                                 } else {
                                     alert('Failed to retrieve order details.');
@@ -533,6 +545,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                         $('.popup-overlay').fadeOut();
                                         fetchOrders();
                                         fetchSettledOrders();
+                                        $('#credit-note').val('');
+                                        const orderId = $('#credit-order-id').val();
+                                        window.location.href = `../reports/invoice_credit.php?order_id=${orderId}`;
                                     } else {
                                         displayErrorMessage(response.message);
                                         $('.popup-confirmation-container').fadeOut();
@@ -1288,5 +1303,6 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/order_entry_panel.js"></script> -->
 <!-- <script src="../js/settlement_panel.js"></script> -->
 <script src="../js/logout.js"></script>
+<script src="../js/hyperlinks_nav.js"></script>
 </body>
 </html>

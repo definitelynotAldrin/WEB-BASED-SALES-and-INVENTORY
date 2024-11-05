@@ -43,3 +43,14 @@
                             </div>
                         </div>
                     </div>
+
+
+
+
+                    <div class="settings-groups change-email">
+                                <div class="settings-group">
+                                    <h3>Change Email</h3>
+                                    <span class="email">example@gmail.com</span>
+                                </div>
+                                <i class="fa-solid fa-angle-right"></i>
+                            </div>

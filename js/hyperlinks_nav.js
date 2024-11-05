@@ -34,3 +34,14 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
+document.addEventListener('DOMContentLoaded', function() {
+    const settings = document.querySelector('.admin-profile');
+    
+    // Add click event listener to the button
+    settings.addEventListener('click', function(){
+        window.location.href = '../public/settings.php';
+    });
+ 
+});
+

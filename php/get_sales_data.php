@@ -7,11 +7,11 @@ $timeframe = isset($_GET['timeframe']) ? $_GET['timeframe'] : 'overall';
 $totalSales = 0.00;
 
 if ($timeframe == 'overall') {
-    $sql = "SELECT SUM(total_amount) AS total_sales FROM orders WHERE payment_status = 'paid'";
+    $sql = "SELECT SUM(total_amount) AS total_sales FROM payments WHERE payment_status = 'paid'";
 } elseif ($timeframe == 'monthly') {
-    $sql = "SELECT SUM(total_amount) AS total_sales FROM orders WHERE payment_status = 'paid' AND MONTH(order_date) = MONTH(CURRENT_DATE()) AND YEAR(order_date) = YEAR(CURRENT_DATE())";
+    $sql = "SELECT SUM(total_amount) AS total_sales FROM payments WHERE payment_status = 'paid' AND MONTH(payment_date) = MONTH(CURRENT_DATE()) AND YEAR(payment_date) = YEAR(CURRENT_DATE())";
 } elseif ($timeframe == 'weekly') {
-    $sql = "SELECT SUM(total_amount) AS total_sales FROM orders WHERE payment_status = 'paid' AND YEARWEEK(order_date, 1) = YEARWEEK(CURRENT_DATE(), 1)";
+    $sql = "SELECT SUM(total_amount) AS total_sales FROM payments WHERE payment_status = 'paid' AND YEARWEEK(payment_date, 1) = YEARWEEK(CURRENT_DATE(), 1)";
 }
 
 // Execute the query

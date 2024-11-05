@@ -227,40 +227,241 @@ document.addEventListener("DOMContentLoaded", function() {
                             setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
                         });
 
+                        $(document).ready(function () {
+                            const $salesReportsCheckbox = $('#sales-reports');
+                            const $otherCheckboxes = $('#orders-reports, #menu-reports, #daily-sales-reports');
+
+                            function toggleCheckboxes() {
+                                if ($salesReportsCheckbox.is(':checked')) {
+                                    $otherCheckboxes.prop('disabled', true).prop('checked', false);
+                                } else {
+                                    $otherCheckboxes.prop('disabled', false);
+                                }
+
+                                if ($otherCheckboxes.is(':checked')) {
+                                    $salesReportsCheckbox.prop('disabled', true);
+                                } else {
+                                    $salesReportsCheckbox.prop('disabled', false);
+                                }
+                            }
+
+                            // Trigger toggle function when checkboxes are clicked
+                            $salesReportsCheckbox.on('change', toggleCheckboxes);
+                            $otherCheckboxes.on('change', toggleCheckboxes);
+
+                            // Automatically set date to today when any checkbox is selected
+                            $('input[type="checkbox"]').on('change', function () {
+                                const today = new Date();
+                                today.setHours(today.getHours() + 8); // Adjust for Philippine Time Zone (UTC+8)
+                                const localDate = today.toISOString().split('T')[0];
+                                $('#start-date, #end-date').val(localDate);
+                            });
+
+                        });
+
+
+                        function generateReport() {
+                            const startDate = $('#start-date').val();
+                            const endDate = $('#end-date').val();
+                            const reportOptions = {
+                                salesReports: $('#sales-reports').is(':checked'),
+                                ordersReports: $('#orders-reports').is(':checked'),
+                                menuReports: $('#menu-reports').is(':checked'),
+                                dailySalesReports: $('#daily-sales-reports').is(':checked'),
+                            };
+
+                            $.ajax({
+                                type: "POST",
+                                url: "../reports/reports.php",
+                                data: {
+                                    start_date: startDate,
+                                    end_date: endDate,
+                                    reportOptions: JSON.stringify(reportOptions)
+                                },
+                                success: function () {
+                                    window.location.href = `../reports/reports.php?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}&reportOptions=${encodeURIComponent(JSON.stringify(reportOptions))}`;
+                                },
+                                error: function () {
+                                    alert("Failed to generate report. Please try again.");
+                                }
+                            });
+                        }
+
+
+                        function generateOrdersReport() {
+                            const startDate = document.getElementById('orders-start-date').value;
+                            const endDate = document.getElementById('orders-end-date').value;
+
+                            // Send dates to the server using AJAX
+                            const xhr = new XMLHttpRequest();
+                            xhr.open("POST", "../reports/orders_reports.php", true);
+                            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                            // Define what to do when a response is received
+                            xhr.onload = function() {
+                                if (xhr.status === 200) {
+                                    // Assuming the PHP script returns a URL to redirect to
+                                    window.location.href = `../reports/orders_reports.php?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`;
+                                } else {
+                                    alert("Failed to generate report. Please try again.");
+                                }
+                            };
+
+                            // Send start and end dates to the PHP file
+                            xhr.send(`start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`);
+                        }
+
+
+                        function generateProductsReport() {
+                            const startDate = document.getElementById('top-product-start-date').value;
+                            const endDate = document.getElementById('top-product-end-date').value;
+
+                            // Send dates to the server using AJAX
+                            const xhr = new XMLHttpRequest();
+                            xhr.open("POST", "../reports/top_products.php", true);
+                            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                            // Define what to do when a response is received
+                            xhr.onload = function() {
+                                if (xhr.status === 200) {
+                                    // Assuming the PHP script returns a URL to redirect to
+                                    window.location.href = `../reports/top_products.php?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`;
+                                } else {
+                                    alert("Failed to generate report. Please try again.");
+                                }
+                            };
+
+                            // Send start and end dates to the PHP file
+                            xhr.send(`start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`);
+                        }
+
+                        function generateDailyReport() {
+                            const startDate = document.getElementById('daily-start-date').value;
+                            const endDate = document.getElementById('daily-end-date').value;
+
+                            // Send dates to the server using AJAX
+                            const xhr = new XMLHttpRequest();
+                            xhr.open("POST", "../reports/daily_sales_reports.php", true);
+                            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                            // Define what to do when a response is received
+                            xhr.onload = function() {
+                                if (xhr.status === 200) {
+                                    // Assuming the PHP script returns a URL to redirect to
+                                    window.location.href = `../reports/daily_sales_reports.php?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`;
+                                } else {
+                                    alert("Failed to generate report. Please try again.");
+                                }
+                            };
+
+                            // Send start and end dates to the PHP file
+                            xhr.send(`start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`);
+                        }
+
+
                         
                     </script>
                     <div class="profile">
-                        <img src="../assets/me.jpg">
+                        <img src="../assets/me.jpg" class="admin-profile">
                     </div>
                     <i class="fa-solid fa-bars nav-bar"></i>
                 </div>
             </div>
             <div class="header-cards-container">
-                <div class="header-card sales-card">
+                <div class="header-card entire-sales-report">
                     <div class="header-card-group">
-                        <h3>sales report</h3>
+                        <h3>Sales Report</h3>
+                    </div>
+                    <div class="checkbox-container">
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="" id="sales-reports">
+                            <label for="">Entire Sales Reports</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="" id="orders-reports">
+                            <label for="">Orders Sales Report</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="" id="menu-reports">
+                            <label for="">Top Menu</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="" id="daily-sales-reports">
+                            <label for="">Daily Sales</label>
+                        </div>
+                    </div>
+                    <div class="header-card-group">
+                        <div class="header-date-group">
+                            <label for="start">Start Date</label>
+                            <input type="date" id="start-date">
+                        </div>
+                        <div class="header-date-group">
+                            <label for="end">End Date</label>
+                            <input type="date" id="end-date">
+                        </div>
+                    </div>
+                    <div class="header-card-button">
+                        <button type="button" class="button-button generate-sales" onclick="generateReport()">Generate</button>
+                    </div>
+                </div>
+                <!-- <div class="header-card orders-sales-report">
+                    <div class="header-card-group">
+                        <h3>orders sales report</h3>
                     </div>
                     <div class="header-card-group">
                         <div class="header-date-group">
                             <label for="start">start date</label>
-                            <input type="date" name="" id="">
+                            <input type="date" id="orders-start-date">
                         </div>
                         <div class="header-date-group">
                             <label for="end">end date</label>
-                            <input type="date" name="" id="">
+                            <input type="date" id="orders-end-date">
                         </div>
                     </div>
                    <div class="header-card-button">
-                        <button type="button" class="button-button btnGenerate" onclick="myFunc()">generate</button>
+                        <button type="button" class="button-button btnGenerate" onclick="generateOrdersReport()">generate</button>
+                   </div>
+                </div> -->
+            </div>
+            <!-- <div class="header-cards-container reports-container">
+                <div class="header-card entire-sales-report">
+                    <div class="header-card-group">
+                        <h3>Top Product Sales Report</h3>
+                    </div>
+                    <div class="header-card-group">
+                        <div class="header-date-group">
+                            <label for="start">Start Date</label>
+                            <input type="date" id="top-product-start-date">
+                        </div>
+                        <div class="header-date-group">
+                            <label for="end">End Date</label>
+                            <input type="date" id="top-product-end-date">
+                        </div>
+                    </div>
+                    <div class="header-card-button">
+                        <button type="button" class="button-button generate-sales" onclick="generateProductsReport()">Generate</button>
+                    </div>
+                </div>
+                <div class="header-card daily-sales-report">
+                    <div class="header-card-group">
+                        <h3>daily sales report</h3>
+                    </div>
+                    <div class="header-card-group">
+                        <div class="header-date-group">
+                            <label for="start">start date</label>
+                            <input type="date" id="daily-start-date">
+                        </div>
+                        <div class="header-date-group">
+                            <label for="end">end date</label>
+                            <input type="date" id="daily-end-date">
+                        </div>
+                    </div>
+                   <div class="header-card-button">
+                        <button type="button" class="button-button btnGenerate" onclick="generateDailyReport()">generate</button>
                    </div>
                 </div>
-            </div>
+            </div> -->
         </div>
-        <script>
-           function myFunc() {
-            alert("hell o world");
-            }
-        </script>
         <div class="pop-up-overlay logout-confirmation-overlay"></div>
         <div class="pop-up-container logout-confirmation-container">
             <div class="pop-up-content logout-confirmation-content">

@@ -7,11 +7,11 @@ $timeframe = isset($_GET['timeframe']) ? $_GET['timeframe'] : 'overall';
 $totalCollectibles = 0.00;
 
 if ($timeframe == 'overall') {
-    $sql = "SELECT SUM(total_amount) AS total_collectibles FROM orders WHERE payment_status = 'credit'";
+    $sql = "SELECT SUM(total_amount) AS total_collectibles FROM payments WHERE payment_status = 'credit'";
 } elseif ($timeframe == 'monthly') {
-    $sql = "SELECT SUM(total_amount) AS total_collectibles FROM orders WHERE payment_status = 'credit' AND MONTH(order_date) = MONTH(CURRENT_DATE()) AND YEAR(order_date) = YEAR(CURRENT_DATE())";
+    $sql = "SELECT SUM(total_amount) AS total_collectibles FROM payments WHERE payment_status = 'credit' AND MONTH(payment_date) = MONTH(CURRENT_DATE()) AND YEAR(payment_date) = YEAR(CURRENT_DATE())";
 } elseif ($timeframe == 'weekly') {
-    $sql = "SELECT SUM(total_amount) AS total_collectibles FROM orders WHERE payment_status = 'credit' AND YEARWEEK(order_date, 1) = YEARWEEK(CURRENT_DATE(), 1)";
+    $sql = "SELECT SUM(total_amount) AS total_collectibles FROM payments WHERE payment_status = 'credit' AND YEARWEEK(payment_date, 1) = YEARWEEK(CURRENT_DATE(), 1)";
 }
 
 // Execute the query

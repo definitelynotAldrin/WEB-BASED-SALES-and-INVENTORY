@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         
                     </script>
                     <div class="profile">
-                        <img src="../assets/me.jpg">
+                        <img src="../assets/me.jpg" class="admin-profile">
                     </div>
                     <i class="fa-solid fa-bars nav-bar"></i>
                 </div>
@@ -335,6 +335,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 <span class="card-name order-number">Table No. ${order.customer_table}</span>
                                             </div>
                                             <div class="card-buttons button-disable">
+                                                <button class="btn-cancel" id="cancel-served-order" data-order-id="${order.order_id}">Cancel</button>
                                                 <button class="btn-view view-served-orders" data-order-id="${order.order_id}">View Order</button>
                                                 <span class="serve-text" data-order-id="${order.order_id}">served</span>
                                             </div>
@@ -673,6 +674,58 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
                 });
 
+                $(document).ready(function() {
+                    // When the confirm button is clicked
+                    $(document).on('click', '#cancel-served-order', function() {
+                        var orderId = $(this).data('order-id'); // Get the order ID from the button
+
+                        // Show the custom confirmation popup
+                        $('#question').text('Are you sure you want to cancel this served order?');
+                        $('.popup-confirmation-container').fadeIn(); // Show the popup
+                        $('.popup-overlay').fadeIn();
+
+                        // Handle confirmation (yes button)
+                        $('.btnConfirm').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+
+                            // Send AJAX request to update order status
+                            $.ajax({
+                                url: '../php/cancel_served_order.php',  // Path to your PHP script
+                                type: 'POST',
+                                data: { order_id: orderId },
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response.success) {
+                                        displaySuccessMessage('Served order cancelled!.');
+                                        // You can refresh the page or update the UI as needed
+                                        fetchPrepareOrders();
+                                        fetchProcessOrders();
+                                        fetchServedOrders();
+                                    } else {
+                                        alert('Failed to confirm order: ' + response.error);
+                                    }
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.log('Error confirming order: ' + textStatus, errorThrown);
+                                }
+                            });
+
+                            // Hide the popup after confirming
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+
+                        // Handle cancellation (no button)
+                        $('.btnCancel').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent default link behavior
+                            // Hide the popup if "no" is clicked
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                        });
+                    });
+                });
+
+
 
                 $(document).ready(function() {
                     // When the confirm button is clicked
@@ -866,5 +919,6 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/logout.js"></script>
 <script src="../js/alert_disappear.js"></script>
 <script src="../js/order_tabs.js"></script>
+<script src="../js/hyperlinks_nav.js"></script>
 </body>
 </html>

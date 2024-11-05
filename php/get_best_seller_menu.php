@@ -26,7 +26,7 @@ if ($category === 'all') {
             JOIN menu_items mi ON moc.item_id = mi.item_id
             WHERE mi.item_category = ? 
             ORDER BY moc.order_count DESC
-            LIMIT 10"; // Adjust the limit as needed
+            "; // Adjust the limit as needed
 }
 
 // Prepare the statement

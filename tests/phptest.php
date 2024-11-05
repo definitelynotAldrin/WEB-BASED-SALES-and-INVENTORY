@@ -1,44 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <?php 
-     include_once "../includes/connection.php";
-     
-        $sql = "SELECT mi.item_id, mi.item_name, mi.item_category, s.stock_quantity, mis.quantity_required
-        FROM menu_items mi
-        JOIN menu_item_stocks mis ON mi.item_id = mis.menu_item_id
-        JOIN stocks s ON mis.stock_id = s.stock_id";
+<?php
+// Connect to your database
+include_once "../includes/connection.php";
 
-$result = $conn->query($sql);
+// Step 1: Calculate the total sales amount from the payments table
+$sql_total_sales = "SELECT SUM(total_amount) AS total_sales FROM payments WHERE payment_status = 'paid'";
+$result_total_sales = $conn->query($sql_total_sales);
+$total_sales = $result_total_sales->fetch_assoc()['total_sales'];
 
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $stock_quantity = $row['stock_quantity'];
-        $quantity_required = $row['quantity_required'];
-        $low_stock_threshold = 10; // Define your low stock threshold here
+// Step 2: Count the total number of transactions
+$sql_total_transactions = "SELECT COUNT(order_id) AS total_transactions FROM payments WHERE payment_status = 'paid'";
+$result_total_transactions = $conn->query($sql_total_transactions);
+$total_transactions = $result_total_transactions->fetch_assoc()['total_transactions'];
 
-        // Check if stock is low
-        if ($stock_quantity < $low_stock_threshold) {
-            $low_stock_indicator = "Low Stock: " . $stock_quantity . " left";
-        } else {
-            $low_stock_indicator = "In Stock";
-        }
-
-        // Display the menu item with the stock indicator
-        echo "<div class='menu-item'>";
-        echo "<h3>" . $row['item_name'] . "</h3>";
-        echo "<p>Stock Status: " . $low_stock_indicator . "</p>";
-        echo "</div>";
-    }
+// Step 3: Calculate the average sales per transaction
+if ($total_transactions > 0) {
+    $average_sales = $total_sales / $total_transactions;
 } else {
-    echo "No items found.";
+    $average_sales = 0; // Prevent division by zero
 }
 
-    ?>
-</body>
-</html>
+// Display the average sales per transaction
+echo "Average Sales per Transaction: ₱" . number_format($average_sales, 2);
+
+?>

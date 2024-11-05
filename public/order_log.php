@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         
                     </script>
                     <div class="profile">
-                        <img src="../assets/me.jpg">
+                        <img src="../assets/me.jpg" class="admin-profile">
                     </div>
                     <i class="fa-solid fa-bars nav-bar"></i>
                 </div>
@@ -421,5 +421,6 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/popup_forms.js"></script>
 <script src="../js/order_entry_panel.js"></script> -->
 <script src="../js/logout.js"></script>
+<script src="../js/hyperlinks_nav.js"></script>
 </body>
 </html>

@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         
                     </script>
                     <div class="profile">
-                        <img src="../assets/me.jpg">
+                        <img src="../assets/me.jpg" class="admin-profile">
                     </div>
                     <i class="fa-solid fa-bars nav-bar"></i>
                 </div>

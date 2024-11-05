@@ -8,12 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (alertDanger) {
         setTimeout(function() {
             alertDanger.style.opacity = '0';
-        }, 5000);
+        }, 3000);
     }
 
     if (alertSuccess) {
         setTimeout(function() {
             alertSuccess.style.opacity = '0';
-        }, 4000);
+        }, 3000);
     }
 });

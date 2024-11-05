@@ -38,6 +38,7 @@
 }
 
 
+
 .side-overlay{
     position: absolute;
     width: 100%;
@@ -143,28 +144,55 @@
 
 .content-container{
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background-color: var(--white);
     position: relative;
 }
 
 .success{
-    color: var(--white);
+    color: var(--dark-green);
     font-size: 1rem;
     font-weight: 500;
     padding: 15px;
     border-radius: 4px;
     border: 1px solid rgb(108, 188, 76, 1);
-    background-color: rgb(108, 188, 76, 0.9);
+    background-color: rgb(108, 188, 76, 0.3);
     text-align: center;
+    transition: 0.5s ease;
     position: absolute;
-    top: 5%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    transition: 0.5s ease;
-    z-index: 2;
-}
-
+  }
+  
+  
+  .alert{
+    color: var(--red);
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 15px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid rgba(215, 1, 1, 0.5);
+    background-color: rgba(250, 0, 0, 0.2);
+    text-align: center;
+    position: absolute;
+  }
+  
+  #error-container{
+    display: none;
+    z-index: 6;
+    color: white;
+    background-color: rgb(134, 2, 2);
+  }
+  
+  
+  #success-container{
+    display: none;
+    z-index: 6;
+    color: white;
+    background-color: var(--light-green);
+  }
 
 .content-header{
     display: flex;
@@ -309,6 +337,215 @@
 .notification-details p span{
     font-weight: 700;
 }
+
+.settings-container{
+    height: 85%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.settings-header h1{
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--darker);
+}
+
+.settings-small-header h1{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--darker);
+}
+
+.settings-small-header p{
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--darker);
+}
+
+
+.settings-content{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    width: 40vw;
+    height: 70vh;
+}
+
+.settings-main-content{
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    background-color: #eeeeee;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+.settings-groups{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0.5rem;
+    background-color: var();
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.settings-group{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.change-password{
+    border: none;
+}
+
+.settings-groups h3{
+    color: var(--darker);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.settings-groups span{
+    color: var(--darker);
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.settings-groups:hover{
+    background-color: #dbddda;
+}
+
+.settings-groups:active{
+    background-color: #b3b4b3;
+}
+
+.settings-popup-overlay{
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    object-fit: cover;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    display: none;
+}
+
+.settings-popup-container{
+    height: 65vh;
+    width: 70vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--white);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 24px;
+    padding: 20px;
+    z-index: 2;
+    display: none;
+}
+
+.change-username-details, .change-password-details{
+    height: 35vh;
+}
+
+.security-confirmation{
+    z-index: 5;
+}
+
+.changing-password, .changing-username{
+    z-index: 4;
+}
+
+.settings-popup-content{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.settings-popup-header{
+    display: flex;
+    flex-direction: column;
+}
+
+.header-authentication{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    
+}
+
+.header-authentication i{
+    color: var(--red);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.settings-popup-form{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.settings-popup-form-group{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.settings-popup-form-group input{
+    padding: 1rem 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    outline: none;
+}
+
+.settings-popup-form-group input:focus{
+    border: 1px solid rgba(0, 0, 0, 0.9);
+}
+
+.settings-popup-form-group input:hover{
+    border: 1px solid rgba(0, 0, 0, 0.9);
+}
+
+
+.settings-popup-form-group label{
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--darker);
+    text-transform: capitalize;
+}
+
+.settings-popup-button button{
+    margin-top: 0.5rem;
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    background-color: var(--light-green);
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+.settings-popup-button button:disabled{
+    cursor: no-drop;
+    opacity: 0.8;
+}
+
+
+.settings-popup-button button:active{
+    background-color: var(--dark-green);
+}
+
 
 .header-cards-container{
     width: 100%;
@@ -601,6 +838,11 @@
     display: none;
 }
 
+.popup-confirmation-container{
+    width: 450px;
+    z-index: 6;
+}
+
 .pop-up-content{
     display: flex;
     flex-direction: column;
@@ -623,6 +865,7 @@
 .pop-up-content h1{
     font-size: 1rem;
     color: var(--darker);
+    text-align: center;
 }
 
 
@@ -660,6 +903,18 @@
     background-color: var(--dark-green);
     color: var(--white);
     border: 1px solid var(--dark-green);
+}
+
+.button-cancel{
+    color: var(--darker);
+    font-weight: 500;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.button-confirm{
+    background-color: #04c001;
+    color: var(--white);
+    border: 1px solid #04c001;
 }
 
 
@@ -891,6 +1146,22 @@
     /* .customer-details h1{
         white-space: nowrap;
     } */
+}
+
+
+@media (max-width: 999px){
+  
+    .settings-content{
+        width: 100%;
+    }
+}
+
+
+@media screen and (min-width: 1000px) and (max-width: 1350px){
+  
+    .settings-content{
+        width: 60vw;
+    }
 }
 
 @media screen and (min-width: 1065px) and (max-width: 1220px){
