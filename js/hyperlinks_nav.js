@@ -45,3 +45,15 @@ document.addEventListener('DOMContentLoaded', function() {
  
 });
 
+
+document.addEventListener('DOMContentLoaded', function() {
+    const inDebt = document.querySelectorAll('.in-debt-cards');
+    
+    // Loop through each element with the class 'in-debt-cards' and add an event listener
+    inDebt.forEach(function(debtCards) {
+        debtCards.addEventListener('click', function() {
+            window.location.href = '../public/settlement_panel.php';
+        });
+    });
+});
+

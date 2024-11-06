@@ -1057,7 +1057,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="settings-popup-content">
                     <div class="settings-popup-header">
                         <div class="header-authentication">
-                            <h1>Username Roles</h1>
+                            <h1>Roles</h1>
                             <i class="fa-regular fa-circle-xmark popup-close-button"></i>
                         </div>
                         
@@ -1083,7 +1083,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="settings-popup-content">
                     <div class="settings-popup-header">
                         <div class="header-authentication">
-                            <h1>Username Roles</h1>
+                            <h1>Roles</h1>
                             <i class="fa-regular fa-circle-xmark popup-close-button"></i>
                         </div>
                         

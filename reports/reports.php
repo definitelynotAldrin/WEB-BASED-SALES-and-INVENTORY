@@ -96,10 +96,11 @@ $result_top_products = $conn->query($sql_top_products);
 $sql_sales_trends = "
     SELECT DATE(payment_date) AS sale_date, SUM(total_amount) AS daily_sales
     FROM payments p
-    WHERE payment_status = 'paid' AND MONTH(payment_date) >= 11 $date_condition
+    WHERE payment_status = 'paid' $date_condition
     GROUP BY sale_date
     ORDER BY sale_date ASC
 ";
+
 $result_sales_trends = $conn->query($sql_sales_trends);
 ?>
 
@@ -177,13 +178,26 @@ $result_sales_trends = $conn->query($sql_sales_trends);
         <h3>Daily Sales</h3>
         <table>
             <tr><th>Date</th><th>Daily Sales</th></tr>
-            <?php while ($row = $result_sales_trends->fetch_assoc()): ?>
+            <?php 
+            $total_sales = 0; // Initialize the total sales variable
+
+            while ($row = $result_sales_trends->fetch_assoc()):
+                // Add each daily sales value to the total sales
+                $total_sales += $row['daily_sales'];
+            ?>
             <tr>
                 <td><?php echo date("m/d/Y", strtotime($row['sale_date'])); ?></td>
                 <td>₱<?php echo number_format($row['daily_sales'], 2); ?></td>
             </tr>
             <?php endwhile; ?>
+
+            <!-- Display total daily sales -->
+            <tr>
+                <td><strong>Total Sales</strong></td>
+                <td><strong>₱<?php echo number_format($total_sales, 2); ?></strong></td>
+            </tr>
         </table>
     </section>
+
 </body>
 </html>

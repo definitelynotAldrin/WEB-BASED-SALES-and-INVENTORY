@@ -173,54 +173,193 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div>
                     </div>
                     <script>
-                        function fetchLowStockItems() {
-                            $.ajax({
-                                url: '../php/get_low_stock_items.php', // Adjust the path if needed
-                                type: 'GET',
-                                dataType: 'json',
-                                success: function(data) {
-                                    const notificationContainer = $('#low-stock-notifications');
-                                    const notificationBell = $('.notification-alert-icon');
-                                    
-                                    notificationContainer.empty(); // Clear the current content
-
-                                    if (data.length > 0) {
-                                        notificationBell.show(); // Show the notification alert icon
+                         $(document).ready(function () {
+                            function fetchLowStockItems() {
+                                $.ajax({
+                                    url: '../php/get_low_stock_items.php', // Adjust the path if needed
+                                    type: 'GET',
+                                    dataType: 'json',
+                                    success: function(data) {
+                                        const notificationContainer = $('#low-stock-notifications');
+                                        const notificationBell = $('.notification-alert-icon');
                                         
-                                        // Loop through the low stock items and add to notification container
-                                        data.forEach(function(item) {
-                                            const notification = `
-                                                <div class="notification-content">
-                                                    <div class="notification-img">
-                                                        <img src="../assets/mark.png">
-                                                    </div>
-                                                    <div class="notification-details">
-                                                        <h1 class="notification-details-title">${item.stock_name}</h1>
-                                                        <p><span>Stock Alert:</span> This item is running low. <br>Only <span>${item.stock_quantity}</span> available.</p>
-                                                    </div>
-                                                </div>`;
-                                            notificationContainer.append(notification);
-                                        });
-                                    } else {
-                                        notificationBell.hide(); // Hide the notification alert icon if no low stock items
-                                        notificationContainer.html('<p>No low stock items currently.</p>');
+                                        notificationContainer.empty(); // Clear the current content
+
+                                        if (data.length > 0) {
+                                            notificationBell.show(); // Show the notification alert icon
+                                            
+                                            // Loop through the low stock items and add to notification container
+                                            data.forEach(function(item) {
+                                                const notification = `
+                                                    <div class="notification-content">
+                                                        <div class="notification-img">
+                                                            <img src="../assets/mark.png">
+                                                        </div>
+                                                        <div class="notification-details">
+                                                            <h1 class="notification-details-title">${item.stock_name}</h1>
+                                                            <p><span>Stock Alert:</span> This item is running low. <br>Only <span>${item.stock_quantity}</span> available.</p>
+                                                        </div>
+                                                    </div>`;
+                                                notificationContainer.append(notification);
+                                            });
+                                        } else {
+                                            notificationBell.hide(); // Hide the notification alert icon if no low stock items
+                                            notificationContainer.html('<p>No low stock items currently.</p>');
+                                        }
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Error fetching low stock items:', error);
                                     }
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error('Error fetching low stock items:', error);
-                                }
+                                });
+                            }
+
+                            // Fetch low stock items when the page loads
+                            $(document).ready(function() {
+                                fetchLowStockItems();
+
+                                // Optional: Set interval to refresh the notifications periodically
+                                setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
                             });
-                        }
 
-                        // Fetch low stock items when the page loads
-                        $(document).ready(function() {
-                            fetchLowStockItems();
+                            function fetchSalesData(timeframe) {
+                                $.ajax({
+                                    url: '../php/get_sales_data.php', // Adjust the path to your PHP script
+                                    type: 'GET',
+                                    data: { timeframe: timeframe },
+                                    dataType: 'json',
+                                    success: function(data) {
+                                        $('#total_sales').text(data.total_sales); // Update the total sales amount
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Error fetching sales data:', error);
+                                    }
+                                });
+                            }
 
-                            // Optional: Set interval to refresh the notifications periodically
-                            setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
-                        });
+                            // Fetch sales data when the page loads
+                            fetchSalesData('overall');
 
+                            // Fetch sales data based on selected timeframe
+                            $('#sales_timeframe').change(function() {
+                                const selectedTimeFrame = $(this).val(); // Get the selected value
+                                fetchSalesData(selectedTimeFrame); // Pass the selected timeframe to the function
+                            });
+
+                            function fetchCollectiblesData(timeframe) {
+                                $.ajax({
+                                    url: '../php/get_collectibles_data.php', // Adjust the path to your PHP script
+                                    type: 'GET',
+                                    data: { timeframe: timeframe },
+                                    dataType: 'json',
+                                    success: function(data) {
+                                        $('#total_collectibles').text(data.total_collectibles); // Update the total sales amount
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Error fetching sales data:', error);
+                                    }
+                                });
+                            }
+
+                            // Fetch sales data when the page loads
+                            fetchCollectiblesData('overall');
+
+                            // Fetch sales data based on selected timeframe
+                            $('#collectibles_timeframe').change(function() {
+                                const selectedTimeFrame = $(this).val(); // Get the selected value
+                                fetchCollectiblesData(selectedTimeFrame); // Pass the selected timeframe to the function
+                            });
+
+
+                            function fetchOrdersHistory() {
+                                const searchCustomer = $('#search_customer').val();
+                                $.ajax({
+                                    url: '../php/fetch_credit_orders.php', // Your existing PHP script
+                                    type: 'GET',
+                                    data: {
+                                        search_customer: searchCustomer
+                                    },
+                                    dataType: 'json',
+                                    success: function (data) {
+                                        $('.in-debt-customers').empty(); // Clear previous results
+                                        if (data.success && data.orders.length > 0) {
+                                            $.each(data.orders, function (index, order) {
+                                                $('.in-debt-customers').append(`
+                                                    <div class="bottom-cards in-debt-cards" data-order-id="${order.order_id}" style="cursor: pointer;">
+                                                        <div class="bottom-cards-group customer-details">
+                                                            <h1 class="bottom-cards-customer">${order.customer_name}</h1>
+                                                            <span class="date-time">${order.order_date} ${order.order_time}</span>
+                                                        </div>
+                                                        <div class="bottom-cards-group settlement">
+                                                            <h3>Debt</h3>
+                                                            <span class="settlement-value">&#x20B1; ${order.total_amount}</span>
+                                                        </div>
+                                                    </div>
+                                                `);
+                                            });
+                                        } else {
+                                            $('.in-debt-customers').append('<p>No credit orders found.</p>');
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        console.log("Error fetching orders: " + textStatus, errorThrown);
+                                    }
+                                });
+                            }
+
+                            
+
+                            fetchOrdersHistory();
+
+                            $('#search_customer').on('input', fetchOrdersHistory);
+
+                            $(document).on('click', '.in-debt-cards', function() {
+                                // This will trigger when the '.in-debt-cards' element is clicked
+                                window.location.href = '../public/settlement_panel.php';
+                            });
+
+
+                            function fetchPaidCredit() {
+                                const searchArchive = $('#search_archive_collectibles').val();
+                                $.ajax({
+                                    url: '../php/fetch_credit_orders_paid.php', // Your existing PHP script
+                                    type: 'GET',
+                                    data: {
+                                        search_archive: searchArchive
+                                    },
+                                    dataType: 'json',
+                                    success: function (data) {
+                                        $('.collectibles-archived').empty(); // Clear previous results
+                                        if (data.success && data.orders.length > 0) {
+                                            $.each(data.orders, function (index, order) {
+                                                $('.collectibles-archived').append(`
+                                                    <div class="bottom-cards customers-cards" data-order-id="${order.order_id}">
+                                                        <div class="bottom-cards-group customer-details">
+                                                            <h1 class="bottom-cards-customer">${order.customer_name}</h1>
+                                                            <span class="date-time">${order.order_date} ${order.order_time}</span>
+                                                        </div>
+                                                        <div class="bottom-cards-group settlement">
+                                                            <h3>paid Debt</h3>
+                                                            <span class="settlement-value">&#x20B1; ${order.total_amount}</span>
+                                                        </div>
+                                                    </div>
+                                                `);
+                                            });
+                                        } else {
+                                            $('.collectibles-archived').append('<p>No archive credit orders found.</p>');
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        console.log("Error fetching orders: " + textStatus, errorThrown);
+                                    }
+                                });
+                            }
+
+                            fetchPaidCredit();
+
+                            $('#search_archive_collectibles').on('input', fetchPaidCredit);
+                         });
                         
+                         
                     </script>
                     <div class="profile">
                         <img src="../assets/me.jpg" class="admin-profile">
@@ -229,57 +368,47 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
             <div class="header-cards-container">
-                <div class="header-card sales-card">
-                    <div class="header-card-group">
+                <div class="header-card sales-card-container">
+                    <div class="header-card-group sales-card">
                         <h3>sales</h3>
-                        <select name="" id="">
-                            <option value="Annually">overall</option>
-                            <option value="Monthly">this month</option>
-                            <option value="Weekly">this week</option>
+                        <select name="sales_timeframe" id="sales_timeframe">
+                            <option value="overall">Overall</option>
+                            <option value="monthly">This Month</option>
+                            <option value="weekly">This Week</option>
                         </select>
                     </div>
-                    <h1 class="header-card-value">&#x20B1;<span>234,555.90</span></h1>
+                    <h1 class="header-card-value">&#x20B1;<span id="total_sales">0.00</span></h1>
+                    <i class="fa-solid fa-arrow-up-right-from-square sales-link"></i>
                 </div>
-                <div class="header-card collectibles-card">
-                    <div class="header-card-group">
+                <div class="header-card collectibles-card-container">
+                    <div class="header-card-group collectibles-card">
                         <h3>collectibles</h3>
-                        <select name="" id="">
-                            <option value="Annually">overall</option>
-                            <option value="Monthly">this month</option>
-                            <option value="Weekly">this week</option>
+                        <select name="collectibles_timeframe" id="collectibles_timeframe">
+                            <option value="overall">overall</option>
+                            <option value="monthly">this month</option>
+                            <option value="weekly">this week</option>
                         </select>
                     </div>
-                    <h1 class="header-card-value">&#x20B1;<span>100,789.00</span></h1>
+                    <h1 class="header-card-value">&#x20B1;<span id="total_collectibles">0.00</span></h1>
+                    <i class="fa-solid fa-arrow-up-right-from-square collectibles-link"></i>
                 </div>
             </div>
             <div class="bottom-cards-container">
                 <div class="bottom-card customers">
-                    <h1 class="bottom-cards-title">in-debt customers</h1>
-                    <div class="bottom-card-content customer-card-container">
-                        <div class="bottom-cards customers-cards">
-                            <div class="bottom-cards-group customer-details">
-                                <h1 class="bottom-cards-customer">christian campbell</h1>
-                            </div>
-                            <div class="bottom-cards-group settlement">
-                                <h3>Debt</h3>
-                                <span class="settlement-value">&#x20B1; 56,356.00</span>
-                            </div>
-                        </div>
+                    <div class="bottom-cards-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h1 class="bottom-cards-title">in-debt customers</h1>
+                        <input type="search" name="search_customer" id="search_customer">
+                    </div>
+                    <div class="bottom-card-content customer-card-container in-debt-customers">
                         
                     </div>
                 </div>
                 <div class="bottom-card customers">
-                    <h1 class="bottom-cards-title">collectibles archive</h1>
-                    <div class="bottom-card-content customer-card-container">
-                        <div class="bottom-cards customers-cards">
-                            <div class="bottom-cards-group customer-details">
-                                <h1 class="bottom-cards-customer">christian campbell</h1>
-                            </div>
-                            <div class="bottom-cards-group settlement">
-                                <h3>debt</h3>
-                                <span class="settlement-value">&#x20B1; 56,356.00</span>
-                            </div>
-                        </div>
+                    <div class="bottom-cards-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h1 class="bottom-cards-title">collectibles archive</h1>
+                        <input type="search" name="search_customer" id="search_archive_collectibles">
+                    </div>
+                    <div class="bottom-card-content customer-card-container collectibles-archived">
                         
                     </div>
                 </div>
@@ -301,6 +430,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script src="../js/sidenav.js"></script>
 <script src="../js/logout.js"></script>
+<script src="../js/hyperlinks_nav.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="../js/chartJS.js"></script> -->
 </body>

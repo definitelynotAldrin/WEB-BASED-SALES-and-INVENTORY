@@ -1,10 +1,13 @@
 <?php
 include_once "../includes/connection.php";
 
-$searchCustomer = isset($_GET['search_customer']) ? $_GET['search_customer'] : '';
+$searchCustomer = isset($_GET['search_archive']) ? $_GET['search_archive'] : '';
 
-// SQL query to search only by customer name and filter by credit payment status
-$sql = "SELECT * FROM orders WHERE payment_status = 'credit'";
+// SQL query to join orders and payments tables and filter by customer name and payment status
+$sql = "SELECT o.order_id, o.customer_name, o.total_amount, o.order_date, o.order_time, p.payment_status, p.collectibles 
+        FROM orders o 
+        JOIN payments p ON o.order_id = p.order_id
+        WHERE p.payment_status = 'paid' AND p.collectibles = 'Y'";
 
 // Prepare parameters and types
 $params = [];
@@ -12,7 +15,7 @@ $types = "";
 
 // Filter by customer name if provided
 if (!empty($searchCustomer)) {
-    $sql .= " AND customer_name LIKE ?";
+    $sql .= " AND o.customer_name LIKE ?";
     $params[] = "%" . $searchCustomer . "%";
     $types = "s";  // Parameter type for bind_param (s = string)
 }
@@ -37,7 +40,9 @@ if ($result->num_rows > 0) {
             'customer_name' => $row['customer_name'],
             'total_amount' => $row['total_amount'],
             'order_date' => $row['order_date'],
-            'order_time' => $row['order_time']
+            'order_time' => $row['order_time'],
+            'payment_status' => $row['payment_status'],
+            'collectibles' => $row['collectibles']
         ];
     }
 
@@ -49,3 +54,4 @@ if ($result->num_rows > 0) {
 $stmt->close();
 $conn->close();
 ?>
+

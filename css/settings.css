@@ -434,7 +434,6 @@
 }
 
 .settings-popup-container{
-    height: 65vh;
     width: 70vh;
     position: absolute;
     top: 50%;
@@ -448,9 +447,9 @@
     display: none;
 }
 
-.change-username-details, .change-password-details{
-    height: 35vh;
-}
+/* .change-username-details, .change-password-details{
+    
+} */
 
 .security-confirmation{
     z-index: 5;

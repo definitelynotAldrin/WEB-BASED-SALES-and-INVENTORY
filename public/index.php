@@ -295,9 +295,12 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="chart-container">
                 <div class="chart-header">
-                    <select name="year" id="year_selection">
-
+                    <select name="analytics_type" id="analytics-type">
+                        <option value="" hidden>--type of analytics--</option>
+                        <option value="line">Line</option>
+                        <option value="bar">Bar</option>
                     </select>
+                    <select name="year" id="year_selection"></select>
                     <select name="sales" id="sales_selection">
                         <option value="annually">Annually</option>
                         <option value="monthly">Monthly</option>
@@ -308,6 +311,127 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         </div>
         <script>
+            $(document).ready(function() {
+                // Initial chart setup
+                let ctx = $('#sales_chart')[0].getContext('2d');
+                let chart = new Chart(ctx, {
+                    type: 'bar',  // Initial chart type
+                    data: {
+                        labels: [],
+                        datasets: [
+                            { label: 'Sales', data: [], borderColor: '#34701d', borderWidth: 1, fill: false },
+                            { label: 'Collectibles', data: [], borderColor: '#C40C0C', borderWidth: 1, fill: false }
+                        ]
+                    },
+                    options: {
+                        scales: { y: { beginAtZero: true } },
+                        plugins: {
+                            legend: { display: true },
+                            tooltip: { enabled: true }
+                        }
+                    }
+                });
+
+                // Update chart data and type
+                // function updateChart() {
+                //     const selectedYear = $('#year_selection').val();
+                //     const selectedPeriod = $('#sales_selection').val();
+
+                //     $.getJSON(`../php/chart_analytics.php?year=${selectedYear}&period=${selectedPeriod}`, function(data) {
+                //         let labels = [];
+                //         let salesData = [];
+                //         let collectiblesData = [];
+
+                //         if (selectedPeriod === 'annually') {
+                //             labels.push(selectedYear);
+                //             salesData.push(data[0]?.total_sales || 0);
+                //             collectiblesData.push(data[0]?.total_collectibles || 0);
+                //         } else if (selectedPeriod === 'monthly') {
+                //             data.forEach(item => {
+                //                 labels.push(item.month_name);  // Use month names directly
+                //                 salesData.push(item.total_sales || 0);
+                //                 collectiblesData.push(item.total_collectibles || 0);
+                //             });
+                //         } else if (selectedPeriod === 'weekly') {
+                //             data.forEach(item => {
+                //                 // Format label as "Month (Week X)"
+                //                 labels.push(`${item.month_name} (Week ${item.week})`);
+                //                 salesData.push(item.total_sales || 0);
+                //                 collectiblesData.push(item.total_collectibles || 0);
+                //             });
+                //         }
+
+                //         chart.data.labels = labels;
+                //         chart.data.datasets[0].data = salesData;
+                //         chart.data.datasets[1].data = collectiblesData;
+                //         chart.update();
+                //     }).fail(function(error) {
+                //         console.error("Error fetching data:", error);
+                //     });
+                // }.
+
+                function updateChart() {
+                    const selectedYear = $('#year_selection').val();
+                    const selectedPeriod = $('#sales_selection').val();
+
+                    $.getJSON(`../php/chart_analytics.php?year=${selectedYear}&period=${selectedPeriod}`, function(data) {
+                        let labels = [];
+                        let salesData = [];
+                        let collectiblesData = [];
+
+                        if (selectedPeriod === 'annually') {
+                            labels.push(selectedYear);
+                            salesData.push(data[0]?.total_sales || 0);
+                            collectiblesData.push(data[0]?.total_collectibles || 0);
+                        } else if (selectedPeriod === 'monthly') {
+                            data.forEach(item => {
+                                labels.push(item.month_name);
+                                salesData.push(item.total_sales || 0);
+                                collectiblesData.push(item.total_collectibles || 0);
+                            });
+                        } else if (selectedPeriod === 'weekly') {
+                            data.forEach(item => {
+                                // Use week_label directly
+                                labels.push(item.week_label);
+                                salesData.push(item.total_sales || 0);
+                                collectiblesData.push(item.total_collectibles || 0);
+                            });
+                        }
+
+                        chart.data.labels = labels;
+                        chart.data.datasets[0].data = salesData;
+                        chart.data.datasets[1].data = collectiblesData;
+                        chart.update();
+                    }).fail(function(error) {
+                        console.error("Error fetching data:", error);
+                    });
+                }
+
+
+
+                // Change chart type without destroying
+                $('#analytics-type').on('change', function() {
+                    const newType = $(this).val();
+                    
+                    if (newType && chart.config.type !== newType) {
+                        chart.config.type = newType;  // Update the chart type
+                        chart.update();
+                    }
+                });
+
+                // Set up year dropdown and load initial chart data
+                const currentYear = new Date().getFullYear();
+                const startYear = 2020;
+                for (let year = currentYear; year >= startYear; year--) {
+                    $('#year_selection').append(new Option(year, year));
+                }
+                $('#year_selection').val(currentYear);
+                updateChart();
+
+                // Trigger updates based on dropdown changes
+                $('#sales_selection, #year_selection').on('change', updateChart);
+            });
+
             function fetchBestSellers(category = 'all') {
                 $.ajax({
                     url: '../php/get_best_seller_menu.php', // Adjust the path if needed
@@ -442,6 +566,8 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
 
+
+            
         </script>
         <div class="pop-up-overlay logout-confirmation-overlay"></div>
         <div class="pop-up-container logout-confirmation-container">
@@ -459,7 +585,7 @@ document.addEventListener("DOMContentLoaded", function() {
    
 <script src="../js/sidenav.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<script src="../js/chartJS.js"></script>
+<!-- <script src="../js/chartJS.js"></script> -->
 <script src="../js/hyperlinks_nav.js"></script>
 <script src="../js/logout.js"></script>
 <script src="../js/alert_disappear.js"></script>

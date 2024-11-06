@@ -7,7 +7,10 @@ date_default_timezone_set('Asia/Manila');
 $today = date('Y-m-d');
 
 // Query to get today's orders and their table status
-$sql = "SELECT order_id, customer_table, table_status, customer_name FROM orders WHERE DATE(order_date) = '$today'";
+$sql = "SELECT order_id, customer_table, table_status, customer_name 
+        FROM orders 
+        WHERE DATE(order_date) = '$today' AND customer_table != 0";
+
 $result = $conn->query($sql);
 
 $orders = array();

@@ -1,28 +1,47 @@
 <?php
-// invoice.php
-
 // Connect to your database
 include_once "../includes/connection.php";
 
 date_default_timezone_set('Asia/Manila');
 
-// Get the order ID from the URL
-$order_id = $_GET['order_id'] ?? '';
+// Get the array of order IDs from the URL (for multiple selected orders)
+$order_ids = isset($_GET['order_ids']) ? explode(',', $_GET['order_ids']) : [];
 
-// Fetch order and customer details from the database based on the order_id
-$sql = "SELECT * FROM orders WHERE order_id = ?";
+// Check if there are order IDs selected, else show an error
+if (empty($order_ids)) {
+    die("No orders selected.");
+}
+
+// Prepare the query to fetch customer and order details based on multiple order IDs
+$order_placeholders = implode(',', array_fill(0, count($order_ids), '?'));
+$sql = "
+    SELECT SUM(total_amount) AS total_amount
+    FROM orders
+    WHERE order_id IN ($order_placeholders)
+";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $order_id);
+$stmt->bind_param(str_repeat("i", count($order_ids)), ...$order_ids);
 $stmt->execute();
 $order_details = $stmt->get_result()->fetch_assoc();
 
-// Fetch ordered items
+// Fetch any common customer name if needed
+$sql_customer = "
+    SELECT customer_name
+    FROM orders
+    WHERE order_id IN ($order_placeholders)
+    LIMIT 1
+";
+$stmt_customer = $conn->prepare($sql_customer);
+$stmt_customer->bind_param(str_repeat("i", count($order_ids)), ...$order_ids);
+$stmt_customer->execute();
+$customer_details = $stmt_customer->get_result()->fetch_assoc();
+
+// Prepare the query to fetch ordered items for all selected orders
 $sql_items = "
     SELECT 
-        order_details.menu_item_stock_id,
-        order_details.quantity,
-        order_details.sub_total,
-        menu_items.item_name
+        menu_items.item_name,
+        SUM(order_details.quantity) as quantity,
+        SUM(order_details.sub_total) as sub_total
     FROM 
         order_details
     JOIN 
@@ -30,21 +49,23 @@ $sql_items = "
     ON 
         order_details.menu_item_stock_id = menu_items.item_id
     WHERE 
-        order_details.order_id = ?
+        order_details.order_id IN ($order_placeholders)
+    GROUP BY 
+        menu_items.item_name
 ";
 $stmt_items = $conn->prepare($sql_items);
-$stmt_items->bind_param("i", $order_id);
+$stmt_items->bind_param(str_repeat("i", count($order_ids)), ...$order_ids);
 $stmt_items->execute();
 $order_items = $stmt_items->get_result();
 
-
-$sql_payment = "SELECT discounted_amount, cash_tendered, change_due, total_amount, payment_status FROM payments WHERE order_id = ?";
-$stmt_payments = $conn->prepare($sql_payment);
-$stmt_payments->bind_param("i", $order_id);
-$stmt_payments->execute();
-$payment_details = $stmt_payments->get_result()->fetch_assoc();
-
+// Payment details, fetching the latest payment for one of the selected orders
+$sql_payment = "SELECT discounted_amount, cash_tendered, change_due, payment_status FROM payments WHERE order_id = ? ORDER BY payment_date DESC LIMIT 1";
+$stmt_payment = $conn->prepare($sql_payment);
+$stmt_payment->bind_param("i", $order_ids[0]); // Only need one order ID for payment info
+$stmt_payment->execute();
+$payment_details = $stmt_payment->get_result()->fetch_assoc();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,7 +74,7 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
     <style>
         /* Styles for a 3" or 4" wide receipt */
         body { font-family: Arial, sans-serif; width: 250px; margin: 0 auto; }
-        h2, p { text-align: center; margin: 5px 0; text-transform: capitalize;}
+        h2, p { text-align: center; margin: 5px 0; text-transform: capitalize; }
         .receipt { border-top: 1px dashed #333; padding: 10px 0; }
         .header, .footer { text-align: center; }
         .content { margin-top: 10px; }
@@ -61,7 +82,7 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
         .item-list th, .item-list td { text-align: left; padding: 4px; }
         .item-list th { font-weight: bold; }
         .summary { margin-top: 10px; }
-        .summary td { padding: 4px; text-align: right; text-transform: capitalize;}
+        .summary td { padding: 4px; text-align: right; text-transform: capitalize; }
         .thank-you { margin-top: 15px; text-align: center; font-size: 0.9em; }
 
         @media print {
@@ -80,14 +101,14 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
     <div class="receipt">
         <p><strong>Date:</strong> <?php echo date('Y-m-d'); ?></p>
         <p><strong>Time:</strong> <?php echo date("h:i:s a"); ?></p>
-        <p><strong>Order ID:</strong> <?php echo $order_id; ?></p>
-        <p><strong>Customer:</strong> <?php echo htmlspecialchars($order_details['customer_name']); ?></p>
+        <p><strong>Order IDs:</strong> <?php echo implode(", ", $order_ids); ?></p>
+        <p><strong>Customer:</strong> <?php echo htmlspecialchars($customer_details['customer_name']); ?></p>
     </div>
 
     <div class="content">
         <table class="item-list">
             <tr><th>Item</th><th>Qty</th><th>Subtotal</th></tr>
-            <?php while($item = $order_items->fetch_assoc()): ?>
+            <?php while ($item = $order_items->fetch_assoc()): ?>
             <tr>
                 <td><?php echo htmlspecialchars($item['item_name']); ?></td>
                 <td><?php echo $item['quantity']; ?></td>
@@ -96,18 +117,10 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
             <?php endwhile; ?>
         </table>
 
-        
         <table class="summary" width="100%">
             <tr>
                 <td><strong>Total</strong></td>
                 <td><strong>₱<?php echo number_format($order_details['total_amount'], 2); ?></strong></td>
-            </tr>
-            <tr>
-                <td><strong>Discounted Amount</strong></td>
-                <td><strong>₱<?php 
-                    // Check if there's a discounted amount, otherwise display 0
-                    echo number_format($payment_details['discounted_amount'] ?? 0, 2); 
-                ?></strong></td>
             </tr>
             <tr>
                 <td><strong>Cash Tendered</strong></td>
@@ -119,25 +132,19 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
             </tr>
             <tr>
                 <td><strong>Amount Paid</strong></td>
-                <td><strong>₱<?php 
-                    // Display discounted amount if it’s greater than 0, otherwise display total amount
-                    echo number_format($payment_details['discounted_amount'] > 0 ? $payment_details['discounted_amount'] : $order_details['total_amount'], 2); 
-                ?></strong></td>
+                <td><strong>₱<?php echo number_format($payment_details['discounted_amount'] > 0 ? $payment_details['discounted_amount'] : $order_details['total_amount'], 2); ?></strong></td>
             </tr>
             <tr>
                 <td><strong>Payment Status</strong></td>
                 <td><?php echo htmlspecialchars($payment_details['payment_status']); ?></td>
             </tr>
         </table>
-
     </div>
-                <br>
+
+    <br>
     <div class="footer">
         <p>Thank you for dining with us!</p>
         <p>Have a great day!</p>
     </div>
-
-   
-    
 </body>
 </html>

@@ -1080,6 +1080,7 @@ td{
 .pop-up-content h1{
     font-size: 1rem;
     color: var(--darker);
+    text-align: center;
 }
 
 

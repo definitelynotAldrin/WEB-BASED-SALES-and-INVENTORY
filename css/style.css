@@ -358,6 +358,15 @@
     cursor: pointer;
 } */
 
+#search_customer, #search_archive_collectibles{
+    padding: 0.3rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    outline: none;
+    background-color: var(--secondary-white);
+    font-size: 1rem;
+    font-weight: 400;
+}
+
 .header-card-group{
     display: flex;
     align-items: center;
@@ -554,11 +563,6 @@
     text-transform: capitalize;
 }
 
-.settlement{
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
-    padding-left: 1rem;
-    
-}
 
 .settlement h3{
     color: rgba(0, 0, 0, 0.3);
@@ -567,10 +571,10 @@
     text-transform: capitalize;
 }
 
-.settlement span{
+.bottom-cards-group span{
     color: rgba(0, 0, 0, 0.7);
     font-size: 1rem;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 

@@ -428,6 +428,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         $('.popup-settlement-credit').fadeOut();
                         $('.popup-view-settled-orders').fadeOut();
                         $('.popup-overlay').fadeOut();
+
                     });
 
                 
@@ -1058,7 +1059,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                             $('.total-section .total-field span').html(`&#8369; ${response.total_amount}`);
                                             $('.total-section .payment-field:first-of-type span').text(response.payment_status);
-                                            $('#customer_note').val(response.customer_note);
+                                            $('#customer_note').val(response.credit_note);
 
                                             let totalAmountCredit = parseFloat(response.total_amount);
                                             $('.total-amount-credit').text(totalAmountCredit);
@@ -1162,9 +1163,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                             $('.table-body').empty();
                                             $('.total-section .total-field span').html("");
                                             $('.total-section .payment-field:first-of-type span').text("");
-                                            $('#customer_note').val("");
+                                            $('#customer_note').text("");
                                             $('.popup-confirmation-container').fadeOut();
                                             $('.popup-overlay').fadeOut();
+
+                                            const orderIds = selectedOrderIds.join(','); // Join all selected order IDs into a comma-separated string
+                                            window.location.href = `../reports/invoice_credit_payment.php?order_ids=${orderIds}`;
                                         } else {
                                             displayErrorMessage(response.message);
                                         }

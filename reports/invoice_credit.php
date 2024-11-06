@@ -73,7 +73,7 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
 
     <div class="header">
         <h2>Kan-anan by the Sea</h2>
-        <p>123 Beachside Gahub, Talisayan Mis Or</p>
+        <p>Talisayan Mis Or</p>
         <p>Phone: (123) 456-7890</p>
     </div>
 

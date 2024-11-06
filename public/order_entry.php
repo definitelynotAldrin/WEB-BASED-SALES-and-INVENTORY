@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                             </div>
                             <div class="card-button-group">
-                                <button class="btn-cancel" type="button">cancel</button>
+                                <!-- <button class="btn-cancel" type="button">cancel</button> -->
                                 <button class="btn-proceed" type="button" id="proceed-kg">proceed</button>
                             </div>
                         </div>
@@ -357,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </div>
                             </div>
                             <div class="card-button-group">
-                                <button class="btn-cancel" type="button">cancel</button>
+                                <!-- <button class="btn-cancel" type="button">cancel</button> -->
                                 <button class="btn-proceed" type="button" id="proceed-pieces">proceed</button>
                             </div>
                         </div>
@@ -415,6 +415,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         $('#popup-overlay').on('click', function() {
                             $('.popup_order_quantity').hide(); 
                             $('#popup-overlay').hide();
+                            $('#pieces-popup').hide();
                             // $('body').css('overflow', 'auto');// Hide all popups
                         });
 

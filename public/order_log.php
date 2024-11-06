@@ -337,7 +337,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     $(document).ready(function () {
                         fetchOrdersHistory();
 
-                        setInterval(fetchOrdersHistory, 1000)
+                        setInterval(fetchOrdersHistory, 11000)
                     });
                 });
 
