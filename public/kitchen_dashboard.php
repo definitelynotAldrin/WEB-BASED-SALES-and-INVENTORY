@@ -32,11 +32,11 @@ document.addEventListener("DOMContentLoaded", function() {
             navItem.style.cursor = 'pointer';
         });
 
-        // var allButtons = document.querySelectorAll('.button-disable');
-        // allButtons.forEach(function(disButtons){
-        //     disButtons.style.display = 'none';
-        //     disButtons.style.pointerEvents = 'none';
-        // });
+        var allButtons = document.querySelectorAll('.button-disable');
+        allButtons.forEach(function(disButtons){
+            disButtons.style.display = 'none';
+            disButtons.style.pointerEvents = 'none';
+        });
     } 
     else if (userRole === 'user_service') {
         // Disable all navigation except order entry and order log
@@ -342,6 +342,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                         </div>
                                     `);
                                 });
+
+                                // Now that the elements are added, perform actions on .button-disable elements
+                                handleButtonDisable();
                             } else {
                                 $('#served-card-container').append("<p>No orders available for today.</p>");
                             }
@@ -352,14 +355,30 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
                 }
 
+                // Function to disable .button-disable elements
+                function handleButtonDisable() {
+                    var userRole = "<?php echo $user_role; ?>";
+
+                    if (userRole === 'user_admin') {
+                        $('.button-disable').hide().css('pointer-events', 'none');
+                    } else if (userRole === '') {
+                        // Additional conditions for other roles if needed
+                        $('.button-disable').css({
+                            'opacity': '0.5',
+                            'pointer-events': 'none'
+                        });
+                    }
+                    // Additional role-based handling can be added here
+                }
+
                 $(document).ready(function() {
                     fetchPrepareOrders();
                     fetchProcessOrders();
                     fetchServedOrders();
 
-                    setInterval(fetchPrepareOrders, 1000);
-                    setInterval(fetchProcessOrders, 1000);
-                    setInterval(fetchServedOrders, 1000);
+                    // setInterval(fetchPrepareOrders, 1000);
+                    // setInterval(fetchProcessOrders, 1000);
+                    // setInterval(fetchServedOrders, 1000);
                 });
 
 

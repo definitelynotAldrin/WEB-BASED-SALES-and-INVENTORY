@@ -254,6 +254,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                         </div>
                                     `);
                                 });
+
+                                handleButtonDisable();
                             } else {
                                 $('#orders-settlement').append("<p>No orders available for today.</p>");
                             }
@@ -262,6 +264,21 @@ document.addEventListener("DOMContentLoaded", function() {
                             console.log("Error fetching orders: " + textStatus, errorThrown);
                         }
                     });
+                }
+
+                function handleButtonDisable() {
+                    var userRole = "<?php echo $user_role; ?>";
+
+                    if (userRole === 'user_admin') {
+                        $('.button-disable').hide().css('pointer-events', 'none');
+                    } else if (userRole === '') {
+                        // Additional conditions for other roles if needed
+                        $('.button-disable').css({
+                            'opacity': '0.5',
+                            'pointer-events': 'none'
+                        });
+                    }
+                    // Additional role-based handling can be added here
                 }
                 $(document).ready(function() {
                     fetchOrders();
