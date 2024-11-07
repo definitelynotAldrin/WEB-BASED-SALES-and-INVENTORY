@@ -730,7 +730,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 <script src="../libs/jquery-3.6.0.min.js"></script>
 <script src="../js/sidenav.js"></script>
-<script src="../js/menu_entry_panel.js"></script>
+<!-- <script src="../js/menu_entry_panel.js"></script> -->
 <script src="../js/popup_forms.js"></script>
 <script src="../js/logout.js"></script>
 <script src="../js/alert_disappear.js"></script>

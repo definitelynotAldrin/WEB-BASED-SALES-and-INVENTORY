@@ -60,7 +60,7 @@
         <div class="settings-popup-container security-confirmation">
             <div class="settings-popup-content">
                 <div class="settings-popup-header">
-                    <h1>Authentication</h1>
+                    <h1>Verification</h1>
                 </div>
                 <div class="settings-popup-form">
                     <div class="settings-popup-form-group">

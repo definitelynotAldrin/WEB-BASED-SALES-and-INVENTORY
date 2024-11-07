@@ -5,13 +5,14 @@ date_default_timezone_set('Asia/Manila');
 if (isset($_POST['order_ids']) && is_array($_POST['order_ids'])) {
     $orderIds = $_POST['order_ids'];
 
-    // Prepare SQL to get details of selected orders
+    // Prepare SQL to get details of selected orders, including credit_note from payments
     $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
-    $sql = "SELECT o.customer_name, o.order_date, o.order_time, o.customer_note, od.quantity, 
-                   od.sub_total, od.order_item_status, mi.item_name 
+    $sql = "SELECT o.customer_name, o.order_date, o.order_time, od.quantity, 
+                   od.sub_total, od.order_item_status, mi.item_name, p.credit_note 
             FROM orders o
             JOIN order_details od ON o.order_id = od.order_id
             JOIN menu_items mi ON od.menu_item_stock_id = mi.item_id
+            LEFT JOIN payments p ON o.order_id = p.order_id
             WHERE o.order_id IN ($placeholders) AND o.payment_status = 'credit'";
 
     $stmt = $conn->prepare($sql);
@@ -21,7 +22,7 @@ if (isset($_POST['order_ids']) && is_array($_POST['order_ids'])) {
 
     $mergedDetails = [];
     $totalAmount = 0;
-    $customerNotes = []; // Array to collect customer notes
+    $creditNotes = []; // Array to collect credit notes
 
     $firstRow = $result->fetch_assoc();
     
@@ -34,9 +35,9 @@ if (isset($_POST['order_ids']) && is_array($_POST['order_ids'])) {
     ];
 
     do {
-        // Collect customer notes if not empty
-        if (!empty($firstRow['customer_note'])) {
-            $customerNotes[] = $firstRow['customer_note'];
+        // Collect credit notes if not empty
+        if (!empty($firstRow['credit_note'])) {
+            $creditNotes[] = $firstRow['credit_note'];
         }
 
         $itemKey = $firstRow['item_name'] . '_' . $firstRow['order_item_status'];
@@ -54,8 +55,8 @@ if (isset($_POST['order_ids']) && is_array($_POST['order_ids'])) {
         $totalAmount += $firstRow['sub_total'];
     } while ($firstRow = $result->fetch_assoc());
 
-    // Merge customer notes into a single string, separated by commas or newlines if preferred
-    $mergedCustomerNote = implode("\n", $customerNotes);
+    // Merge credit notes into a single string, separated by newlines if preferred
+    $mergedCreditNote = implode("\n", $creditNotes);
 
     // Prepare response with merged data
     echo json_encode([
@@ -63,7 +64,7 @@ if (isset($_POST['order_ids']) && is_array($_POST['order_ids'])) {
         'customer_name' => $orderData['customer_name'],
         'order_date' => $orderData['order_date'],
         'order_time' => $orderData['order_time'],
-        'customer_note' => $mergedCustomerNote,
+        'credit_note' => $mergedCreditNote,
         'total_amount' => $totalAmount,
         'payment_status' => $orderData['payment_status'],
         'order_details' => array_values($mergedDetails)

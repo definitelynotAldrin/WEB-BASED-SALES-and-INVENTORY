@@ -735,27 +735,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     }, 3000); // Change the duration as needed
                 }
 
-                $(document).on('click', '.collectibles-settlement', function() {
-                    
-                    $('.first-panel-section').hide();
-                    $('.second-panel-section').hide();
-                    $('.third-panel-section').show();
-                    $('.fourth-panel-section').show();
-                    $('.orders-settlement').css('color', '#363636');
-                    $('.collectibles-settlement').css('color', '#0B60B0');
-                });
-
-                $(document).on('click', '.orders-settlement', function() {
-                    
-                    $('.first-panel-section').show();
-                    $('.second-panel-section').show();
-                    $('.third-panel-section').hide();
-                    $('.fourth-panel-section').hide();
-                    $('.orders-settlement').css('color', '#0B60B0');
-                    $('.collectibles-settlement').css('color', '#363636');
-                });
-
-
 
 
             </script>
@@ -1023,6 +1002,28 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
 
                         $('#search_customer').on('input', fetchOrdersHistory);
+
+                        
+                        $(document).on('click', '.collectibles-settlement', function() {
+                            
+                            $('.first-panel-section').hide();
+                            $('.second-panel-section').hide();
+                            $('.third-panel-section').show();
+                            $('.fourth-panel-section').show();
+                            $('.orders-settlement').css('color', '#363636');
+                            $('.collectibles-settlement').css('color', '#0B60B0');
+                            fetchOrdersHistory();
+                        });
+
+                        $(document).on('click', '.orders-settlement', function() {
+                            
+                            $('.first-panel-section').show();
+                            $('.second-panel-section').show();
+                            $('.third-panel-section').hide();
+                            $('.fourth-panel-section').hide();
+                            $('.orders-settlement').css('color', '#0B60B0');
+                            $('.collectibles-settlement').css('color', '#363636');
+                        });
 
                         // AJAX request whenever checkbox is checked or unchecked
                         $(document).on('change', '.merge-checkbox', function () {

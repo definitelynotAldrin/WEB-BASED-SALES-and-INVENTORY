@@ -63,14 +63,24 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
         .summary { margin-top: 10px; }
         .summary td { padding: 4px; text-align: right; text-transform: capitalize;}
         .thank-you { margin-top: 15px; text-align: center; font-size: 0.9em; }
+        .return-button{
+            text-decoration: none;
+            color: #333;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
 
         @media print {
             body { margin: 0; }
+            .return-button{
+                display: none;
+            }
         }
     </style>
 </head>
 <body onload="window.print(); window.onafterprint = function() { window.close(); }">
-
+<a href="../public/settlement_panel.php" class="return-button">Return</a>
     <div class="header">
         <h2>Kan-anan by the Sea</h2>
         <p>Talisayan Mis Or</p>

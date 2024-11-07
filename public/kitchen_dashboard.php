@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 <span class="card-name order-number">Table No. ${order.customer_table}</span>
                                             </div>
                                             <div class="card-buttons button-disable">
-                                                <button class="btn-cancel" id="cancel-order-button" data-order-id="${order.order_id}">Cancel</button>
+                                                <button class="btn-cancel" id="cancel-order-button" data-order-id="${order.order_id}" >Cancel</button>
                                                 <button class="btn-view view-prepare-orders" data-order-id="${order.order_id}">View Order</button>
                                                 <button class="btn-confirm" data-order-id="${order.order_id}">Confirm</button>
                                             </div>
@@ -522,6 +522,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Assuming jQuery is being used for the AJAX call
                 $(document).on('click', '#cancel-order-button', function() {
                     var orderId = $(this).data('order-id');
+
+                    console.log(orderId);
                     $('#question').text('Are you sure you want to cancel this order?');
                     $('.popup-confirmation-container').fadeIn(); // Show the popup
                     $('.popup-overlay').fadeIn();

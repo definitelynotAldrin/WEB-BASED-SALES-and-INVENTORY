@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <title>Kan-anan by the Sea</title>
     <link rel="stylesheet" href="../css/order_entry.css">
     <link rel="shortcut icon" href="../assets/Sea Sede (200 x 200 px).png" type="image/x-icon">
-    <!-- <link rel="stylesheet" href="../fontawesome-free-6.6.0-web/css/all.min.css"> -->
+    <link rel="stylesheet" href="../fontawesome-free-6.6.0-web/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link

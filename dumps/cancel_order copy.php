@@ -111,23 +111,6 @@ if (isset($_POST['order_id'])) {
                 $updateOrderTotalStmt->bind_param("di", $newTotalAmount, $orderID);
                 $updateOrderTotalStmt->execute();
 
-                $getOrderStatusSql = "SELECT recent_status FROM orders WHERE order_id = ?";
-                $getOrderStatusStmt = $conn->prepare($getOrderStatusSql);
-                $getOrderStatusStmt->bind_param("i", $orderID);
-                $getOrderStatusStmt->execute();
-                $orderStatusResult = $getOrderStatusStmt->get_result()->fetch_assoc();
-
-                // Check if recent_status is available and assign it to a variable
-                $orderStatus = $orderStatusResult['recent_status'] ?? null;
-
-                if ($orderStatus !== null) {  // Only proceed if recent_status is not null
-                    $updateOrderStatusSQL = "UPDATE orders SET order_status = ? WHERE order_id = ?";
-                    $updateOrderStatusStmt = $conn->prepare($updateOrderStatusSQL);
-                    $updateOrderStatusStmt->bind_param("si", $orderStatus, $orderID);
-                    $updateOrderStatusStmt->execute();
-                    
-                }
-
                 // Delete only the "prepare" items from order_details
                 $deletePrepareItemsSQL = "DELETE FROM order_details WHERE order_id = ? AND order_item_status = 'prepare'";
                 $deletePrepareItemsStmt = $conn->prepare($deletePrepareItemsSQL);
@@ -150,7 +133,6 @@ if (isset($_POST['order_id'])) {
                     $deleteOrderStmt->execute();
                 }
 
-
                 // Commit the transaction
                 $conn->commit();
 
@@ -172,4 +154,4 @@ if (isset($_POST['order_id'])) {
     $conn->close();
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);
-} 
+}

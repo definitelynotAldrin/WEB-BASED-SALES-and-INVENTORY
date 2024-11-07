@@ -42,35 +42,30 @@ if (isset($_POST['order_id'])) {
                 $updateCustomerStmt->execute();
             }
 
-            // Step 4: Perform stock adjustments for the canceled order with "prepare" status
-            $sql = "SELECT od.quantity, mis.menu_item_id, mis.stock_id, mis.quantity_required, od.order_item_status, od.menu_price 
+            // Step 4: Perform stock adjustments for the canceled order
+            $sql = "SELECT od.quantity, mis.menu_item_id, mis.stock_id, mis.quantity_required 
                     FROM order_details od 
                     JOIN menu_item_stocks mis ON od.menu_item_stock_id = mis.menu_item_id
-                    WHERE od.order_id = ? AND od.order_item_status = 'prepare'";
+                    WHERE od.order_id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $orderID);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows > 0) {
-                // Array to hold stock adjustments, order count adjustments, and calculate total to deduct
+                // Array to hold stock adjustments and order count adjustments
                 $stockAdjustments = [];
                 $orderCountAdjustments = [];
-                $totalDeductAmount = 0;
 
-                // Loop through order details and handle stock adjustments for prepare items
+                // 2. Loop through order details and handle stock adjustments
                 while ($row = $result->fetch_assoc()) {
                     $menuItemID = $row['menu_item_id'];
                     $stockID = $row['stock_id'];
                     $quantityOrdered = $row['quantity'];
                     $quantityRequired = $row['quantity_required'];
-                    $itemPrice = $row['menu_price'];
 
                     // Calculate the total quantity to return to stock
                     $totalQuantityToReturn = $quantityOrdered * $quantityRequired;
-
-                    // Add to total amount that needs to be deducted from orders table
-                    $totalDeductAmount += $quantityOrdered * $itemPrice;
 
                     // Store stock adjustments (group by stock_id)
                     if (isset($stockAdjustments[$stockID])) {
@@ -87,7 +82,7 @@ if (isset($_POST['order_id'])) {
                     }
                 }
 
-                // Update the stock quantities in the stocks table
+                // 3. Update the stock quantities in the stocks table
                 foreach ($stockAdjustments as $stockID => $quantityToAdd) {
                     $updateStockSQL = "UPDATE stocks SET stock_quantity = stock_quantity + ? WHERE stock_id = ?";
                     $updateStockStmt = $conn->prepare($updateStockSQL);
@@ -104,52 +99,16 @@ if (isset($_POST['order_id'])) {
                     $updateCounterStmt->execute();
                 }
 
-                // Adjust the total amount in orders table
-                $newTotalAmount = max(0, $totalAmount - $totalDeductAmount);
-                $updateOrderTotalSQL = "UPDATE orders SET total_amount = ? WHERE order_id = ?";
-                $updateOrderTotalStmt = $conn->prepare($updateOrderTotalSQL);
-                $updateOrderTotalStmt->bind_param("di", $newTotalAmount, $orderID);
-                $updateOrderTotalStmt->execute();
+                // 6. Delete the order from orders and order_details tables
+                $deleteOrderSQL = "DELETE FROM orders WHERE order_id = ?";
+                $deleteOrderStmt = $conn->prepare($deleteOrderSQL);
+                $deleteOrderStmt->bind_param("i", $orderID);
+                $deleteOrderStmt->execute();
 
-                $getOrderStatusSql = "SELECT recent_status FROM orders WHERE order_id = ?";
-                $getOrderStatusStmt = $conn->prepare($getOrderStatusSql);
-                $getOrderStatusStmt->bind_param("i", $orderID);
-                $getOrderStatusStmt->execute();
-                $orderStatusResult = $getOrderStatusStmt->get_result()->fetch_assoc();
-
-                // Check if recent_status is available and assign it to a variable
-                $orderStatus = $orderStatusResult['recent_status'] ?? null;
-
-                if ($orderStatus !== null) {  // Only proceed if recent_status is not null
-                    $updateOrderStatusSQL = "UPDATE orders SET order_status = ? WHERE order_id = ?";
-                    $updateOrderStatusStmt = $conn->prepare($updateOrderStatusSQL);
-                    $updateOrderStatusStmt->bind_param("si", $orderStatus, $orderID);
-                    $updateOrderStatusStmt->execute();
-                    
-                }
-
-                // Delete only the "prepare" items from order_details
-                $deletePrepareItemsSQL = "DELETE FROM order_details WHERE order_id = ? AND order_item_status = 'prepare'";
-                $deletePrepareItemsStmt = $conn->prepare($deletePrepareItemsSQL);
-                $deletePrepareItemsStmt->bind_param("i", $orderID);
-                $deletePrepareItemsStmt->execute();
-
-                // Check if there are any remaining items in order_details with this order_id
-                $remainingItemsSql = "SELECT COUNT(*) as count FROM order_details WHERE order_id = ? AND order_item_status != 'prepare'";
-                $remainingItemsStmt = $conn->prepare($remainingItemsSql);
-                $remainingItemsStmt->bind_param("i", $orderID);
-                $remainingItemsStmt->execute();
-                $remainingItemsResult = $remainingItemsStmt->get_result();
-                $row = $remainingItemsResult->fetch_assoc();
-
-                if ($row['count'] == 0) {
-                    // Delete from orders if no other items remain
-                    $deleteOrderSQL = "DELETE FROM orders WHERE order_id = ?";
-                    $deleteOrderStmt = $conn->prepare($deleteOrderSQL);
-                    $deleteOrderStmt->bind_param("i", $orderID);
-                    $deleteOrderStmt->execute();
-                }
-
+                $deleteOrderDetailsSQL = "DELETE FROM order_details WHERE order_id = ?";
+                $deleteOrderDetailsStmt = $conn->prepare($deleteOrderDetailsSQL);
+                $deleteOrderDetailsStmt->bind_param("i", $orderID);
+                $deleteOrderDetailsStmt->execute();
 
                 // Commit the transaction
                 $conn->commit();
@@ -157,7 +116,7 @@ if (isset($_POST['order_id'])) {
                 // Send success response
                 echo json_encode(['success' => true]);
             } else {
-                throw new Exception('No "prepare" items found for the given order ID.');
+                throw new Exception('No order details found for the given order ID.');
             }
         } else {
             throw new Exception('Order not found.');
@@ -172,4 +131,5 @@ if (isset($_POST['order_id'])) {
     $conn->close();
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);
-} 
+}
+?>

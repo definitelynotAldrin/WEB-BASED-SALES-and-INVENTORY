@@ -39,11 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 foreach ($_SESSION['order_details'] as $order) {
                     $totalAmount += $order['sub_total'];
                 }
-
-                $updateOrderStatusSQL = "UPDATE orders SET recent_status = ? WHERE order_id = ?";
-                $updateOrderStatusStmt = $conn->prepare($updateOrderStatusSQL);
-                $updateOrderStatusStmt->bind_param("si", $currentStatus, $orderId);
-                $updateOrderStatusStmt->execute();
                 
                 // Fetch the current total amount before updating
                 $currentTotalSql = "SELECT total_amount FROM orders WHERE order_id = ?";

@@ -108,6 +108,7 @@ $result_sales_trends = $conn->query($sql_sales_trends);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Sales Report</title>
     <style>
         body { font-family: Arial, sans-serif; }
         h1, h2 { text-align: center; }

@@ -976,25 +976,28 @@ document.addEventListener("DOMContentLoaded", function() {
                             <h1>Change Password</h1>
                             <i class="fa-regular fa-circle-xmark popup-close-button"></i>
                         </div>
-                        <p>Your password must be at least 8 characters.</p>
                     </div>
                     <div class="settings-popup-form">
                         <div class="settings-popup-form-group">
-                            <label for="current_password">current password</label>
+                            <label for="current_password">Current Password</label>
                             <input type="password" id="current-password">
+                            <i class="fas fa-eye showHidePassword"></i>
                         </div>
                         <div class="settings-popup-form-group">
-                            <label for="new_password">new password</label>
+                            <label for="new_password">New Password</label>
                             <input type="password" id="new-password">
+                            <i class="fas fa-eye showHidePassword"></i>
                         </div>
                         <div class="settings-popup-form-group">
-                            <label for="retype_password">retype password</label>
+                            <label for="retype_password">Retype Password</label>
                             <input type="password" id="retype-new-password">
+                            <i class="fas fa-eye showHidePassword"></i>
                         </div>
                         <div class="settings-popup-button">
-                            <button type="button" class="change-account-password-button">change password</button>
+                            <button type="button" class="change-account-password-button">Change Password</button>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -1134,6 +1137,33 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="../js/hyperlinks_nav.js"></script>
 <script src="../js/logout.js"></script>
 <!-- <script src="../js/alert_disappear.js"></script> -->
+ <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Select all icons with class 'showHidePassword'
+    const toggles = document.querySelectorAll('.showHidePassword');
+
+    toggles.forEach(toggle => {
+        // Add event listener to each toggle icon
+        toggle.addEventListener('click', function() {
+            const passwordInput = toggle.previousElementSibling; // Get the input field right before the icon
+
+            // Toggle between password and text type
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggle.classList.remove('fa-eye');
+                toggle.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = "password";
+                toggle.classList.remove('fa-eye-slash');
+                toggle.classList.add('fa-eye');
+            }
+        });
+    });
+});
+
+
+
+ </script>
 </body>
 
 </html>
