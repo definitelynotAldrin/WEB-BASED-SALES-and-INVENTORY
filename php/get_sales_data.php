@@ -26,6 +26,15 @@ if ($timeframe == 'overall') {
 
 // $sql = "SELECT SUM(total_amount) AS total_sales FROM payments WHERE payment_status = 'paid' 
 //             AND YEARWEEK(payment_date, 1) = YEARWEEK(CURRENT_DATE(), 1)";
+} elseif ($timeframe == 'today') {
+    // Query for sales in the current week (based on Monday as the first day of the week)
+    $startDate = date('Y-m-d');  // Get the first day of the current month
+    $sql = "SELECT SUM(total_amount) AS total_sales 
+        FROM payments 
+        WHERE payment_status = 'paid' 
+        AND payment_date >= '$startDate' 
+        AND payment_date <= CURRENT_DATE()";
+
 }
 
 // Execute the query

@@ -243,6 +243,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <option value="overall">Overall</option>
                             <option value="monthly">This Month</option>
                             <option value="weekly">This Week</option>
+                            <option value="today">Today</option>
                         </select>
                     </div>
                     <h1 class="header-card-value">&#x20B1;<span id="total_sales">0.00</span></h1>
@@ -255,6 +256,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <option value="overall">overall</option>
                             <option value="monthly">this month</option>
                             <option value="weekly">this week</option>
+                            <option value="today">Today</option>
                         </select>
                     </div>
                     <h1 class="header-card-value">&#x20B1;<span id="total_collectibles">0.00</span></h1>

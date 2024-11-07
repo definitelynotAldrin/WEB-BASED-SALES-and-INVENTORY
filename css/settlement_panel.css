@@ -1187,7 +1187,9 @@ td{
     }
 
     .first-panel-section,
-    .second-panel-section{
+    .second-panel-section,
+    .third-panel-section,
+    .fourth-panel-section{
         padding: 1rem;
     }
 }
@@ -1272,7 +1274,7 @@ td{
         white-space: nowrap;    
     }
 
-    .menu-section-container{
+    .menu-section-container, .nav-buttons{
         padding-right: 1rem;
         padding-left: 1rem;
     }
@@ -1345,7 +1347,7 @@ td{
         margin-right: 1rem;
     }
 
-    .menu-section-container{
+    .menu-section-container, .nav-buttons{
         padding-right: 1rem;
         padding-left: 1rem;
     }
@@ -1400,10 +1402,11 @@ td{
         margin-right: 2rem;
     }
 
-    .menu-section-container{
+    .menu-section-container, .nav-buttons{
         padding-right: 2rem;
         padding-left: 2rem;
     }
+
 
 
     .popup-overlay{
@@ -1451,7 +1454,9 @@ td{
     }
 
     .first-panel-section,
-    .second-panel-section{
+    .second-panel-section,
+    .third-panel-section,
+    .fourth-panel-section{
         width: 100%;
     }
 

@@ -976,6 +976,10 @@
         padding: 18px 20px;
         white-space: nowrap;    
     }
+
+    .settings-container{
+        height: auto;
+    }
 }
 
 
@@ -1080,6 +1084,9 @@
         cursor: pointer;
     }
     
+    .settings-container{
+        height: auto;
+    }
 }
 
 @media screen and (min-width: 900px) and (max-width: 1064px){
@@ -1136,6 +1143,10 @@
         left: 0;
         margin-top: 7rem;
     }
+
+    .settings-container{
+        height: auto;
+    }
 }
 
 
@@ -1160,6 +1171,10 @@
     /* .customer-details h1{
         white-space: nowrap;
     } */
+
+    .settings-container{
+        height: auto;
+    }
 }
 
 

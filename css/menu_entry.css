@@ -510,7 +510,7 @@ select{
     background-color: var(--secondary-white);
 }
 
-.menu-card-content{
+.menu-card-content {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -518,7 +518,7 @@ select{
     overflow: auto;
 }
 
-.menu-cards{
+.menu-cards {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -530,13 +530,21 @@ select{
     position: relative;
 }
 
-.menu-card-img{
+.menu-card-img {
     width: 40%;
+    height: 50px; /* Set a fixed height */
+    overflow: hidden;
 }
 
-.menu-card-img img{
+.menu-card-img img {
     width: 100%;
+    height: 100%; /* Match the container height */
+    object-fit: cover; /* Ensures the image covers the area without stretching */
     border-radius: 5px;
+}
+
+.menu-cards-group.menu-details {
+    flex-grow: 1;
 }
 
 
@@ -1164,32 +1172,7 @@ select{
     }
 }
 
-@media (max-width: 1200px){
 
-    .menu-card-img{
-        width: 100%;
-    }
-}
-
-
-
-@media screen and (min-width: 1191px) and (max-width: 1200px){
-    .menu-card-content{
-        flex-direction: row;
-        justify-content: space-between;
-        flex-wrap: wrap;
-    }
-
-    .menu-cards{
-        padding: 0.5rem;
-        max-width: 240px;
-    }
-
-    .menu-cards h1{
-        white-space: nowrap;
-    }
-
-}
 
 
 @media (max-width: 1200px){
@@ -1203,6 +1186,16 @@ select{
         width: 100%;
     }
 
+    .menu-cards{
+        width: 155px;
+        height: 150px;
+        flex: 1 1 155px;
+    }
+
+    .menu-card-img{
+        height: 100%;
+
+    }
     
 }
 
@@ -1232,41 +1225,15 @@ select{
 }
 
 
-@media screen and (min-width: 1200px) and (max-width: 1300px) {
-    .form-groups{
-        flex-direction: column;
-    }
 
-    .menu-header{
-        flex-direction: column;
-        align-items: start;
-        gap: 0.5rem;
-    }
-
-    
-    .menu-details{
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-    }
-
-    .menu-cards-buttons{
-        flex-direction: row;
-    }
-}
-
-@media screen and (min-width: 1200px) and (max-width: 1380px) {
-
-    .menu-header{
-        flex-direction: column;
-        align-items: start;
-        gap: 0.5rem;
-    }
-}
-
-@media screen and (min-width: 1200px) and (max-width: 1299px) {
+@media screen and (min-width: 100px) and (max-width: 1299px) {
     .menu-card-content{
         max-height: 580px;
+    }
+    .menu-card-content{
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
     }
 
     .menu-cards{
@@ -1277,13 +1244,17 @@ select{
     }
 
     .menu-card-img{
-        width: 90%;
+        width: 100%;
     }
 
     .menu-details{
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+
+    .menu-details h1{
+        white-space: nowrap;
     }
     
 }
