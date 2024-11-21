@@ -4,6 +4,7 @@ session_start();
 
 $account_id = $_SESSION['account_id'];
 $user_role = $_SESSION['user_role'];
+$username = $_SESSION['account_username'];
 
 if(!isset($account_id)){
    header('location: ../public/login_panel.php');
@@ -161,6 +162,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 <?php echo $_GET['success']; ?>
                 </div>
             <?php } ?>
+            <div class="alert error-message" id="error-container"></div>
+            <div class="success success-message" id="success-container"></div>
             <div class="content-header">
                 <div class="header-text">
                     <h1>Good morning <span></span></h1>
@@ -176,6 +179,42 @@ document.addEventListener("DOMContentLoaded", function() {
                             <h1 class="notification-title">Notifications</h1>
                             <div class="notification-card-container" id="low-stock-notifications">
                                 <p>No low stock items currently.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message-icon-container">
+                        <i class="fa-solid fa-message message-button">
+                            <i class="fa-solid fa-circle notification-alert-icon" style="display: none;"></i>
+                        </i>
+                        <div class="notification-container message-container">
+                            <div class="notification-main-wrapper message-wrapper">
+                                <div class="notification-header">
+                                    <h1>Kan-anan by the Sea Group Chat</h1>
+                                </div>
+                                <div class="notification-message-wrapper">
+                                    <!-- <div class="notification-group replier-group left-box">
+                                        <div class="notification-details left-box">
+                                            <span class="notification-username">The brightest</span>
+                                            <span class="notification-time">2024-11-03 05:24:02</span> 
+                                        </div>
+                                        <div class="notification-box message-box">
+                                            <p class="notification-message">Sorry, my brighterr..</p>
+                                        </div>
+                                    </div>
+                                    <div class="notification-group sender-group right-box">
+                                        <div class="notification-details right-details">
+                                            <span class="notification-time">2024-11-03 05:24:02</span>
+                                            <span class="notification-username">Joel</span>
+                                        </div>
+                                        <div class="notification-box message-box">
+                                            <p class="notification-message">:<</p>
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <div class="notification-bottom-box message-input-area">
+                                    <input type="text" name="" id="message-input" placeholder="Type a message...">
+                                    <button type="button" class="send-message-button">Send</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -227,6 +266,89 @@ document.addEventListener("DOMContentLoaded", function() {
                             setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
                         });
 
+
+                        $(document).ready(function() {
+                            // Function to load messages
+                            sessionUserRole = "<?php echo $user_role; ?>";
+                            function loadMessages() {
+                                $.ajax({
+                                    url: '../php/fetch_messages.php', // Separate PHP script to fetch messages if needed
+                                    type: 'GET',
+                                    dataType: 'json',
+                                    success: function(response) {
+                                        if (response.success) {
+                                            // Clear the current messages
+                                            $('.notification-message-wrapper').empty();
+                                            response.messages.forEach(function(message) {
+                                                $('.notification-message-wrapper').append(
+                                                    `<div class="notification-group ${message.user_role === sessionUserRole ? 'sender-group right-box' : 'replier-group left-box'}">
+                                                        <div class="notification-details ${message.user_role === sessionUserRole ? 'right-details' : 'left-box'}">
+                                                            <span class="notification-username">${message.user_role}</span>
+                                                            <span class="notification-time">${message.timestamp}</span>
+                                                        </div>
+                                                        <div class="notification-box message-box">
+                                                            <p class="notification-message">${message.text_message}</p>
+                                                        </div>
+                                                    </div>`
+                                                );
+                                            });
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
+                                });
+                            }
+
+                            // Initial load of messages
+                            loadMessages();
+
+                            // Poll for new messages every 5 seconds
+                            setInterval(loadMessages, 5000);
+
+                            // Send message on button click
+                            $(document).on('click', '.send-message-button', function() {
+                                var userRole = "<?php echo $user_role; ?>"; // Assumes $user_role is set in PHP
+                                var textMessage = $('#message-input').val();
+
+                                if (textMessage.trim() === "") {
+                                    displayErrorMessage("Please enter a message.");
+                                    return;
+                                }
+
+                                $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
+
+                                $.ajax({
+                                    url: '../php/send_message.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        user_role: userRole,
+                                        text_message: textMessage
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            // Display new messages without waiting for the interval
+                                            loadMessages();
+                                            $('#message-input').val(''); // Clear input after sending
+                                        } else {
+                                            displayErrorMessage("Failed to send message: " + response.error);
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
+                                });
+                            });
+                        });
+
+                        
+                        $(document).on('click', '.message-button', function() {
+                            $('.message-container').fadeToggle();
+                            $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
+                        });
+
+
                         
                     </script>
                     <div class="profile">
@@ -235,6 +357,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <i class="fa-solid fa-bars nav-bar"></i>
                 </div>
             </div>
+            
             <div class="header-cards-container">
                 <div class="header-card sales-card-container">
                     <div class="header-card-group sales-card">
@@ -569,6 +692,33 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
+                    function displaySuccessMessage(message1) {
+                        // Create a div to hold the success message
+                        const messageDiv = $('<div class="success-message"></div>').text(message1);
+                        
+                        // Append the message to a specific container in your HTML
+                        $('#success-container').html(messageDiv);
+                        $('#success-container').removeClass('fadeOut').addClass('fadeIn');
+
+                        // Optionally, remove the message after a few seconds
+                        setTimeout(() => {
+                            $('#success-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                        }, 3000); // Change the duration as needed
+                    }
+
+                    function displayErrorMessage(message2) {
+                        // Create a div to hold the success message
+                        const messageDiv = $('<div class="error-message"></div>').text(message2);
+                        
+                        // Append the message to a specific container in your HTML
+                        $('#error-container').html(messageDiv);
+                        $('#error-container').removeClass('fadeOut').addClass('fadeIn');
+
+                        // Optionally, remove the message after a few seconds
+                        setTimeout(() => {
+                            $('#error-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                        }, 3000); // Change the duration as needed
+                    }
             
         </script>
         <div class="pop-up-overlay logout-confirmation-overlay"></div>

@@ -2,7 +2,7 @@
 include_once "../includes/connection.php";
 
 // Fetch all customers ordered by total amount spent, descending
-$sql = "SELECT customer_name, total_amount_spent FROM customers ORDER BY total_amount_spent DESC LIMIT 10";
+$sql = "SELECT customer_name, total_amount_spent FROM customers WHERE customer_name != '' ORDER BY total_amount_spent DESC LIMIT 10";
 $result = $conn->query($sql);
 
 $customers = [];

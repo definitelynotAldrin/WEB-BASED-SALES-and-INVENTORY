@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST["password"];
     
     // SQL query to retrieve the user data from the database
-    $sql = "SELECT * FROM accounts WHERE account_username = ? AND account_password = ? AND account_id ='2'";
+    $sql = "SELECT * FROM accounts WHERE account_username = ? AND account_password = ? AND user_role = 'user_service'";
     
     // Prepare the SQL statement
     $stmt = $conn->prepare($sql);

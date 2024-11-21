@@ -359,6 +359,129 @@
     font-weight: 700;
 }
 
+.message-icon-container{
+    position: relative;
+}
+
+.message-button{
+    font-size: 1.5rem;
+    color: var(--dark);
+    cursor: pointer;
+    position: relative;
+}
+
+.notification-container{
+    position: absolute;
+    top: 0;
+    right: 0%;
+    z-index:1;
+    margin-top: 3rem;
+    display: none;
+}
+
+.notification-main-wrapper{
+    width: 75vh;
+    background-color: var(--white);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+
+.notification-header{
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background-color: var(--dark-green);
+}
+
+.notification-header h1{
+    color: var(--white);
+    text-transform: capitalize;
+    font-size: 1.5rem;
+}
+
+.notification-message-wrapper{
+    height: 45vh;
+    max-height: 45vh;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 1rem;
+}
+
+.notification-group{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.notification-box{
+    height: 100px;
+    background-color: var(--secondary-white); 
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 1rem;
+   
+}
+
+.right-box p{
+    text-align: right;
+}
+
+.right-details{
+    display: flex;
+    align-items: center;
+    justify-content:right;
+    gap: 0.5rem;
+}
+
+.notification-details .notification-username{
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.notification-details .notification-time{
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--darker);
+}
+
+.notification-bottom-box{
+    width: 100%;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.notification-bottom-box input{
+    width: 100%;
+    padding: 1rem 0;
+    border-radius: 6px;
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    font-size: 1rem;
+    color: var(--darker);
+}
+
+.notification-bottom-box a{
+    padding: 1rem 25px;
+    border-radius: 6px;
+    border: none;
+    background-color: var(--dark-green);
+    color: var(--white);
+    text-transform: capitalize;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
 .menu-section-container{
     display: flex;
     align-self: normal;
@@ -1319,6 +1442,13 @@ form{
     }
 }
 
+@media (max-width: 650px){
+
+    .notification-main-wrapper{
+        width: 85vw;
+    }
+}
+
 @media (max-width: 540px){
     
     .menu-header{
@@ -1427,7 +1557,8 @@ form{
         flex-direction: column;
     }
 
-    .notification-content-container{
+    .notification-content-container,
+    .notification-container{
         position: absolute;
         left: 0;
         margin-top: 7rem;
@@ -1514,7 +1645,8 @@ form{
         white-space: nowrap;    
     }
 
-    .notification-content-container{
+    .notification-content-container,
+    .notification-container{
         position: absolute;
         left: 0;
         margin-top: 7rem;

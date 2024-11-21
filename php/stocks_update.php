@@ -3,7 +3,7 @@ ob_start();
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['item_id'], $_POST['item_name'], $_POST['item_quantity'], $_POST['stock_unit'], $_POST['submission_time'])) {
+    if (isset($_POST['item_id'], $_POST['item_name'], $_POST['item_quantity'], $_POST['stock_unit'], $_POST['submission_time'], $_POST['account_username'])) {
         include_once "../includes/connection.php";
 
         $stockID = intval($_POST['item_id']);  // Ensure it's an integer
@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stockQuantity = trim($_POST['item_quantity']);
         $stockUnit = $_POST['stock_unit'];
         $submissionTime = $_POST['submission_time'];
+        $username = $_POST['account_username'];
 
         // Format the stock name
         $formattedName = ucfirst(strtolower($stockName));
@@ -50,10 +51,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
 
                 // 3. Insert a new history record in `stock_history`
-                $historySql = "INSERT INTO stock_history (stock_id, updated_quantity, previous_quantity, updated_at, last_action_type) 
-                               VALUES (?, ?, ?, ?, 'update')";
+                $historySql = "INSERT INTO stock_history (stock_id, username, updated_quantity, previous_quantity, updated_at, last_action_type) 
+                               VALUES (?, ?, ?, ?, ?, 'update')";
                 $historyStmt = $conn->prepare($historySql);
-                $historyStmt->bind_param("idds", $stockID, $stockQuantity, $previousQuantity, $submissionTime);
+                $historyStmt->bind_param("isdds", $stockID, $username, $stockQuantity, $previousQuantity, $submissionTime);
 
                 if (!$historyStmt->execute()) {
                     throw new Exception("Failed to insert stock history.");

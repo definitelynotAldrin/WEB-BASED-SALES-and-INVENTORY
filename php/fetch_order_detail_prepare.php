@@ -23,7 +23,7 @@ if (isset($_GET['order_id'])) {
 
             // Query to fetch order items with the 'prepare' status
             $sql_items = "
-                SELECT mi.item_name, od.quantity, od.order_item_status 
+                SELECT mi.item_name, od.quantity, od.order_item_status, od.order_detail_id, od.order_id
                 FROM order_details od 
                 JOIN menu_items mi ON od.menu_item_stock_id = mi.item_id 
                 WHERE od.order_id = ? AND od.order_item_status = 'prepare'";
@@ -46,6 +46,8 @@ if (isset($_GET['order_id'])) {
                         // Otherwise, initialize entry for this item and status
                         $itemCounts[$itemName] = [
                             'item_name' => $itemName,
+                            'order_id' => $row['order_id'],
+                            'order_detail_id' => $row['order_detail_id'],
                             'quantity' => $row['quantity'],
                             'order_item_status' => $row['order_item_status']
                         ];

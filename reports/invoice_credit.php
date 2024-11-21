@@ -9,6 +9,10 @@ date_default_timezone_set('Asia/Manila');
 // Get the order ID from the URL
 $order_id = $_GET['order_id'] ?? '';
 
+if (empty($order_id)) {
+    die("No orders selected.");
+}
+
 // Fetch order and customer details from the database based on the order_id
 $sql = "SELECT * FROM orders WHERE order_id = ?";
 $stmt = $conn->prepare($sql);

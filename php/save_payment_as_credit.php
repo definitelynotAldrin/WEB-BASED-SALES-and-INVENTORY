@@ -13,18 +13,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $orderId = $_POST['order_id'];
     $totalAmount = $_POST['total_amount'];
     $creditNote = $_POST['credit_note'];
+    $username = $_POST['username'];
     
     // Set default payment status
     $paymentStatus = 'credit';
     $collectiblesStatus = 'Y';
     
     // Insert payment details into the payments table
-    $sql = "INSERT INTO payments (order_id, total_amount, payment_status, credit_note, collectibles)
-            VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO payments (order_id, username, total_amount, payment_status, credit_note, collectibles)
+            VALUES (?, ?, ?, ?, ?, ?)";
     
     // Prepare and execute the statement
     if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param('idsss', $orderId, $totalAmount, $paymentStatus, $creditNote, $collectiblesStatus);
+        $stmt->bind_param('isdsss', $orderId, $username, $totalAmount, $paymentStatus, $creditNote, $collectiblesStatus);
         
         if ($stmt->execute()) {
             // Update the payment_status in the orders table after payment is successful

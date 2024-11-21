@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="success success-message" id="success-container"></div>
             <div class="content-header">
                 <div class="header-text">
-                    <h1 class="main-header-title">Let's seize the day!</h1>
+                    <h1>Let's seize the day! <span></span></h1>
                     <h4>Let's cook orders and make sales...</h4>
                 </div>
                 <div class="header-profile">
@@ -191,37 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         </div>
                     </div>
-                    <div class="message-icon-container">
-                        <i class="fa-solid fa-message message-button">
-                            <i class="fa-solid fa-circle notification-alert-icon" style="display: none;"></i>
-                        </i>
-
-                        <div class="notification-container message-container collectibles-notif">
-                            <div class="notification-main-wrapper message-wrapper">
-                                <div class="notification-header">
-                                    <h1>Kan-anan by the Sea Group Chat</h1>
-                                </div>
-                                <div class="notification-message-wrapper">
-                                    
-                                </div>
-                                <div class="notification-bottom-box message-input-area">
-                                    <input type="text" name="" id="message-input" placeholder="Type a message...">
-                                    <button type="button" class="send-message-button">Send</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <script>
-                        $(document).ready(function() {
-                            var sessionUserRole = "<?php echo $user_role; ?>";
-
-                            if (sessionUserRole === 'user_kitchen') {
-                                $('.main-header-title').text('Kitchen Interface');
-                            } else{
-                                $('.main-header-title').text('Admin Interface');
-                            }
-                        });
-
                         function fetchLowStockItems() {
                             $.ajax({
                                 url: '../php/get_low_stock_items.php', // Adjust the path if needed
@@ -269,85 +239,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
                         });
 
-                        $(document).ready(function() {
-                            // Function to load messages
-                            sessionUserRole = "<?php echo $user_role; ?>";
-                            function loadMessages() {
-                                $.ajax({
-                                    url: '../php/fetch_messages.php', // Separate PHP script to fetch messages if needed
-                                    type: 'GET',
-                                    dataType: 'json',
-                                    success: function(response) {
-                                        if (response.success) {
-                                            // Clear the current messages
-                                            $('.notification-message-wrapper').empty();
-                                            response.messages.forEach(function(message) {
-                                                $('.notification-message-wrapper').append(
-                                                    `<div class="notification-group ${message.user_role === sessionUserRole ? 'sender-group right-box' : 'replier-group left-box'}">
-                                                        <div class="notification-details ${message.user_role === sessionUserRole ? 'right-details' : 'left-box'}">
-                                                            <span class="notification-username">${message.user_role}</span>
-                                                            <span class="notification-time">${message.timestamp}</span>
-                                                        </div>
-                                                        <div class="notification-box message-box">
-                                                            <p class="notification-message">${message.text_message}</p>
-                                                        </div>
-                                                    </div>`
-                                                );
-
-                                            });
-                                        }
-                                    },
-                                    error: function(jqXHR, textStatus, errorThrown) {
-                                        console.log('Error: ' + textStatus, errorThrown);
-                                    }
-                                });
-                            }
-
-                            // Initial load of messages
-                            loadMessages();
-
-                            // Poll for new messages every 5 seconds
-                            setInterval(loadMessages, 5000);
-
-                            // Send message on button click
-                            $(document).on('click', '.send-message-button', function() {
-                                var userRole = "<?php echo $user_role; ?>"; // Assumes $user_role is set in PHP
-                                var textMessage = $('#message-input').val();
-
-                                if (textMessage.trim() === "") {
-                                    displayErrorMessage("Please enter a message.");
-                                    return;
-                                }
-
-                                $.ajax({
-                                    url: '../php/send_message.php',
-                                    type: 'POST',
-                                    dataType: 'json',
-                                    data: {
-                                        user_role: userRole,
-                                        text_message: textMessage
-                                    },
-                                    success: function(response) {
-                                        if (response.success) {
-                                            // Display new messages without waiting for the interval
-                                            loadMessages();
-                                            $('#message-input').val(''); // Clear input after sending
-                                            $('#notification-message-wrapper').scrollTop($('#notification-message-wrapper')[0].scrollHeight);
-                                        } else {
-                                            displayErrorMessage("Failed to send message: " + response.error);
-                                        }
-                                    },
-                                    error: function(jqXHR, textStatus, errorThrown) {
-                                        console.log('Error: ' + textStatus, errorThrown);
-                                    }
-                                });
-                            });
-                        });
-
-                        $(document).on('click', '.message-button', function() {
-                            $('.message-container').fadeToggle();
-                            $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
-                        });
                         
                     </script>
                     <div class="profile">
@@ -369,7 +260,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     $('#prepare-card-container').append(`
                                         <div class="card order-item-card">
                                             <div class="card-img-container">
-                                                <img src="../assets/prepare.png" class="card-img order-img">
+                                                <img src="../assets/Profile (1).png" class="card-img order-img">
                                             </div>
                                             <div class="card-details order-card-details">
                                                 <span class="card-name order-number">Table No. ${order.customer_table}</span>
@@ -406,7 +297,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     $('#process-card-container').append(`
                                         <div class="card order-item-card">
                                             <div class="card-img-container">
-                                                <img src="../assets/process.jpg" class="card-img order-img">
+                                                <img src="../assets/me2.jpg" class="card-img order-img">
                                             </div>
                                             <div class="card-details order-card-details">
                                                 <span class="card-name order-number">Table No. ${order.customer_table}</span>
@@ -442,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     $('#served-card-container').append(`
                                         <div class="card order-item-card">
                                             <div class="card-img-container">
-                                                <img src="../assets/served.jpg" class="card-img order-img">
+                                                <img src="../assets/me2.jpg" class="card-img order-img">
                                             </div>
                                             <div class="card-details order-card-details">
                                                 <span class="card-name order-number">Table No. ${order.customer_table}</span>
@@ -489,9 +380,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     fetchProcessOrders();
                     fetchServedOrders();
 
-                    setInterval(fetchPrepareOrders, 1000);
-                    setInterval(fetchProcessOrders, 1000);
-                    setInterval(fetchServedOrders, 1000);
+                    // setInterval(fetchPrepareOrders, 1000);
+                    // setInterval(fetchProcessOrders, 1000);
+                    // setInterval(fetchServedOrders, 1000);
                 });
 
 
@@ -524,9 +415,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <tr>
                                             <td>${item.item_name}</td>
                                             <td>${item.quantity}</td>
-                                            <td class="delete-order-detail" data-detail-id='${item.order_detail_id}' data-order-id='${item.order_id}'>
-                                                <i class="fa-regular fa-circle-xmark"></i>
-                                            </td>
+                                            
                                         </tr>
                                     `);
                                 });
@@ -539,61 +428,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             }
                         });
                     }
-
-                    $(document).on('click', '.delete-order-detail', function() {
-                        var orderDetailId = $(this).data('detail-id');
-                        var orderId = $(this).data('order-id');
-
-                        console.log(orderDetailId);
-                        console.log(orderId);
-                        $('#question').text('Are you sure you want to cancel this item?');
-                        $('.popup-confirmation-container').fadeIn();
-                        $('.popup-overlay').fadeIn();
-                        
-                        $('.btnConfirm').off('click').on('click', function(e) {
-                            e.preventDefault(); // Prevent default link behavior
-
-                            // Send AJAX request to update order status
-                            $.ajax({
-                                url: '../php/delete_order_detail_id.php', // Ensure this path is correct
-                                type: 'POST',
-                                data: { order_detail_id: orderDetailId, order_id: orderId },
-                                success: function(response) {
-                                    // Parse JSON response
-                                    var res = JSON.parse(response);
-
-                                    if (res.success) {
-                                        // Handle success: You can display a message or reload the page
-                                        displaySuccessMessage('Item deleted successfully.');
-                                        fetchPrepareOrders();
-                                        $('.popup-card-container.popup-order-view').fadeOut();
-                                    } else {
-                                        // Handle error
-                                        displayErrorMessage(res.message);
-                                        $('.popup-card-container.popup-order-view').fadeOut();
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    // Handle AJAX error
-                                    console.error('AJAX Error: ' + status + ' - ' + error);
-                                    displayErrorMessage('Failed to cancel the order.');
-                                }
-                            });
-
-                            // Hide the popup after confirming
-                            $('.popup-confirmation-container').fadeOut();
-                            $('.popup-overlay').fadeOut();
-                        });
-                        
-                        // Handle cancellation (no button)
-                        $('.btnCancel').off('click').on('click', function(e) {
-                            e.preventDefault(); // Prevent default link behavior
-                            // Hide the popup if "no" is clicked
-                            $('.popup-confirmation-container').fadeOut();
-                            
-                        });
-
-                    });
 
                     function fetchProcessOrderDetails(orderId) {
                         $.ajax({
@@ -675,7 +509,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
                     }
 
-
                     // Bind click event to the btn-view
                     $(document).on('click', '.view-prepare-orders', function() {
                         const orderId = $(this).data('order-id');
@@ -737,7 +570,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     fetchPrepareOrders();
                                 } else {
                                     // Handle error
-                                    displayErrorMessage(res.message);
+                                    alert('Error: ' + res.message);
                                 }
                             },
                             error: function(xhr, status, error) {

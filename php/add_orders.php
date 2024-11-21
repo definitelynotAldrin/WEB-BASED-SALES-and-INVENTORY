@@ -7,10 +7,11 @@ include_once "../includes/connection.php"; // Ensure your connection.php is corr
 // Check if POST data is received
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if customer info is provided and not empty
-    if (!empty($_POST['customer_name']) && isset($_POST['customer_note']) && isset($_POST['customer_table'])) {
+    if (!empty($_POST['customer_name']) && isset($_POST['customer_note']) && isset($_POST['customer_table']) && isset($_POST['username'])) {
         $customerName = $_POST['customer_name'];
         $customerNote = $_POST['customer_note'];
         $customerTable = $_POST['customer_table'];
+        $username = $_POST['username'];
         $orderId = isset($_POST['hidden_order_id']) ? $_POST['hidden_order_id'] : null;
 
         // Check if there is an existing order using the order_id
@@ -187,9 +188,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
         
                 // Insert a new order
-                $sql = "INSERT INTO orders (customer_name, customer_note, customer_table, total_amount, order_status, table_status, payment_status) VALUES (?, ?, ?, ?, 'prepare', 1, 'unpaid')";
+                $sql = "INSERT INTO orders (username, customer_name, customer_note, customer_table, total_amount, order_status, table_status, payment_status) VALUES (?, ?, ?, ?, ?, 'prepare', 1, 'unpaid')";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sssd", $customerName, $customerNote, $customerTable, $totalAmount);
+                $stmt->bind_param("ssssd", $username, $customerName, $customerNote, $customerTable, $totalAmount);
                 $stmt->execute();
         
                 // Get the newly inserted order ID

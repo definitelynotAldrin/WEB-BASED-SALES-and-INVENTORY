@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = "username=" . urlencode($username);
 
     // SQL query to retrieve the user data from the database
-    $sql = "SELECT * FROM accounts WHERE account_username = ? AND account_password = ? AND account_id ='1' ";
+    $sql = "SELECT * FROM accounts WHERE account_username = ? AND account_password = ? AND user_role = 'user_admin'";
     
     // Prepare the SQL statement
     $stmt = $conn->prepare($sql);

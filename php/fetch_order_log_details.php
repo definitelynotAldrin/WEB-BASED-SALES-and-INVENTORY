@@ -6,9 +6,12 @@ if (isset($_GET['order_id'])) {
 
     // Updated SQL query to group items by item_name and order_item_status
     $sql = "SELECT 
+        p.username AS payment_username,  -- Alias for username from payments
+        o.username AS order_username,
         o.customer_name, 
         o.order_date, 
         o.order_time, 
+        o.customer_table,
         o.customer_note, 
         o.total_amount, 
         o.order_status, 
@@ -22,6 +25,8 @@ if (isset($_GET['order_id'])) {
         order_details od ON o.order_id = od.order_id 
     JOIN 
         menu_items mi ON od.menu_item_stock_id = mi.item_id 
+    LEFT JOIN
+        payments p ON o.order_id = p.order_id
     WHERE 
         o.order_id = ?
     GROUP BY 
@@ -41,13 +46,17 @@ if (isset($_GET['order_id'])) {
 
         // Store static order data once (only from the first row)
         $orderData = [
+            'payment_username' => $firstRow['payment_username'] ?? "?",  // From payments table
+            'order_username' => $firstRow['order_username'] ?? "?",      // From orders table
             'customer_name' => $firstRow['customer_name'],
             'order_date' => $firstRow['order_date'],
-            'order_time' => $formattedTime,  // Use formatted time here
+            'order_time' => $formattedTime,
+            'customer_table' => $firstRow['customer_table'],
             'customer_note' => $firstRow['customer_note'],
             'total_amount' => $firstRow['total_amount'],
             'order_status' => $firstRow['order_status']
         ];
+        
 
         // Store all grouped order details in an array
         $orderDetails = [];
@@ -65,14 +74,17 @@ if (isset($_GET['order_id'])) {
         // Send response back to the frontend
         echo json_encode([
             'success' => true,
+            'payment_username' => $orderData['payment_username'],  
+            'order_username' => $orderData['order_username'],  
             'customer_name' => $orderData['customer_name'],
             'order_date' => $orderData['order_date'],
-            'order_time' => $orderData['order_time'],  // Send the formatted time
+            'order_time' => $orderData['order_time'],
+            'customer_table' => $orderData['customer_table'],
             'customer_note' => $orderData['customer_note'],
             'total_amount' => $orderData['total_amount'],
             'order_status' => $orderData['order_status'],
             'order_details' => $orderDetails
-        ]);
+        ]);        
     } else {
         echo json_encode(['success' => false, 'message' => 'No order found']);
     }

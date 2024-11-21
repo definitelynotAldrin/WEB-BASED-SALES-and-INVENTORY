@@ -11,7 +11,15 @@ if ($timeframe == 'overall') {
 } elseif ($timeframe == 'monthly') {
     $sql = "SELECT SUM(total_amount) AS total_collectibles FROM payments WHERE payment_status = 'credit' AND MONTH(payment_date) = MONTH(CURRENT_DATE()) AND YEAR(payment_date) = YEAR(CURRENT_DATE())";
 } elseif ($timeframe == 'weekly') {
-    $sql = "SELECT SUM(total_amount) AS total_collectibles FROM payments WHERE payment_status = 'credit' AND YEARWEEK(payment_date, 1) = YEARWEEK(CURRENT_DATE(), 1)";
+    // Get the start and end dates of the current week
+    $startDate = date('Y-m-d'); 
+
+    $sql = "SELECT SUM(total_amount) AS total_collectibles 
+        FROM payments 
+        WHERE payment_status = 'credit' 
+        AND payment_date >= '$startDate' 
+        AND payment_date <= CURRENT_DATE()";
+
 } elseif ($timeframe == 'today') {
     // Query for sales in the current week (based on Monday as the first day of the week)
     $startDate = date('Y-m-d');  // Get the first day of the current month

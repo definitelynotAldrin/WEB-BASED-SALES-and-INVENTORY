@@ -5,6 +5,7 @@ session_start();
 $account_id = $_SESSION['account_id'];
 $user_role = $_SESSION['user_role'];
 
+
 if(!isset($account_id)){
    header('location: ../public/login_panel.php');
 }
@@ -164,6 +165,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 <?php echo $_GET['success']; ?>
                 </div>
             <?php } ?>
+            <div class="alert error-message" id="error-container"></div>
+            <div class="success success-message" id="success-container"></div>
             <div class="content-header">
                 <div class="header-text">
                     <h1>Stock History <span></span></h1>
@@ -179,6 +182,26 @@ document.addEventListener("DOMContentLoaded", function() {
                             <h1 class="notification-title">Notifications</h1>
                             <div class="notification-card-container" id="low-stock-notifications">
                                 <p>No low stock items currently.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message-icon-container">
+                        <i class="fa-solid fa-message message-button">
+                            <i class="fa-solid fa-circle notification-alert-icon" style="display: none;"></i>
+                        </i>
+
+                        <div class="notification-container message-container collectibles-notif">
+                            <div class="notification-main-wrapper message-wrapper">
+                                <div class="notification-header">
+                                    <h1>Kan-anan by the Sea Group Chat</h1>
+                                </div>
+                                <div class="notification-message-wrapper">
+                                    
+                                </div>
+                                <div class="notification-bottom-box message-input-area">
+                                    <input type="text" name="" id="message-input" placeholder="Type a message...">
+                                    <button type="button" class="send-message-button">Send</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -230,6 +253,113 @@ document.addEventListener("DOMContentLoaded", function() {
                             setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
                         });
 
+                        $(document).ready(function() {
+                            // Function to load messages
+                            sessionUserRole = "<?php echo $user_role; ?>";
+                            function loadMessages() {
+                                $.ajax({
+                                    url: '../php/fetch_messages.php', // Separate PHP script to fetch messages if needed
+                                    type: 'GET',
+                                    dataType: 'json',
+                                    success: function(response) {
+                                        if (response.success) {
+                                            // Clear the current messages
+                                            $('.notification-message-wrapper').empty();
+                                            response.messages.forEach(function(message) {
+                                                $('.notification-message-wrapper').append(
+                                                    `<div class="notification-group ${message.user_role === sessionUserRole ? 'sender-group right-box' : 'replier-group left-box'}">
+                                                        <div class="notification-details ${message.user_role === sessionUserRole ? 'right-details' : 'left-box'}">
+                                                            <span class="notification-username">${message.user_role}</span>
+                                                            <span class="notification-time">${message.timestamp}</span>
+                                                        </div>
+                                                        <div class="notification-box message-box">
+                                                            <p class="notification-message">${message.text_message}</p>
+                                                        </div>
+                                                    </div>`
+                                                );
+                                            });
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
+                                });
+                            }
+
+                            // Initial load of messages
+                            loadMessages();
+
+                            // Poll for new messages every 5 seconds
+                            setInterval(loadMessages, 5000);
+
+                            // Send message on button click
+                            $(document).on('click', '.send-message-button', function() {
+                                var userRole = "<?php echo $user_role; ?>"; // Assumes $user_role is set in PHP
+                                var textMessage = $('#message-input').val();
+
+                                if (textMessage.trim() === "") {
+                                    displayErrorMessage("Please enter a message.");
+                                    return;
+                                }
+
+                                $.ajax({
+                                    url: '../php/send_message.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        user_role: userRole,
+                                        text_message: textMessage
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            // Display new messages without waiting for the interval
+                                            loadMessages();
+                                            $('#message-input').val(''); // Clear input after sending
+                                        } else {
+                                            displayErrorMessage("Failed to send message: " + response.error);
+                                            $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
+                                });
+                            });
+                        });
+
+                        
+                        $(document).on('click', '.message-button', function() {
+                            $('.message-container').fadeToggle();
+                            $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
+                        });
+
+                        function displaySuccessMessage(message1) {
+                            // Create a div to hold the success message
+                            const messageDiv = $('<div class="success-message"></div>').text(message1);
+                            
+                            // Append the message to a specific container in your HTML
+                            $('#success-container').html(messageDiv);
+                            $('#success-container').removeClass('fadeOut').addClass('fadeIn');
+
+                            // Optionally, remove the message after a few seconds
+                            setTimeout(() => {
+                                $('#success-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                            }, 3000); // Change the duration as needed
+                        }
+
+                        function displayErrorMessage(message2) {
+                            // Create a div to hold the success message
+                            const messageDiv = $('<div class="error-message"></div>').text(message2);
+                            
+                            // Append the message to a specific container in your HTML
+                            $('#error-container').html(messageDiv);
+                            $('#error-container').removeClass('fadeOut').addClass('fadeIn');
+
+                            // Optionally, remove the message after a few seconds
+                            setTimeout(() => {
+                                $('#error-container').removeClass('fadeIn').addClass('fadeOut'); // Fade out the message
+                            }, 3000); // Change the duration as needed
+                        }
                         
                     </script>
                     <div class="profile">
@@ -241,93 +371,90 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="menu-section-container">
                 <div class="first-panel-section">
                     <div class="first-panel-header search-area">
-                        <form method="GET" action="" id="search-form">
-                            <input type="date" name="search_item" id="search_date" placeholder="Search an item" onchange="document.getElementById('search-form').submit();">
-                            <input type="text" id="date_display" value="<?php echo (isset($_GET['search_item'])) ? date("F j, Y", strtotime($_GET['search_item'])) : ''; ?>" placeholder="<?php echo date('F j, Y'); ?>"  disabled>
+                        <form id="search-form">
+                            <input type="date" name="search_item" id="search_date" placeholder="Search an item">
+                            <!-- <input type="text" id="date_display" placeholder="<?php echo date('Y-m-d'); ?>" disabled> -->
                         </form>
-                        
                     </div>
 
                     <div class="table-container">
-                        <?php
-                        include_once "../includes/connection.php";
-                        date_default_timezone_set('Asia/Manila');
-
-                        // Get the selected date from the input field
-                        $search_date = isset($_GET['search_item']) ? $_GET['search_item'] : '';
-
-                        // Prepare the SQL query
-                        if ($search_date) {
-                            // If a specific date is selected, filter results by that date
-                            $sql = "SELECT s.stock_name, sh.previous_quantity, sh.updated_quantity, sh.updated_at, sh.last_action_type 
-                                    FROM stock_history sh
-                                    JOIN stocks s ON sh.stock_id = s.stock_id
-                                    WHERE DATE(sh.updated_at) = '$search_date'";
-                        } else {
-                            // If no date is selected, filter results by today's date
-                            $sql = "SELECT s.stock_name, sh.previous_quantity, sh.updated_quantity, sh.updated_at, sh.last_action_type 
-                                    FROM stock_history sh
-                                    JOIN stocks s ON sh.stock_id = s.stock_id
-                                    WHERE DATE(sh.updated_at) = CURDATE()";
-                        }
-
-                        $result = $conn->query($sql);
-                        ?>
-
                         <table>
                             <thead>
                                 <tr>
+                                    <th>Username</th>
                                     <th>Item Name</th>
                                     <th class="quantity">Previous Quantity</th>
                                     <th class="quantity">Added/Changed Quantity</th>
                                     <th>Updated Quantity</th>
-                                    <th>action type</th>
+                                    <th>Action Type</th>
                                     <th>Date Added</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                if ($result->num_rows > 0) {
-                                    // Output data of each row
-                                    while($row = $result->fetch_assoc()) {
-                                        echo "<tr>";
-                                        echo "<td>" . htmlspecialchars($row['stock_name']) . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['previous_quantity']) . "</td>";
-                                        
-                                        // Check if the last action was 'insert' or 'update'
-                                        if ($row['last_action_type'] === 'insert') {
-                                            // For 'insert', display previous + updated quantities
-                                            echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['previous_quantity'] + $row['updated_quantity']) . "</td>"; // Updated stock = previous + added
-                                            echo "<td>" . htmlspecialchars($row['last_action_type']) . "</td>";
-                                        } elseif ($row['last_action_type'] === 'update') {
-                                            // For 'update', just display the change in quantity and the updated total
-                                            // $changeQuantity = $row['updated_quantity'] - $row['previous_quantity']; // Calculate change
-                                            echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['updated_quantity']) . "</td>"; // Updated stock = final quantity after update
-                                            echo "<td>" . htmlspecialchars($row['last_action_type']) . "</td>";
-                                        }
-                                        
-                                        echo "<td>" . htmlspecialchars(date('M d, Y h:i A', strtotime($row['updated_at']))) . "</td>";
-                                        echo "</tr>";
-                                    }
-                                } else {
-                                    // If no data is found for the selected date or today
-                                    echo "<tr><td colspan='5' style='text-align:center;'>No data found for the selected date or today.</td></tr>";
-                                }
-                                ?>
+                                <tr>
+                                    <td colspan="6" style="text-align:center;">Select a date to view stock history.</td>
+                                </tr>
                             </tbody>
                         </table>
-
-                        <?php
-                        // Close connection
-                        $conn->close();
-                        ?>
                     </div>
-
                 </div>
             </div>
+            <script>
+                $(document).ready(function () {
+                    // Function to load data based on a date
+                    function loadStockHistory(searchDate = '') {
+                        $.ajax({
+                            url: '../php/fetch_stock_history.php',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                search_item: searchDate
+                            },
+                            success: function (response) {
+                                var tableBody = $('table tbody');
+                                tableBody.empty(); // Clear the current table contents
 
+                                if (response.error) {
+                                    tableBody.append(`<tr><td colspan="6" style="text-align:center;">${response.error}</td></tr>`);
+                                    return;
+                                }
+
+                                $.each(response, function (index, row) {
+                                    tableBody.append(`
+                                        <tr>
+                                            <td>${row.username}</td>
+                                            <td>${row.stock_name}</td>
+                                            <td>${row.previous_quantity}</td>
+                                            <td>${row.updated_quantity}</td>
+                                            <td>${row.updated_stock}</td>
+                                            <td>${row.last_action_type}</td>
+                                            <td>${row.formatted_date}</td>
+                                        </tr>
+                                    `);
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.error('Error: ' + textStatus, errorThrown);
+                                var tableBody = $('table tbody');
+                                tableBody.empty();
+                                tableBody.append(`<tr><td colspan="6" style="text-align:center;">Failed to load data. Please try again later.</td></tr>`);
+                            }
+                        });
+                    }
+
+                    var currentDate = new Date().toISOString().split('T')[0]; 
+                    $('#search_date').val(currentDate); 
+                    loadStockHistory(currentDate);
+
+                    // Reload data when the user selects a date
+                    $('#search_date').on('change', function () {
+                        var searchDate = $(this).val();
+                        loadStockHistory(searchDate);
+                    });
+                });
+
+
+            </script>
             <div class="delete-confirmation-overlay"></div>
             <div class="delete-confirmation-container">
                 <div class="delete-confirmation-content">

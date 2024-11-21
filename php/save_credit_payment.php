@@ -18,6 +18,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn->begin_transaction();
 
     try {
+        // Check if the cash tendered is sufficient for the total amount of the selected orders
+        $totalAmount = 0;
+        $sqlGetTotalAmount = "SELECT SUM(total_amount) AS total_amount FROM orders WHERE order_id IN (" . implode(',', $orderIds) . ")";
+        $result = $conn->query($sqlGetTotalAmount);
+
+        if ($result && $row = $result->fetch_assoc()) {
+            $totalAmount = $row['total_amount'];
+        }
+
+        // If cash tendered is less than total amount, return error
+        if ($cashTendered < $totalAmount) {
+            echo json_encode(['status' => 'error', 'message' => 'Cash tendered is insufficient for the total amount.']);
+            $conn->rollback();
+            exit;
+        }
+
         // Update payment records in the payments table for each selected order
         $sqlUpdatePayment = "UPDATE payments SET cash_tendered = ?, change_due = ?, payment_status = ?, paid_as_group = ? WHERE order_id = ?";
         $stmtUpdatePayment = $conn->prepare($sqlUpdatePayment);
