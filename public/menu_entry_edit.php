@@ -20,7 +20,7 @@ if ($user_role !== 'user_admin') {
 include_once "../includes/connection.php";
 
 if (!isset($_GET['item_id'])) {
-    $errorMsg = 'Something went wrong!';
+    $errorMsg = 'item does not exist!';
     header("Location: ../public/menu_entry.php?error=$errorMsg");
     exit();
 }
@@ -458,10 +458,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                     ?>
                                                 </select>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="stock_quantity_<?php echo $index + 1; ?>">Required Quantity</label>
-                                                <input type="number" step="0.01" min="0" name="quantities[]" value="<?php echo htmlspecialchars($stock['quantity_required']); ?>" required>
-                                            </div>
+                                            <input type="hidden" step="0.01" min="0" name="quantities[]" required value="1">
                                             <i class="fa-regular fa-circle-xmark remove-field" onclick="removeSpecificField(this)"></i>
                                         </div>
                                     <?php } ?>
@@ -532,10 +529,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 ?>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="stock_quantity_${stockCount}">Quantity required</label>
-                            <input type="number" step="0.01" min="0" name="quantities[]" required>
-                        </div>
+                        <input type="hidden" step="0.01" min="0" name="quantities[]" required value="1">
                         <!-- Remove field icon -->
                         <i class="fa-regular fa-circle-xmark remove-field" onclick="removeSpecificField(this)"></i>
                     `;
@@ -552,7 +546,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         const fieldToRemove = element.parentElement;  // Get the parent of the icon (the stock entry)
                         fieldToRemove.remove();
                     } else {
-                        window.location.href = '../public/menu_entry_edit.php?error=At least one stock field must remain.';
+                        window.location.href = '../public/menu_entry.php?error=At least one stock field must remain.';
                     }
                 }
             </script>

@@ -7,12 +7,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['status' => 'error', 'message' => 'No orders selected.']);
         exit;
     }
-    
+
     $orderIds = $_POST['order_ids'];
     $cashTendered = $_POST['cash_tendered'];
     $changeDue = $_POST['change_due'];
     $paymentStatus = $_POST['payment_status'];
     $groupId = $_POST['group_id'];
+    $username = $_POST['username'];
 
     // Begin a transaction
     $conn->begin_transaction();
@@ -53,10 +54,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        // Append new username to the existing username column
+        $updateUsernameSql = "UPDATE payments SET username = CONCAT(IFNULL(username, ''), '\n', ?) WHERE order_id IN (" . implode(',', $orderIds) . ")";
+        $stmtUpdateUsername = $conn->prepare($updateUsernameSql);
+        $stmtUpdateUsername->bind_param('s', $username);
+
+        if (!$stmtUpdateUsername->execute()) {
+            throw new Exception("Failed to update username for the selected orders.");
+        }
+
         // Commit transaction
         $conn->commit();
 
-        echo json_encode(['status' => 'success', 'message' => 'Payments updated and orders marked as paid.']);
+        echo json_encode(['status' => 'success', 'message' => 'Payments updated, orders marked as paid, and username appended.']);
     } catch (Exception $e) {
         // Roll back transaction if an error occurs
         $conn->rollback();
@@ -65,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Close statements
         $stmtUpdatePayment->close();
         if (isset($stmtUpdateOrder)) $stmtUpdateOrder->close();
+        if (isset($stmtUpdateUsername)) $stmtUpdateUsername->close();
     }
     $conn->close();
 } else {

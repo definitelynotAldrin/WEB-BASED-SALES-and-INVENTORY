@@ -412,10 +412,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         ?>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label for="stock_quantity_1">Quantity required</label>
-                                    <input type="number" step="0.01" min="0" name="quantities[]" required value="<?php echo (isset($_GET['quantities'])) ? $_GET['quantities'] : '' ?>">
-                                </div>
+                                <input type="hidden" step="0.01" min="0" name="quantities[]" required value="1">
                                 <!-- Remove field icon -->
                                 <i class="fa-regular fa-circle-xmark remove-field" onclick="removeSpecificField(this)"></i>
                             </div>
@@ -477,10 +474,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 ?>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="stock_quantity_${stockCount}">Quantity required</label>
-                            <input type="number" step="0.01" min="0" name="quantities[]" required>
-                        </div>
+                        <input type="hidden" step="0.01" min="0" name="quantities[]" required value="1">
                         <!-- Remove field icon -->
                         <i class="fa-regular fa-circle-xmark remove-field" onclick="removeSpecificField(this)"></i>
                     `;

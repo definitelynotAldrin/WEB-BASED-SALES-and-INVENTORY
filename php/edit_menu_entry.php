@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Update the database with new image
                     $sql = "UPDATE menu_items SET item_name = ?, item_price = ?, item_category = ?, item_image = ? WHERE item_id = ?";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("ssssi", $itemName, $itemPrice, $itemCat, $fileName, $itemId);
+                    $stmt->bind_param("sissi", $itemName, $itemPrice, $itemCat, $fileName, $itemId);
                 } else {
                     $errorMsg = "Failed to upload image";
                     header("Location: ../public/menu_entry_edit.php?error=$errorMsg&$data");
@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Update without changing the image
             $sql = "UPDATE menu_items SET item_name = ?, item_price = ?, item_category = ? WHERE item_id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssi", $itemName, $itemPrice, $itemCat, $itemId);
+            $stmt->bind_param("sisi", $itemName, $itemPrice, $itemCat, $itemId);
         }
 
 

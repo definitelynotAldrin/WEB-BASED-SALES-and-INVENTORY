@@ -410,7 +410,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <h3>Waiter name</h3>
                                     <span class="waiter-username"></span>
                                 </div>
-                                <div class="card-bottom-group">
+                                <div class="card-bottom-group cashier-section">
                                     <h3>Cashier name</h3>
                                     <span class="cashier-username"></span>
                                 </div>

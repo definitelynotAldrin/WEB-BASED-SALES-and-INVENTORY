@@ -694,11 +694,16 @@ td{
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     width: 100%;
+    height: 100px;
 }
 
 /* .card-bottom-group{
     align-items: end;
 } */
+
+.cashier-section{
+    overflow-y: auto;
+}
 
 .card-bottom-group span{
     font-size: 1.5rem;

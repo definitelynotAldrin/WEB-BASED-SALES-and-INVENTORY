@@ -7,7 +7,7 @@ include_once "../includes/connection.php"; // Ensure your connection.php is corr
 // Check if POST data is received
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if customer info is provided and not empty
-    if (!empty($_POST['customer_name']) && isset($_POST['customer_note']) && isset($_POST['customer_table']) && isset($_POST['username'])) {
+    if (!empty($_POST['customer_name']) && isset($_POST['customer_note']) && !empty($_POST['customer_table']) && isset($_POST['username'])) {
         $customerName = $_POST['customer_name'];
         $customerNote = $_POST['customer_note'];
         $customerTable = $_POST['customer_table'];

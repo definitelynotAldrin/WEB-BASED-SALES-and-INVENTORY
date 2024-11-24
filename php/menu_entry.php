@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Insert into menu_items table
         $sql = "INSERT INTO menu_items (item_name, item_price, item_category, item_image) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $itemName, $itemPrice, $itemCat, $filePath);
+        $stmt->bind_param("siss", $itemName, $itemPrice, $itemCat, $filePath);
         $stmt->execute();
 
         // Get the last inserted item_id

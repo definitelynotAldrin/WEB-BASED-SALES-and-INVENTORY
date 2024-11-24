@@ -556,6 +556,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         $('.popup-settlement-credit').fadeOut();
                         $('.popup-view-settled-orders').fadeOut();
                         $('.popup-overlay').fadeOut();
+                        $('.popup-confirmation-container').fadeOut();
 
                     });
 
@@ -1247,6 +1248,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             const totalAmountCredit = parseFloat($('.total-amount-credit').text());
                             const changeDueCredit = parseFloat($('#total-change-credit').val());
                             const paymentStatus = 'paid';
+                            const username = $('#account_username').val();
 
 
                             const groupId = generateRandomString(8);
@@ -1256,7 +1258,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             console.log("Total Amount (Credit):", totalAmountCredit);
                             console.log("Cash Tendered (Credit):", cashTenderedCredit);
                             console.log("Change Due (Credit):", changeDueCredit);
-
+                            console.log("Account username:", username);
                             console.log("Generated Group ID:", groupId);
 
                             if (selectedOrderIds.length === 0) {
@@ -1283,7 +1285,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                         cash_tendered: cashTenderedCredit,
                                         change_due: changeDueCredit,
                                         payment_status: paymentStatus,
-                                        group_id: groupId
+                                        group_id: groupId,
+                                        username: username
                                     },
                                     success: function(response) {
                                         if (response.status === 'success') {

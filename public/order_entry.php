@@ -810,7 +810,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         // Check if response is successful
                                         if (response.status === 'success') {
-                                            displaySuccessMessage('Order successfully placed!');
+                                            displaySuccessMessage(response.message);
 
                                             // Clear customer data fields
                                             $('#customer-name').val('');
@@ -1154,7 +1154,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <select name="customer_table" id="customer-table">
                                         <option value="" hidden>Select Customer Table</option>
                                         <option value="occupied_table" id="occupied_table" hidden>Already have a table!</option>
-                                        <?php for ($i = 1; $i <= 30; $i++): ?>
+                                        <?php for ($i = 0; $i <= 30; $i++): ?>
                                         <option value="<?php echo $i; ?>">Table <?php echo $i; ?></option>
                                         <?php endfor; ?>
                                     </select>
