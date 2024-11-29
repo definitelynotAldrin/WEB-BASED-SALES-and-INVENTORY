@@ -845,6 +845,7 @@ td{
     width: 100%;
 }
 
+
 form{
     display: flex;
     flex-direction: column;
@@ -907,6 +908,23 @@ form{
     font-size: 0.9rem;
     text-transform: capitalize;
     cursor: pointer;
+}
+
+.table-number-field{
+    flex-direction: row;
+    align-items: center;
+}
+
+.table-number-field i{
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.table-number-field .numberDecrease{
+    color: var(--red);
+}
+
+.table-number-field .numberIncrease{
+    color: var(--light-green);
 }
 
 .button-section {

@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 try {
     // Fetch the latest 10 messages
-    $query = "SELECT user_role, text_message, CONCAT(message_date, ' ', message_time) AS timestamp 
+    $query = "SELECT user_role, username, text_message, CONCAT(message_date, ' ', message_time) AS timestamp 
               FROM messages 
               ORDER BY id DESC";
     $result = $conn->query($query);
@@ -15,6 +15,7 @@ try {
     while ($row = $result->fetch_assoc()) {
         $messages[] = [
             'user_role' => htmlspecialchars($row['user_role']),
+            'username' => htmlspecialchars($row['username']),
             'text_message' => htmlspecialchars($row['text_message']),
             'timestamp' => $row['timestamp']
         ];

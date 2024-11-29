@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         $(document).ready(function() {
                             // Function to load messages
-                            sessionUserRole = "<?php echo $user_role; ?>";
+                            sessionUserRole = "<?php echo $username; ?>";
                             function loadMessages() {
                                 $.ajax({
                                     url: '../php/fetch_messages.php', // Separate PHP script to fetch messages if needed
@@ -279,9 +279,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                             $('.notification-message-wrapper').empty();
                                             response.messages.forEach(function(message) {
                                                 $('.notification-message-wrapper').append(
-                                                    `<div class="notification-group ${message.user_role === sessionUserRole ? 'sender-group right-box' : 'replier-group left-box'}">
-                                                        <div class="notification-details ${message.user_role === sessionUserRole ? 'right-details' : 'left-box'}">
-                                                            <span class="notification-username">${message.user_role}</span>
+                                                    `<div class="notification-group ${message.username === sessionUserRole ? 'sender-group right-box' : 'replier-group left-box'}">
+                                                        <div class="notification-details ${message.username === sessionUserRole ? 'right-details' : 'left-box'}">
+                                                            <span class="notification-username">${message.username}</span>
+                                                            <span class="notification-time">${message.user_role}</span>
                                                             <span class="notification-time">${message.timestamp}</span>
                                                         </div>
                                                         <div class="notification-box message-box">
@@ -306,20 +307,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
                             // Send message on button click
                             $(document).on('click', '.send-message-button', function() {
-                                var userRole = "<?php echo $user_role; ?>"; // Assumes $user_role is set in PHP
+                                var username = "<?php echo $username; ?>"; // Assumes $user_role is set in PHP
+                                var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
+                                console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;
                                 }
+
+                                $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
 
                                 $.ajax({
                                     url: '../php/send_message.php',
                                     type: 'POST',
                                     dataType: 'json',
                                     data: {
-                                        user_role: userRole,
+                                        user_role: user_role,
+                                        username: username,
                                         text_message: textMessage
                                     },
                                     success: function(response) {
@@ -327,7 +333,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                             // Display new messages without waiting for the interval
                                             loadMessages();
                                             $('#message-input').val(''); // Clear input after sending
-                                            $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
                                         } else {
                                             displayErrorMessage("Failed to send message: " + response.error);
                                         }
@@ -590,6 +595,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 $('#kilograms-popup').hide();
                                                 $('#popup-overlay').hide();
                                                 $('body').css('overflow', 'auto');
+                                                displaySuccessMessage(result.message);
                                             } else {
                                                 displayErrorMessage(result.message);
                                             }
@@ -831,9 +837,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                         $('.popup-overlay').fadeOut();
                                     },
                                     error: function(xhr, status, error) {
-                                        alert('Error submitting customer info: ' + error); // Handle error
+                                        console.log('Error submitting customer info: ' + error); // Handle error
                                         // Hide the popup in case of an error as well
-                                        $('.popup-confirmation-container').hide();
+                                        $('.popup-confirmation-container').fadeOut();
+                                        $('.popup-overlay').fadeOut();
                                     }
                                 });
                             });
@@ -1034,6 +1041,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                 $('.table-orders-container').hide();
                                 $('#popup-overlay').hide();
                             });
+
+                            updateTable();
                         });
 
 
@@ -1110,6 +1119,55 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     updateTable();
 
+                    $(document).ready(function () {
+                        // Fetch and Populate Table Numbers
+                        function fetchTables() {
+                            $.ajax({
+                                url: "../php/get_table_numbers.php",
+                                method: "GET",
+                                dataType: "json",
+                                success: function (data) {
+                                    $("#customer-table").empty();
+                                    $("#customer-table").append('<option value="" hidden>Customer Table</option>');
+                                    $("#customer-table").append('<option value="occupied_table" id="occupied_table" hidden>Already have a table!</option>');
+                                    data.forEach(function (table) {
+                                        $("#customer-table").append(`<option value="${table}">Table ${table}</option>`);
+                                    });
+                                }
+                            });
+                        }
+
+                        // Initial Fetch
+                        fetchTables();
+
+                        // Add Table
+                        $(".numberIncrease").click(function () {
+                            $.ajax({
+                                url: "../php/update_table_numbers.php",
+                                method: "POST",
+                                data: { action: "add" },
+                                success: function (response) {
+                                    displaySuccessMessage(response);
+                                    fetchTables();
+                                    updateTable();
+                                }
+                            });
+                        });
+
+                        // Remove Table
+                        $(".numberDecrease").click(function () {
+                            $.ajax({
+                                url: "../php/update_table_numbers.php",
+                                method: "POST",
+                                data: { action: "remove" },
+                                success: function (response) {
+                                    displaySuccessMessage(response);
+                                    fetchTables();
+                                    updateTable();
+                                }
+                            });
+                        });
+                    });
                 </script>
                 <div class="second-panel-section">
                     <div class="menu-header">
@@ -1149,15 +1207,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <input type="text" placeholder="Optional" name="customer_note" id="customer-note">
                                 </div>
                             </div>
-                            <div class="card-bottom-groups order-number-field">
-                                <div class="card-bottom-group">
+                            <div class="card-bottom-groups">
+                                <div class="card-bottom-group table-number-field">
+                                    <i class="fa-regular fa-square-minus numberDecrease"></i>
                                     <select name="customer_table" id="customer-table">
-                                        <option value="" hidden>Select Customer Table</option>
+                                        <option value="" hidden>Customer Table</option>
                                         <option value="occupied_table" id="occupied_table" hidden>Already have a table!</option>
-                                        <?php for ($i = 0; $i <= 30; $i++): ?>
-                                        <option value="<?php echo $i; ?>">Table <?php echo $i; ?></option>
-                                        <?php endfor; ?>
                                     </select>
+                                    <i class="fa-regular fa-square-plus numberIncrease"></i>
                                 </div>
                                 <button class="btnTable">tables availability</button>
                             </div>

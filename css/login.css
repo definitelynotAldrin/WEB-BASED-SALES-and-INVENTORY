@@ -73,6 +73,7 @@ body{
   justify-content: center;
   flex-direction: column;
   gap: 3rem;
+  position: relative;
 }
 
 form{
@@ -92,6 +93,11 @@ form{
   position: relative;
 }
 
+.account-form{
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .form-group label{
   font-size: 1.2rem;
   font-weight: 500;
@@ -99,7 +105,7 @@ form{
   color: rgba(0, 0, 0, 0.5);
 }
 
-.form-group input{
+.form-group input, select{
   font-size: 1.2rem;
   font-weight: 500;
   width: 100%;
@@ -109,6 +115,10 @@ form{
   border-radius: 4px;
   outline: none;
   background-color: rgba(221, 221, 221, 0.5);
+}
+
+.form-group select{
+  text-transform: capitalize;
 }
 
 .form-group a{
@@ -179,12 +189,12 @@ form{
   color: var(--dark-green);
   font-size: 1rem;
   font-weight: 500;
-  padding: 15px;
+  padding: 20px;
   border-radius: 4px;
+  width: 100%;
   border: 1px solid rgb(108, 188, 76, 1);
   background-color: rgb(108, 188, 76, 0.3);
   text-align: center;
-  transition: 0.5s ease;
 }
 
 
@@ -192,7 +202,7 @@ form{
   color: var(--red);
   font-size: 1rem;
   font-weight: 500;
-  padding: 15px;
+  padding: 20px;
   width: 100%;
   border-radius: 4px;
   border: 1px solid rgba(215, 1, 1, 0.5);
@@ -205,6 +215,9 @@ form{
   z-index: 6;
   color: white;
   background-color: rgb(134, 2, 2);
+  position: absolute;
+  top: 0;
+  border-radius: 0;
 }
 
 
@@ -213,6 +226,9 @@ form{
   z-index: 6;
   color: white;
   background-color: var(--light-green);
+  position: absolute;
+  top: 0;
+  border-radius: 0;
 }
 
 #error-container.fadeOut{
@@ -335,6 +351,123 @@ form{
   background-color: var(--dark-green);
 }
 
+.popup-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  object-fit: cover;
+  z-index: 2;
+  display: none;
+}
+
+.pop-up-container{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: var(--white);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 40px;
+  box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 3;
+  display: none;
+}
+
+.popup-confirmation-container{
+  width: 450px;
+}
+
+.pop-up-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pop-up-content i{
+  font-size: 1.5rem;
+  color: var(--red);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--semi-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pop-up-content h1{
+  font-size: 1rem;
+  color: var(--darker);
+  text-align: center;
+}
+
+
+.pop-up-buttons{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pop-up-buttons a{
+  font-size: 0.9rem;
+  text-transform: capitalize;
+  text-decoration: none;
+  padding: 5px 25px;
+  border-radius: 4px;
+}
+
+.btn-first{
+  background-color: var(--red);
+  color: var(--white);
+  border: 1px solid var(--red);
+}
+
+.btn-second{
+  color: var(--darker);
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.btn-first:active{
+  background-color: #7b0303;
+}
+
+.btn-second:active{
+  background-color: var(--dark-green);
+  color: var(--white);
+  border: 1px solid var(--dark-green);
+}
+
+
+.btnCancel{
+  color: var(--darker);
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.btnConfirm{
+  background-color: #04c001;
+  color: var(--white);
+  border: 1px solid #04c001;
+}
+
+.btnConfirm:active{
+  background-color: #048f02;
+  border: 1px solid #048f02;
+}
+
+.btnCancel:active{
+  background-color: var(--red);
+  color: var(--white);
+  border: 1px solid var(--red);
+}
+
 
 
 @media (max-width:385px){
@@ -352,6 +485,12 @@ form{
 
 
 @media (max-width:630px){
+  .btnBack{
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 2;
+  }
   form{
     padding: 0 5%;
   }

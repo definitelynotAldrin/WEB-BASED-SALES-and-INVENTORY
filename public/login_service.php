@@ -48,8 +48,9 @@
                     <i class="fas fa-eye" id="showPassword"></i>
                     <i class="fas fa-eye-slash" id="hidePassword"></i>
                 </div>
-                <div class="form-group">
+                <div class="form-group account-form">
                     <a href="#" id="forgot-password">forgot password</a>
+                    <a href="../public/create_account.php" id="create-account">create account</a>
                 </div>
                 <div class="button-group">
                     <button type="submit">service login</button>

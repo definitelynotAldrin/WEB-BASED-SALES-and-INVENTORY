@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $discountedAmount = isset($_POST['discounted_amount']) ? $_POST['discounted_amount'] : null;
     $cashTendered = $_POST['cash_tendered'];
     $changeDue = $_POST['change_due'];
+    $discount_type = $_POST['discount_type'];
     $username = $_POST['username'];
     
     // Check if cash tendered is less than the total amount
@@ -27,12 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $paymentStatus = 'paid';
     
     // Insert payment details into the payments table
-    $sql = "INSERT INTO payments (order_id, username, total_amount, discounted_amount, cash_tendered, change_due, payment_status)
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO payments (order_id, username, total_amount, discounted_amount, cash_tendered, change_due, payment_status, discount_type)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     
     // Prepare and execute the statement
     if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param('isddids', $orderId, $username, $totalAmount, $discountedAmount, $cashTendered, $changeDue, $paymentStatus);
+        $stmt->bind_param('isddidss', $orderId, $username, $totalAmount, $discountedAmount, $cashTendered, $changeDue, $paymentStatus, $discount_type);
         
         if ($stmt->execute()) {
             // Update the payment_status in the orders table after payment is successful

@@ -38,7 +38,7 @@ $stmt_items->execute();
 $order_items = $stmt_items->get_result();
 
 
-$sql_payment = "SELECT discounted_amount, cash_tendered, change_due, total_amount, payment_status FROM payments WHERE order_id = ?";
+$sql_payment = "SELECT discounted_amount, cash_tendered, change_due, total_amount, payment_status, discount_type FROM payments WHERE order_id = ?";
 $stmt_payments = $conn->prepare($sql_payment);
 $stmt_payments->bind_param("i", $order_id);
 $stmt_payments->execute();
@@ -118,6 +118,10 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
                     // Check if there's a discounted amount, otherwise display 0
                     echo number_format($payment_details['discounted_amount'] ?? 0, 2); 
                 ?></strong></td>
+            </tr>
+            <tr>
+                <td><strong>Applied Discount</strong></td>
+                <td><?php echo htmlspecialchars($payment_details['discount_type']); ?></td>
             </tr>
             <tr>
                 <td><strong>Cash Tendered</strong></td>

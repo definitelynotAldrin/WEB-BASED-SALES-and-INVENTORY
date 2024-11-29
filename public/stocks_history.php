@@ -4,6 +4,7 @@ session_start();
 
 $account_id = $_SESSION['account_id'];
 $user_role = $_SESSION['user_role'];
+$username = $_SESSION['account_username'];
 
 
 if(!isset($account_id)){
@@ -255,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         $(document).ready(function() {
                             // Function to load messages
-                            sessionUserRole = "<?php echo $user_role; ?>";
+                            sessionUserRole = "<?php echo $username; ?>";
                             function loadMessages() {
                                 $.ajax({
                                     url: '../php/fetch_messages.php', // Separate PHP script to fetch messages if needed
@@ -267,9 +268,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                             $('.notification-message-wrapper').empty();
                                             response.messages.forEach(function(message) {
                                                 $('.notification-message-wrapper').append(
-                                                    `<div class="notification-group ${message.user_role === sessionUserRole ? 'sender-group right-box' : 'replier-group left-box'}">
-                                                        <div class="notification-details ${message.user_role === sessionUserRole ? 'right-details' : 'left-box'}">
-                                                            <span class="notification-username">${message.user_role}</span>
+                                                    `<div class="notification-group ${message.username === sessionUserRole ? 'sender-group right-box' : 'replier-group left-box'}">
+                                                        <div class="notification-details ${message.username === sessionUserRole ? 'right-details' : 'left-box'}">
+                                                            <span class="notification-username">${message.username}</span>
+                                                            <span class="notification-time">${message.user_role}</span>
                                                             <span class="notification-time">${message.timestamp}</span>
                                                         </div>
                                                         <div class="notification-box message-box">
@@ -294,20 +296,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
                             // Send message on button click
                             $(document).on('click', '.send-message-button', function() {
-                                var userRole = "<?php echo $user_role; ?>"; // Assumes $user_role is set in PHP
+                                var username = "<?php echo $username; ?>"; // Assumes $user_role is set in PHP
+                                var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
+                                console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;
                                 }
+
+                                $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
 
                                 $.ajax({
                                     url: '../php/send_message.php',
                                     type: 'POST',
                                     dataType: 'json',
                                     data: {
-                                        user_role: userRole,
+                                        user_role: user_role,
+                                        username: username,
                                         text_message: textMessage
                                     },
                                     success: function(response) {
@@ -317,7 +324,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                             $('#message-input').val(''); // Clear input after sending
                                         } else {
                                             displayErrorMessage("Failed to send message: " + response.error);
-                                            $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
                                         }
                                     },
                                     error: function(jqXHR, textStatus, errorThrown) {

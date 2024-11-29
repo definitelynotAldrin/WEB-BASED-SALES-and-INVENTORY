@@ -414,6 +414,7 @@
     display: flex;
     align-items: center;
     justify-content:right;
+    flex-direction: row-reverse;
     gap: 0.5rem;
 }
 

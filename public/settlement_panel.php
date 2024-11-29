@@ -254,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         $(document).ready(function() {
                             // Function to load messages
-                            sessionUserRole = "<?php echo $user_role; ?>";
+                            sessionUserRole = "<?php echo $username; ?>";
                             function loadMessages() {
                                 $.ajax({
                                     url: '../php/fetch_messages.php', // Separate PHP script to fetch messages if needed
@@ -266,9 +266,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                             $('.notification-message-wrapper').empty();
                                             response.messages.forEach(function(message) {
                                                 $('.notification-message-wrapper').append(
-                                                    `<div class="notification-group ${message.user_role === sessionUserRole ? 'sender-group right-box' : 'replier-group left-box'}">
-                                                        <div class="notification-details ${message.user_role === sessionUserRole ? 'right-details' : 'left-box'}">
-                                                            <span class="notification-username">${message.user_role}</span>
+                                                    `<div class="notification-group ${message.username === sessionUserRole ? 'sender-group right-box' : 'replier-group left-box'}">
+                                                        <div class="notification-details ${message.username === sessionUserRole ? 'right-details' : 'left-box'}">
+                                                            <span class="notification-username">${message.username}</span>
+                                                            <span class="notification-time">${message.user_role}</span>
                                                             <span class="notification-time">${message.timestamp}</span>
                                                         </div>
                                                         <div class="notification-box message-box">
@@ -293,20 +294,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
                             // Send message on button click
                             $(document).on('click', '.send-message-button', function() {
-                                var userRole = "<?php echo $user_role; ?>"; // Assumes $user_role is set in PHP
+                                var username = "<?php echo $username; ?>"; // Assumes $user_role is set in PHP
+                                var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
+                                console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;
                                 }
+
+                                $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
 
                                 $.ajax({
                                     url: '../php/send_message.php',
                                     type: 'POST',
                                     dataType: 'json',
                                     data: {
-                                        user_role: userRole,
+                                        user_role: user_role,
+                                        username: username,
                                         text_message: textMessage
                                     },
                                     success: function(response) {
@@ -314,7 +320,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                             // Display new messages without waiting for the interval
                                             loadMessages();
                                             $('#message-input').val(''); // Clear input after sending
-                                            $('.notification-message-wrapper').scrollTop($('.notification-message-wrapper')[0].scrollHeight);
                                         } else {
                                             displayErrorMessage("Failed to send message: " + response.error);
                                         }
@@ -445,42 +450,67 @@ document.addEventListener("DOMContentLoaded", function() {
                                         tbody.append(row);
                                     });
 
-                                    $(document).ready(function() {
+                                    $(document).ready(function () {
                                         // Populate the total amount fields
                                         let totalAmount = parseFloat(response.total_amount);
                                         $('#total-amount').val(totalAmount.toFixed(2));
                                         $('#hidden-total-amount').val(totalAmount); // Store original total for reference
 
-                                        // Calculate and update the total amount based on discount status
+                                        // Unified function to update total amount based on discounts
                                         const updateTotalWithDiscount = () => {
-                                            const isDiscounted = $('#discount_box').is(':checked');
-                                            const discountRate = 0.20; // 20% discount
-                                            const discountedAmount = isDiscounted ? totalAmount * (1 - discountRate) : totalAmount;
+                                            const isPWD = $('#discount_pwd').is(':checked');
+                                            const isSenior = $('#discount_senior').is(':checked');
+                                            let discountedAmount = totalAmount;
+                                            let discountType = '';
+
+                                            if (isPWD) {
+                                                discountedAmount = totalAmount * 0.80; // 20% discount
+                                                discountType = 'PWD'; // Set discount type
+                                            } else if (isSenior) {
+                                                discountedAmount = totalAmount * 0.90; // 10% discount
+                                                discountType = 'Senior'; // Set discount type
+                                            }
 
                                             $('#total-amount').val(discountedAmount.toFixed(2));
-                                            $('#discounted-amount').val(isDiscounted ? discountedAmount.toFixed(2) : '');
+                                            $('#discounted-amount').val(discountedAmount.toFixed(2));
+                                            $('#discount_type').val(discountType); // Update hidden input with the discount type
                                         };
 
-                                        // Calculate and update the change based on cash tendered
+                                        // Function to calculate and update the change
                                         const updateChange = () => {
                                             const cashTendered = parseFloat($('#cash-tendered').val()) || 0;
                                             const currentTotalAmount = parseFloat($('#total-amount').val());
                                             const change = cashTendered - currentTotalAmount;
 
-                                            $('#total-change').val(change > 0 ? change.toFixed(2) : '0.00');
+                                            // Ensure "change" field shows 0 if the amount tendered is insufficient
+                                            $('#total-change').val(change >= 0 ? change.toFixed(2) : '0.00');
                                         };
 
-                                        // Event listeners for real-time updates
-                                        $('#discount_box').on('change', () => {
+                                        // Event listeners for discount checkboxes
+                                        $('#discount_pwd').on('change', function () {
+                                            if ($(this).is(':checked')) {
+                                                $('#discount_senior').prop('checked', false); // Uncheck senior
+                                            }
                                             updateTotalWithDiscount();
-                                            updateChange(); // Recalculate change whenever discount changes
+                                            updateChange(); // Recalculate change
                                         });
 
-                                        $('#cash-tendered').on('input', updateChange); // Trigger change calculation on cash tendered input
+                                        $('#discount_senior').on('change', function () {
+                                            if ($(this).is(':checked')) {
+                                                $('#discount_pwd').prop('checked', false); // Uncheck pwd
+                                            }
+                                            updateTotalWithDiscount();
+                                            updateChange(); // Recalculate change
+                                        });
 
-                                        // Initial calculation to set values based on loaded data
+                                        // Event listener for cash tendered input
+                                        $('#cash-tendered').on('input', updateChange);
+
+                                        // Initial calculations to set values based on loaded data
                                         updateTotalWithDiscount();
+                                        updateChange();
                                     });
+
 
 
                                 } else {
@@ -570,6 +600,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         const cashTendered = $('#cash-tendered').val(); 
                         const changeDue = $('#total-change').val();
                         const paymentStatus = 'paid';
+                        const discount_type = $('#discount_type').val();
                         const username = $('#account_username').val();
 
                         // Log the data to console for debugging
@@ -579,6 +610,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         console.log("Cash Tendered:", cashTendered);
                         console.log("Change Due:", changeDue);
                         console.log("Account username:", username);
+                        console.log(discount_type)
 
                         $('#question').text('Are you sure settling this order?');
                         $('.popup-confirmation-container').fadeIn(); // Show the popup
@@ -600,6 +632,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     cash_tendered: cashTendered,
                                     change_due: changeDue,
                                     payment_status: paymentStatus,
+                                    discount_type: discount_type,
                                     username: username
                                 },
                                 success: function(response) {
@@ -896,6 +929,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <input type="hidden" name="order_id" id="order-id" value="">
                             <input type="hidden" name="discounted_amount" id="discounted-amount">
                             <input type="hidden" name="hidden_total_amount" id="hidden-total-amount">
+                            <input type="hidden" name="discount_type" id="discount_type">
                        </div>
                     </div>
                     <div class="popup-card-content">
@@ -924,8 +958,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <div class="popup-card-label">
                                             <label>Total</label>
                                             <div class="popup-card-label-discount">
-                                                <label>apply discount</label>
-                                                <input type="checkbox" name="discount_box" id="discount_box">
+                                                <input type="checkbox" name="discount_senior" id="discount_senior">
+                                                <label>Senior citizen</label>
+                                                <input type="checkbox" name="discount_pwd" id="discount_pwd">
+                                                <label>PWD discount</label>
                                             </div>
                                         </div>
                                         <div class="popup-card-input-group">
