@@ -61,23 +61,19 @@
         <div class="settings-popup-container security-confirmation">
             <div class="settings-popup-content">
                 <div class="settings-popup-header">
-                    <h1>Verification</h1>
+                    <h1>Verify it using your email.</h1>
                 </div>
                 <div class="settings-popup-form">
                     <div class="settings-popup-form-group">
-                        <label for="date_establish">Favorite Color</label>
-                        <input type="text" id="favorite-color">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email">
                     </div>
                     <div class="settings-popup-form-group">
-                        <label for="new_password">Favorite Pet</label>
-                        <input type="text" id="favorite-pet">
-                    </div>
-                    <div class="settings-popup-form-group">
-                        <label for="retype_password">Name one expensive place you visit?</label>
-                        <input type="text" id="expensive-place">
+                        <label for="username">username</label>
+                        <input type="text" id="username">
                     </div>
                     <div class="settings-popup-button">
-                        <button type="button" class="verify">verify answers</button>
+                        <button type="button" class="verify">send</button>
                     </div>
                 </div>
             </div>
@@ -93,39 +89,33 @@
 
 
                         // Handle confirmation (yes button)
-                        $('.verify').off('click').on('click', function(e) {
+                        $('.verify').off('click').on('click', function (e) {
                             e.preventDefault();
 
-                            const color = $('#favorite-color').val();
-                            const pet = $('#favorite-pet').val();
-                            const place = $('#expensive-place').val();
-                            
-                            const account_id = 3;
+                            const email = $('#email').val();
+                            const username = $('#username').val();
+                            const user_role = 'user_kitchen';
 
                             $.ajax({
-                                url: '../php/security_verification.php', 
+                                url: '../php/email_verification.php',
                                 type: 'POST',
                                 dataType: 'json',
                                 data: {
-                                    fav_color: color,
-                                    fav_pet: pet,
-                                    place: place,
-                                    account_id: account_id
+                                    email: email,
+                                    user_role: user_role,
+                                    username: username
                                 },
-                                success: function(response) {
+                                success: function (response) {
                                     if (response.success) {
-                                        displaySuccessMessage('Password: ' + response.password);
-                                        
+                                        displaySuccessMessage(response.message); // Use the success message
+                                        $('#email').val('');
+                                        $('#username').val('');
                                     } else {
-                                        displayErrorMessage('Failed to verify: ' + response.error);
-                                        console.log(color);
-                                        console.log(pet);
-                                        console.log(place);
-                                        console.log(account_id);
+                                        displayErrorMessage('Verification failed: ' + response.error);
                                     }
                                 },
-                                error: function(jqXHR, textStatus, errorThrown) {
-                                    console.log('Error: ' + textStatus, errorThrown);
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    displayErrorMessage('Error: ' + textStatus, errorThrown);
                                 }
                             });
 
@@ -133,7 +123,7 @@
                             $('.security-confirmation').fadeOut();
                             $('.settings-popup-overlay').fadeOut();
                         });
-
+                        
                         // Handle cancellation (no button)
                         $('.settings-popup-overlay').off('click').on('click', function(e) {
                             e.preventDefault(); // Prevent default link behavior
@@ -177,5 +167,6 @@
         </script>
     </div>
     <script src="../js/showPass.js"></script>
+    <script src="../js/alert_disappear.js"></script>
 </body>
 </html>

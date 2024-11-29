@@ -1,3 +1,41 @@
+<?php
+
+$token = $_GET["token"];
+
+$token_hash = hash("sha256", $token);
+
+include_once "../includes/connection.php";
+
+$mysqli = new mysqli("localhost", "root", "", "campano_db");
+
+// Check for connection errors
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
+}
+
+
+$sql = "SELECT * FROM accounts
+        WHERE reset_token_hash = ?";
+
+$stmt = $mysqli->prepare($sql);
+
+$stmt->bind_param("s", $token_hash);
+
+$stmt->execute();
+
+$result = $stmt->get_result();
+
+$user = $result->fetch_assoc();
+
+if ($user === null) {
+    header("Location: ../me.jpg");
+}
+
+if (strtotime($user["reset_token_expires_at"]) <= time()) {
+    die("token has expired");
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,11 +64,11 @@
             <i class="fa-solid fa-arrow-right"></i>
         </a>
         <div class="image-container">
-            <img src="../assets/service.jpg" alt="">
+            <img src="../assets/img_bg.jpg" alt="">
         </div>
         <div class="form-container">
-            <h1 class="logo-title">Kan-anan by the sea</h1>
-            <form action="../php/service_login.php" method="POST">
+            <h1 class="logo-title">Reset password</h1>
+            <form action="../php/admin_login.php" method="POST">
                 <?php if(isset($_GET['error'])){ ?>
                     <div class="alert alert-danger" role="alert">
                     <?php echo $_GET['error']; ?>
@@ -38,98 +76,95 @@
                 <?php } ?>
                 <div class="alert error-message" id="error-container"></div>
                 <div class="success success-message" id="success-container"></div>
-                <div class="form-group">
-                    <label for="username">username</label>
-                    <input type="text" name="username" value="<?php echo (isset($_GET['username']))?$_GET['username']:"" ?>">
-                </div>
+                <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>" id="token">
                 <div class="form-group">
                     <label for="password">password</label>
-                    <input type="password" name="password" id="passwordInput">
-                    <i class="fas fa-eye" id="showPassword"></i>
-                    <i class="fas fa-eye-slash" id="hidePassword"></i>
+                    <input type="text" name="password" id="password">
+                    <i class="fas fa-eye show-password" id="showPassword"></i>
+                    <i class="fas fa-eye-slash hide-password" id="hidePassword"></i>
                 </div>
-                <div class="form-group account-form">
-                    <a href="#" id="forgot-password">forgot password</a>
-                    <a href="../public/create_account.php" id="create-account">create account</a>
+                <div class="form-group">
+                    <label for="password">repeat-password</label>
+                    <input type="password" name="repeat_password" id="repeat-password">
+                    <i class="fas fa-eye show-password" id="showPassword"></i>
+                    <i class="fas fa-eye-slash hide-password" id="hidePassword"></i>
                 </div>
                 <div class="button-group">
-                    <button type="submit">service login</button>
+                    <button type="submit" id="button-confirm">confirm reset</button>
                 </div>
             </form>
         </div>
-        <div class="settings-popup-overlay"></div>
-        <div class="settings-popup-container security-confirmation">
-            <div class="settings-popup-content">
-                <div class="settings-popup-header">
-                    <h1>Verify it using your email.</h1>
-                </div>
-                <div class="settings-popup-form">
-                    <div class="settings-popup-form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email">
-                    </div>
-                    <div class="settings-popup-form-group">
-                        <label for="username">username</label>
-                        <input type="text" id="username">
-                    </div>
-                    <div class="settings-popup-button">
-                        <button type="button" class="verify">send</button>
-                    </div>
+        
+        <div class="popup-overlay"></div>
+        <div class="pop-up-container popup-confirmation-container">
+            <div class="pop-up-content popup-confirmation-content">
+                <i class="fa-solid fa-question"></i>    
+                <h1 id="question"></h1>
+                <div class="pop-up-buttons logout-buttons">
+                    <a href="#" class="btn-second btnCancel">no</a>
+                    <a href="#" class="btn-first btnConfirm">yes</a>
                 </div>
             </div>
         </div>
+
         <script>
                 $(document).ready(function() {
                     // When the confirm button is clicked
-                    $(document).on('click', '#forgot-password', function(e) {
+                    $(document).on('click', '#button-confirm', function(e) {
                         e.preventDefault();
-                        // Show the custom confirmation popup
-                        $('.security-confirmation').fadeIn(); // Show the popup
-                        $('.settings-popup-overlay').fadeIn();
-
+                      
+                        $('.popup-confirmation-container').fadeIn(); 
+                        $('.popup-overlay').fadeIn();
+                        $('#question').text('Confirmation for reset password.');
 
                         // Handle confirmation (yes button)
-                        $('.verify').off('click').on('click', function (e) {
+                        $('.btnConfirm').off('click').on('click', function (e) {
                             e.preventDefault();
 
-                            const email = $('#email').val();
-                            const username = $('#username').val();
-                            const user_role = 'user_service';
+                            const password = $('#password').val();
+                            const repeat_password = $('#repeat-password').val();
+                            const token = $('#token').val();
+
+                            console.log(token);
 
                             $.ajax({
-                                url: '../php/email_verification.php',
+                                url: '../php/process_reset_password.php',
                                 type: 'POST',
-                                dataType: 'json',
+                                dataType: 'json', // Expect JSON response
                                 data: {
-                                    email: email,
-                                    user_role: user_role,
-                                    username: username
+                                    password: password,
+                                    repeat_password: repeat_password, 
+                                    token: token
                                 },
                                 success: function (response) {
                                     if (response.success) {
-                                        displaySuccessMessage(response.message); // Use the success message
-                                        $('#email').val('');
-                                        $('#username').val('');
+                                        displaySuccessMessage(response.message); 
+                                        $('#password').val('');
+                                        $('#repeat-password').val('');
+                                        $('#token').val('');
+
+                                        $('.popup-confirmation-container').fadeOut(); 
+                                        $('.popup-overlay').fadeOut();
                                     } else {
-                                        displayErrorMessage('Verification failed: ' + response.error);
+                                        displayErrorMessage(response.error); 
+                                        $('.popup-confirmation-container').fadeOut(); 
+                                        $('.popup-overlay').fadeOut();
                                     }
                                 },
                                 error: function (jqXHR, textStatus, errorThrown) {
-                                    displayErrorMessage('Error: ' + textStatus, errorThrown);
+                                    displayErrorMessage('Error: ' + textStatus + ', ' + errorThrown);
                                 }
                             });
-
-                            // Hide the popup after confirming
-                            $('.security-confirmation').fadeOut();
-                            $('.settings-popup-overlay').fadeOut();
                         });
 
+
+
                         // Handle cancellation (no button)
-                        $('.settings-popup-overlay').off('click').on('click', function(e) {
+                        $('.btnCancel').off('click').on('click', function(e) {
                             e.preventDefault(); // Prevent default link behavior
                             // Hide the popup if "no" is clicked
-                            $('.security-confirmation').fadeOut(); // Show the popup
-                            $('.settings-popup-overlay').fadeOut();
+                            $('.popup-confirmation-container').fadeOut(); 
+                            $('.popup-overlay').fadeOut();
                         });
                     });
                 });
@@ -162,10 +197,11 @@
                     // Optionally, remove the message after a few seconds
                     setTimeout(() => {
                         $('#error-container').fadeOut(); // Fade out the message
-                    }, 3000); // Change the duration as needed
+                    }, 5000); // Change the duration as needed
                 }
         </script>
     </div>
-    <script src="../js/showPass.js"></script>
+<script src="../js/showPass.js"></script>
+<script src="../js/alert_disappear.js"></script>
 </body>
 </html>

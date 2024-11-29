@@ -26,11 +26,11 @@
             <i class="fa-solid fa-arrow-right"></i>
         </a>
         <div class="image-container">
-            <img src="../assets/service.jpg" alt="">
+            <img src="../assets/img_bg.jpg" alt="">
         </div>
         <div class="form-container">
             <h1 class="logo-title">Kan-anan by the sea</h1>
-            <form action="../php/service_login.php" method="POST">
+            <form action="../php/admin_login.php" method="POST">
                 <?php if(isset($_GET['error'])){ ?>
                     <div class="alert alert-danger" role="alert">
                     <?php echo $_GET['error']; ?>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="form-group">
                     <label for="password">password</label>
-                    <input type="password" name="password" id="passwordInput">
+                    <input type="password" name="password" id="passwordInput" value="<?php echo (isset($_GET['[password]']))?$_GET['password']:"" ?>">
                     <i class="fas fa-eye" id="showPassword"></i>
                     <i class="fas fa-eye-slash" id="hidePassword"></i>
                 </div>
@@ -53,7 +53,7 @@
                     <a href="../public/create_account.php" id="create-account">create account</a>
                 </div>
                 <div class="button-group">
-                    <button type="submit">service login</button>
+                    <button type="submit">admin login</button>
                 </div>
             </form>
         </div>
@@ -61,19 +61,23 @@
         <div class="settings-popup-container security-confirmation">
             <div class="settings-popup-content">
                 <div class="settings-popup-header">
-                    <h1>Verify it using your email.</h1>
+                    <h1>Verification</h1>
                 </div>
                 <div class="settings-popup-form">
                     <div class="settings-popup-form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email">
+                        <label for="date_establish">Favorite Color</label>
+                        <input type="text" id="favorite-color">
                     </div>
                     <div class="settings-popup-form-group">
-                        <label for="username">username</label>
-                        <input type="text" id="username">
+                        <label for="new_password">Favorite Pet</label>
+                        <input type="text" id="favorite-pet">
+                    </div>
+                    <div class="settings-popup-form-group">
+                        <label for="retype_password">Name one expensive place you visit?</label>
+                        <input type="text" id="expensive-place">
                     </div>
                     <div class="settings-popup-button">
-                        <button type="button" class="verify">send</button>
+                        <button type="button" class="verify">verify answers</button>
                     </div>
                 </div>
             </div>
@@ -89,33 +93,39 @@
 
 
                         // Handle confirmation (yes button)
-                        $('.verify').off('click').on('click', function (e) {
+                        $('.verify').off('click').on('click', function(e) {
                             e.preventDefault();
 
-                            const email = $('#email').val();
-                            const username = $('#username').val();
-                            const user_role = 'user_service';
+                            const color = $('#favorite-color').val();
+                            const pet = $('#favorite-pet').val();
+                            const place = $('#expensive-place').val();
+                            
+                            const account_id = 1;
 
                             $.ajax({
-                                url: '../php/email_verification.php',
+                                url: '../php/security_verification.php', 
                                 type: 'POST',
                                 dataType: 'json',
                                 data: {
-                                    email: email,
-                                    user_role: user_role,
-                                    username: username
+                                    fav_color: color,
+                                    fav_pet: pet,
+                                    place: place,
+                                    account_id: account_id
                                 },
-                                success: function (response) {
+                                success: function(response) {
                                     if (response.success) {
-                                        displaySuccessMessage(response.message); // Use the success message
-                                        $('#email').val('');
-                                        $('#username').val('');
+                                        displaySuccessMessage('Password: ' + response.password);
+                                        
                                     } else {
-                                        displayErrorMessage('Verification failed: ' + response.error);
+                                        displayErrorMessage('Failed to confirm verification: ' + response.error);
+                                        console.log(color);
+                                        console.log(pet);
+                                        console.log(place);
+                                        console.log(account_id);
                                     }
                                 },
-                                error: function (jqXHR, textStatus, errorThrown) {
-                                    displayErrorMessage('Error: ' + textStatus, errorThrown);
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.log('Error: ' + textStatus, errorThrown);
                                 }
                             });
 
@@ -166,6 +176,7 @@
                 }
         </script>
     </div>
-    <script src="../js/showPass.js"></script>
+<script src="../js/showPass.js"></script>
+<script src="../js/alert_disappear.js"></script>
 </body>
 </html>
