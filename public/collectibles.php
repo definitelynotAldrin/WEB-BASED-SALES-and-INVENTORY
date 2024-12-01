@@ -534,7 +534,7 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="bottom-cards-container">
                 <div class="bottom-card customers">
-                    <div class="bottom-cards-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="bottom-cards-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h1 class="bottom-cards-title">in-debt customers</h1>
                         <input type="search" name="search_customer" id="search_customer" placeholder="Search">
                     </div>
@@ -543,7 +543,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>
                 <div class="bottom-card customers">
-                    <div class="bottom-cards-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="bottom-cards-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h1 class="bottom-cards-title">collectibles archive</h1>
                         <input type="search" name="search_customer" id="search_archive_collectibles" placeholder="Search">
                     </div>

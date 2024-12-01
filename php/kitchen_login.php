@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // SQL query to retrieve the user data from the database
-    $sql = "SELECT * FROM accounts WHERE account_username = ? AND user_role = 'user_kitchen'";
+    $sql = "SELECT * FROM accounts WHERE account_username = ? AND user_role = 'user_kitchen' AND account_status = 'active'";
 
     // Prepare the SQL statement
     $stmt = $conn->prepare($sql);

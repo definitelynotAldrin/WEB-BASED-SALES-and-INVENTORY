@@ -277,7 +277,7 @@
     box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
     margin-top: 3rem;
     display: none;
-    z-index: 1;
+    z-index: 10;
 }
 
 .notification-title{
@@ -353,7 +353,7 @@
     position: absolute;
     top: 0;
     right: 0%;
-    z-index:1;
+    z-index:10;
     margin-top: 3rem;
     display: none;
 }
@@ -570,15 +570,19 @@
     display: none;
 }
 
-/* .change-username-details, .change-password-details{
-    
-} */
-
-.security-confirmation{
-    z-index: 5;
+.role-verification{
+    z-index: 3;
 }
 
-.changing-password, .changing-username{
+.credentials-verification{
+    z-index: 4;
+}
+
+.email-verification{
+    z-index: 4;
+}
+
+.change-email-popup{
     z-index: 4;
 }
 
@@ -1054,7 +1058,84 @@
     border: 1px solid #04c001;
 }
 
+.popup-table-container{
+    width: 70vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--white);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 50px 20px;
+    z-index: 2;
+    display: none;
+}
 
+.popup-table-container .popup-close-button{
+    font-size: 1.2rem;
+    color: var(--red);
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.popup-table-content{
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead{
+    position: sticky;
+    top: 0;
+    background-color: var(--white);
+}
+
+th, td {
+    padding: 10px 0;
+    text-align: left;
+}
+
+th{
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+td{
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+
+.table-action i{
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+
+.table-action .button-inactive,
+.table-action .button-active{
+    color: var(--blue);
+}
+
+.table-action .button-delete{
+    color: var(--red);
+}
+
+
+.table-action .hidden{
+    display: none;
+}
 
 @media (max-width: 480px){
 

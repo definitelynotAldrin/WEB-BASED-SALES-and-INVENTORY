@@ -80,6 +80,11 @@
                         return;
                     }
 
+                    if (!validatePassword(password)) {
+                        displayErrorMessage('Password must be at least 8 characters long and include at least one number, and one special character.');
+                        return;
+                    }
+
                     $('.popup-confirmation-container').fadeIn(); // Show the popup
                     $('.popup-overlay').fadeIn();
 
@@ -114,6 +119,14 @@
                             }
                         });
                     });
+
+                    function validatePassword(password) {
+                        const minLength = 8;
+                        const hasNumber = /[0-9]/.test(password);
+                        const hasSpecialChar = /[\W_]/.test(password);
+
+                        return password.length >= minLength && hasNumber && hasSpecialChar;
+                    }
                     // AJAX request
 
                 });

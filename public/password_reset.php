@@ -28,7 +28,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 if ($user === null) {
-    header("Location: ../me.jpg");
+    header("Location: ../public/login_panel");
 }
 
 if (strtotime($user["reset_token_expires_at"]) <= time()) {
@@ -68,7 +68,7 @@ if (strtotime($user["reset_token_expires_at"]) <= time()) {
         </div>
         <div class="form-container">
             <h1 class="logo-title">Reset password</h1>
-            <form action="../php/admin_login.php" method="POST">
+            <form method="POST">
                 <?php if(isset($_GET['error'])){ ?>
                     <div class="alert alert-danger" role="alert">
                     <?php echo $_GET['error']; ?>
@@ -145,6 +145,7 @@ if (strtotime($user["reset_token_expires_at"]) <= time()) {
 
                                         $('.popup-confirmation-container').fadeOut(); 
                                         $('.popup-overlay').fadeOut();
+                                        window.location.href = '../public/settlement_panel.php';
                                     } else {
                                         displayErrorMessage(response.error); 
                                         $('.popup-confirmation-container').fadeOut(); 

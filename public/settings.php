@@ -251,627 +251,401 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
 
                         $(document).ready(function() {
-                            // When the confirm button is clicked
-                            $(document).on('click', '.change-security-passwords', function(e) {
-                                e.preventDefault();
-                                // Show the custom confirmation popup
-                                $('.settings-popup-overlay').fadeIn();
-                                $('.change-security-password').fadeIn();
-                                $('.security-confirmation').fadeIn();
 
-
-                                // Handle confirmation (yes button)
-                                $('.verify').off('click').on('click', function(e) {
-                                    e.preventDefault();
-
-                                    const color = $('#favorite-color').val();
-                                    const pet = $('#favorite-pet').val();
-                                    const place = $('#expensive-place').val();
-                                    
-                                    const account_id = 1;
-
-                                    $.ajax({
-                                        url: '../php/security_verification.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place,
-                                            account_id: account_id
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                               
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#favorite-color').val('');
-                                                $('#favorite-pet').val('');
-                                                $('#expensive-place').val('');
-                                                
-                                            } else {
-                                                displayErrorMessage('Failed to verify: ' + response.error);
-                                                console.log(color);
-                                                console.log(pet);
-                                                console.log(place);
-                                                console.log(account_id);
-                                            }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
-                                        }
-                                    });
-
-                                });
-                                
-                            });
-
-                            $(document).on('click', '.update-security-button', function(e) {
+                            $(document).on('click', '.button-active', function(e) {
                                 e.preventDefault();
 
+                                const username = $(this).data('account-username'); 
+                                const account_id = $(this).data('account-id'); 
                                 $('.popup-confirmation-container').fadeIn();
-                                $('#question').text('Are you sure about the changes that going to be made?');
+                                $('#question').text(`Are you sure you want to set this account name ${username} as active?`);
 
-                                // Handle confirmation (yes button)
+                                console.log(username);
+                                console.log(account_id);
+
                                 $('.button-confirm').off('click').on('click', function(e) {
-                                    e.preventDefault();
-
-                                    const color = $('#change-favorite-color').val();
-                                    const pet = $('#change-favorite-pet').val();
-                                    const place = $('#change-expensive-place').val();
-
                                     $.ajax({
-                                        url: '../php/security_change_password.php', 
+                                        url: '../php/account_set_as_active.php',
                                         type: 'POST',
                                         dataType: 'json',
                                         data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place
+                                            account_id: account_id
                                         },
                                         success: function(response) {
                                             if (response.success) {
-                                                
+                                                $('.popup-confirmation-container').fadeOut();
+                                                loadAccounts();
                                                 displaySuccessMessage(response.message);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#change-favorite-color').val('');
-                                                $('#change-favorite-pet').val('');
-                                                $('#change-expensive-place').val('');
-
-                                                $('.popup-confirmation-container').fadeOut();
-                                                $('.change-security-password').fadeOut();
-                                                $('.settings-popup-overlay').fadeOut();
-                                                
                                             } else {
-                                                displayErrorMessage('Failed to update: ' + response.error);
-                                                $('.popup-confirmation-container').fadeOut();
+                                                displayErrorMessage('Failed to verify: ' + response.error);
                                             }
                                         },
                                         error: function(jqXHR, textStatus, errorThrown) {
                                             console.log('Error: ' + textStatus, errorThrown);
                                         }
                                     });
-
                                 });
                                 
                             });
 
-                            $(document).on('click', '.change-username', function(e) {
+                            $(document).on('click', '.manage-accounts', function(e) {
                                 e.preventDefault();
 
-                                $('.change-username-details').fadeIn();
+                                $('.popup-table-container').fadeIn();
                                 $('.settings-popup-overlay').fadeIn();
-                                // Handle confirmation (yes button)
-                                $('.button-confirm').off('click').on('click', function(e) {
-                                    e.preventDefault();
-
-                                    const color = $('#change-favorite-color').val();
-                                    const pet = $('#change-favorite-pet').val();
-                                    const place = $('#change-expensive-place').val();
-
-                                    $.ajax({
-                                        url: '../php/security_change_password.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                
-                                                displaySuccessMessage(response.message);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#change-favorite-color').val('');
-                                                $('#change-favorite-pet').val('');
-                                                $('#change-expensive-place').val('');
-
-                                                $('.popup-confirmation-container').fadeOut();
-                                                $('.change-security-password').fadeOut();
-                                                $('.settings-popup-overlay').fadeOut();
-                                                
-                                            } else {
-                                                displayErrorMessage('Failed to update: ' + response.error);
-                                                $('.popup-confirmation-container').fadeOut();
-                                            }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
-                                        }
-                                    });
-
-                                });
-                                
-                            });
-
-                            $(document).on('click', '.change-admin-username', function(e) {
-                                e.preventDefault();
-                                $('.changing-username').fadeIn();
-                                $('.security-confirmation').fadeIn();
 
                                 
-                                $('.verify').off('click').on('click', function(e) {
+                                $('.button-inactive').off('click').on('click', function(e) {
                                     e.preventDefault();
 
-                                    const color = $('#favorite-color').val();
-                                    const pet = $('#favorite-pet').val();
-                                    const place = $('#expensive-place').val();
+                                    const account_id = $(this).data('account-id');
+                                    const username = "<?php echo $username; ?>";
+                                    console.log(account_id);
+
+                                    $('.popup-confirmation-container').fadeIn();
+                                    $('#question').text('Are you sure you want set this account as inactive?');
                                     
+                                    $('.button-confirm').off('click').on('click', function(e) {
 
-                                    const account_id = $('.change-admin-username').data('account-id');
-
-                                    console.log(account_id);
-
-                                    $.ajax({
-                                        url: '../php/security_verification_update.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place,
-                                            account_id: account_id
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                $('#hidden-account-id').val(account_id);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#favorite-color').val('');
-                                                $('#favorite-pet').val('');
-                                                $('#expensive-place').val('');
-                                                
-                                            } else {
-                                                displayErrorMessage('Failed to verify: ' + response.error);
+                                        $.ajax({
+                                            url: '../php/account_status_security_code.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                account_id: account_id,
+                                                username: username
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.popup-table-container').fadeOut();
+                                                    $('.email-verification-status').fadeIn();
+                                                    $('.popup-confirmation-container').fadeOut();
+                                                    $('#email-address-status').text(response.email);
+                                                    $('.settings-header-title').text('Check email to an account you want to update.');
+                                                        
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                        
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
                                             }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
-                                        }
+                                        });
                                     });
-
                                 });
-                                
-                            });
-
-
-                            $(document).on('click', '.change-service-username', function(e) {
-                                e.preventDefault();
-                                $('.changing-username').fadeIn();
-                                $('.security-confirmation').fadeIn();
-
-                                
-                                $('.verify').off('click').on('click', function(e) {
-                                    e.preventDefault();
-
-                                    const color = $('#favorite-color').val();
-                                    const pet = $('#favorite-pet').val();
-                                    const place = $('#expensive-place').val();
                                     
+                            });
 
-                                    const account_id = $('.change-service-username').data('account-id');
+                            $(document).on('click', '.verify-code-status', function(e) {
+                                e.preventDefault();
 
-                                    console.log(account_id);
+                                const security_code = $('#security-code-status').val();
+                                console.log(security_code);
 
-                                    $.ajax({
-                                        url: '../php/security_verification_update.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place,
-                                            account_id: account_id
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                $('#hidden-account-id').val(account_id);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#favorite-color').val('');
-                                                $('#favorite-pet').val('');
-                                                $('#expensive-place').val('');
-                                                
-                                            } else {
-                                                displayErrorMessage('Failed to verify: ' + response.error);
-                                            }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
+                                $.ajax({
+                                    url: '../php/security_code_verification_account_status.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        security_code: security_code
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            $('.email-verification-status').fadeOut();
+                                            $('.settings-popup-overlay').fadeOut();
+                                            loadAccounts();
+                                            displaySuccessMessage(response.message);
+                                        } else {
+                                            displayErrorMessage('Failed to verify: ' + response.error);
                                         }
-                                    });
-
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
                                 });
                                 
                             });
+                            
 
-                            $(document).on('click', '.change-kitchen-username', function(e) {
-                                e.preventDefault();
-                                $('.changing-username').fadeIn();
-                                $('.security-confirmation').fadeIn();
+                            function loadAccounts() {
+                                $.ajax({
+                                    url: '../php/fetch_accounts.php',
+                                    method: 'GET',
+                                    dataType: 'json',
+                                    success: function (response) {
+                                        if (response.success) {
+                                            let tableBody = '';
+                                            response.data.forEach((account) => {
+                                                // Check account status and set the appropriate button visibility
+                                                const isActive = account.account_status === "active";
+                                                const activeClass = isActive ? "hidden" : ""; // Show active button if inactive
+                                                const inactiveClass = isActive ? "" : "hidden"; // Show inactive button if active
 
-                                
-                                $('.verify').off('click').on('click', function(e) {
-                                    e.preventDefault();
-
-                                    const color = $('#favorite-color').val();
-                                    const pet = $('#favorite-pet').val();
-                                    const place = $('#expensive-place').val();
-                                    
-
-                                    const account_id = $('.change-kitchen-username').data('account-id');
-
-                                    console.log(account_id);
-
-                                    $.ajax({
-                                        url: '../php/security_verification_update.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place,
-                                            account_id: account_id
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                $('#hidden-account-id').val(account_id);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#favorite-color').val('');
-                                                $('#favorite-pet').val('');
-                                                $('#expensive-place').val('');
-                                                
-                                            } else {
-                                                displayErrorMessage('Failed to verify: ' + response.error);
-                                            }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
+                                                tableBody += `
+                                                    <tr>
+                                                        <td>${account.email}</td>
+                                                        <td>${account.account_username}</td>
+                                                        <td>${account.account_status}</td>
+                                                        <td class="table-action">
+                                                            <i class="fas fa-eye-slash button-active ${activeClass}" data-account-id="${account.account_id}" data-account-username="${account.account_username}"></i>
+                                                            <i class="fa-regular fa-eye button-inactive ${inactiveClass}"
+                                                                data-account-id="${account.account_id}"></i>
+                                                            <i class="fa-regular fa-trash-can button-delete" data-account-id="${account.account_id}"></i>
+                                                        </td>
+                                                    </tr>
+                                                `;
+                                            });
+                                            $('.popup-table-container tbody').html(tableBody);
+                                        } else {
+                                            alert(response.error);
                                         }
-                                    });
-
+                                    },
+                                    error: function () {
+                                        console.error("Failed to fetch account data");
+                                    }
                                 });
-                                
-                            });
+                            }
 
-                            $(document).on('click', '.change-account-username-button', function(e) {
+
+                            loadAccounts();
+
+                            // -------------------------------------ROLE SERVICE CHANGE EMAIL-------------------------------------
+
+                            $(document).on('click', '.change-email', function(e) {
                                 e.preventDefault();
-
-                                $('.popup-confirmation-container').fadeIn();
-                                $('#question').text('Are you sure about the changes that going to be made?');
-
-                                // Handle confirmation (yes button)
-                                $('.button-confirm').off('click').on('click', function(e) {
-                                    e.preventDefault();
-
-                                    const currentUsername = $('#current-username').val();
-                                    const newUsername = $('#new-username').val();
-                                    const retypeNew = $('#retype-new-username').val();
-                                    const account_id = $('#hidden-account-id').val();
-
-                                    console.log(account_id);
-
-                                    $.ajax({
-                                        url: '../php/update_username.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            current_username: currentUsername,
-                                            new_username: newUsername,
-                                            retypeNew_username: retypeNew,
-                                            account_id: account_id
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                
-                                                displaySuccessMessage(response.message);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#current-username').val('');
-                                                $('#new-username').val('');
-                                                $('#retype-new-username').val('');
-                                                $('#hidden-account-id').val('');
-
-                                                $('.popup-confirmation-container').fadeOut();
-                                                $('.changing-username').fadeOut();
-                                                $('.change-username-details').fadeOut();
-                                                $('.settings-popup-overlay').fadeOut();
-                                                
-                                                $('#hidden-account-id').val('');
-                                            } else {
-                                                displayErrorMessage('Failed to update: ' + response.error);
-                                                $('.popup-confirmation-container').fadeOut();
-                                            }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
-                                        }
-                                    });
-
-                                });
-                                
-                            });
-
-                            $(document).on('click', '.change-password', function(e) {
-                                e.preventDefault();
-
-                                $('.change-password-details').fadeIn();
+                                // $('.changing-email-popup').fadeIn();
+                                $('.role-verification').fadeIn();
                                 $('.settings-popup-overlay').fadeIn();
-                                // Handle confirmation (yes button)
-                                $('.button-confirm').off('click').on('click', function(e) {
-                                    e.preventDefault();
-
-                                    const color = $('#change-favorite-color').val();
-                                    const pet = $('#change-favorite-pet').val();
-                                    const place = $('#change-expensive-place').val();
-
-                                    $.ajax({
-                                        url: '../php/security_change_password.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                
-                                                displaySuccessMessage(response.message);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#change-favorite-color').val('');
-                                                $('#change-favorite-pet').val('');
-                                                $('#change-expensive-place').val('');
-
-                                                $('.popup-confirmation-container').fadeOut();
-                                                $('.change-security-password').fadeOut();
-                                                $('.settings-popup-overlay').fadeOut();
-                                                
-                                            } else {
-                                                displayErrorMessage('Failed to update: ' + response.error);
-                                                $('.popup-confirmation-container').fadeOut();
-                                            }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
-                                        }
-                                    });
-
-                                });
-                                
-                            });
-
-                            $(document).on('click', '.change-admin-password', function(e) {
-                                e.preventDefault();
-                                $('.changing-password').fadeIn();
-                                $('.security-confirmation').fadeIn();
 
                                 
-                                $('.verify').off('click').on('click', function(e) {
+                                $('.role-admin').off('click').on('click', function(e) {
                                     e.preventDefault();
 
-                                    const color = $('#favorite-color').val();
-                                    const pet = $('#favorite-pet').val();
-                                    const place = $('#expensive-place').val();
+                                    $('.credentials-verification').fadeIn();
+                                    $('.settings-header-title').text('Enter Admin Credential');
                                     
+                                    const user_role = $('.role-admin').data('user-role');
 
-                                    const account_id = $('.change-admin-password').data('account-id');
+                                    $('.verify-credentials').off('click').on('click', function(e) {
+                                        e.preventDefault();
 
-                                    console.log(account_id);
+                                        const email = $('#email-credential').val();
+                                        const username = $('#username-credential').val();
+                                        console.log(user_role);
+                                        console.log(email);
+                                        console.log(username);
 
-                                    $.ajax({
-                                        url: '../php/security_verification_update.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place,
-                                            account_id: account_id
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                $('#hidden-account-id').val(account_id);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#favorite-color').val('');
-                                                $('#favorite-pet').val('');
-                                                $('#expensive-place').val('');
-                                                
-                                            } else {
-                                                displayErrorMessage('Failed to verify: ' + response.error);
+                                        $.ajax({
+                                            url: '../php/credentials_verification.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                email: email,
+                                                username: username,
+                                                user_role: user_role
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.email-verification').fadeIn();
+                                                    $('.credentials-verification').fadeOut();
+                                                    $('.settings-header-title').text('Check your email');
+                                                    $('#email-address').text(response.email);
+                                                    
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                    
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
                                             }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
-                                        }
+                                        });
+
                                     });
-
                                 });
-                                
-                            });
-
-                            $(document).on('click', '.change-service-password', function(e) {
-                                e.preventDefault();
-                                $('.changing-password').fadeIn();
-                                $('.security-confirmation').fadeIn();
-
-                                
-                                $('.verify').off('click').on('click', function(e) {
-                                    e.preventDefault();
-
-                                    const color = $('#favorite-color').val();
-                                    const pet = $('#favorite-pet').val();
-                                    const place = $('#expensive-place').val();
                                     
-
-                                    const account_id = $('.change-service-password').data('account-id');
-
-                                    console.log(account_id);
-
-                                    $.ajax({
-                                        url: '../php/security_verification_update.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place,
-                                            account_id: account_id
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                $('#hidden-account-id').val(account_id);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#favorite-color').val('');
-                                                $('#favorite-pet').val('');
-                                                $('#expensive-place').val('');
-                                                
-                                            } else {
-                                                displayErrorMessage('Failed to verify: ' + response.error);
-                                            }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
-                                        }
-                                    });
-
-                                });
-                                
                             });
 
-                            $(document).on('click', '.change-kitchen-password', function(e) {
+                            // -------------------------------------ROLE SERVICE CHANGE EMAIL-------------------------------------
+
+                            $(document).on('click', '.change-email', function(e) {
                                 e.preventDefault();
-                                $('.changing-password').fadeIn();
-                                $('.security-confirmation').fadeIn();
+                                // $('.changing-email-popup').fadeIn();
+                                $('.role-verification').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
 
                                 
-                                $('.verify').off('click').on('click', function(e) {
+                                $('.role-service').off('click').on('click', function(e) {
                                     e.preventDefault();
 
-                                    const color = $('#favorite-color').val();
-                                    const pet = $('#favorite-pet').val();
-                                    const place = $('#expensive-place').val();
+                                    $('.credentials-verification').fadeIn();
+                                    $('.settings-header-title').text('Enter Service Credential');
                                     
+                                    const user_role = $('.role-service').data('user-role');
 
-                                    const account_id = $('.change-kitchen-password').data('account-id');
+                                    $('.verify-credentials').off('click').on('click', function(e) {
+                                        e.preventDefault();
 
-                                    console.log(account_id);
+                                        const email = $('#email-credential').val();
+                                        const username = $('#username-credential').val();
+                                        console.log(user_role);
+                                        console.log(email);
+                                        console.log(username);
 
-                                    $.ajax({
-                                        url: '../php/security_verification_update.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            fav_color: color,
-                                            fav_pet: pet,
-                                            place: place,
-                                            account_id: account_id
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                $('#hidden-account-id').val(account_id);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#favorite-color').val('');
-                                                $('#favorite-pet').val('');
-                                                $('#expensive-place').val('');
-                                                
-                                            } else {
-                                                displayErrorMessage('Failed to verify: ' + response.error);
+                                        $.ajax({
+                                            url: '../php/credentials_verification.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                email: email,
+                                                username: username,
+                                                user_role: user_role
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.email-verification').fadeIn();
+                                                    $('.credentials-verification').fadeOut();
+                                                    $('.settings-header-title').text('Check your email');
+                                                    $('#email-address').text(response.email);
+                                                    
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                    
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
                                             }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
-                                        }
-                                    });
+                                        });
 
+                                    });
+                                });
+                                    
+                            });
+
+
+                            // -------------------------------------ROLE Kitchen Change Email-------------------------------------
+
+                            $(document).on('click', '.change-email', function(e) {
+                                e.preventDefault();
+                                // $('.changing-email-popup').fadeIn();
+                                $('.role-verification').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
+
+                                
+                                $('.role-kitchen').off('click').on('click', function(e) {
+                                    e.preventDefault();
+
+                                    $('.credentials-verification').fadeIn();
+                                    $('.settings-header-title').text('Enter Service Credential');
+                                    
+                                    const user_role = $('.role-kitchen').data('user-role');
+
+                                    $('.verify-credentials').off('click').on('click', function(e) {
+                                        e.preventDefault();
+
+                                        const email = $('#email-credential').val();
+                                        const username = $('#username-credential').val();
+                                        console.log(user_role);
+                                        console.log(email);
+                                        console.log(username);
+
+                                        $.ajax({
+                                            url: '../php/credentials_verification.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                email: email,
+                                                username: username,
+                                                user_role: user_role
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.email-verification').fadeIn();
+                                                    $('.credentials-verification').fadeOut();
+                                                    $('.settings-header-title').text('Check your email');
+                                                    $('#email-address').text(response.email);
+                                                    
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                    
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
+                                            }
+                                        });
+
+                                    });
+                                });
+                                    
+                            });
+
+
+
+                            $(document).on('click', '.verify-code', function(e) {
+                                e.preventDefault();
+
+                                const security_code = $('#security-code').val();
+                                console.log(security_code);
+
+                                $.ajax({
+                                    url: '../php/security_code_verification.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        security_code: security_code
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            $('.change-email-popup').fadeIn();
+                                            $('.email-verification').fadeOut();
+                                            $('#email-credential').val('');
+                                            $('#username-credential').val('')
+
+                                            $('#update-email-id').val(response.account_id)
+                                            displaySuccessMessage(response.message);
+                                        } else {
+                                            displayErrorMessage('Failed to verify: ' + response.error);
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
                                 });
                                 
                             });
 
-                            $(document).on('click', '.change-account-password-button', function(e) {
+                            $(document).on('click', '.update-email-button', function(e) {
                                 e.preventDefault();
 
-                                $('.popup-confirmation-container').fadeIn();
-                                $('#question').text('Are you sure about the changes that going to be made?');
+                                const new_email = $('#email-update').val();
+                                const account_id = $('#update-email-id').val();
 
-                                // Handle confirmation (yes button)
-                                $('.button-confirm').off('click').on('click', function(e) {
-                                    e.preventDefault();
+                                $.ajax({
+                                    url: '../php/update_email.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        new_email: new_email,
+                                        account_id: account_id
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            $('.change-email-popup').fadeOut();
 
-                                    const currentPassword = $('#current-password').val();
-                                    const newPassword = $('#new-password').val();
-                                    const retypeNew = $('#retype-new-password').val();
-                                    const account_id = $('#hidden-account-id').val();
-
-                                    console.log(account_id);
-
-                                    $.ajax({
-                                        url: '../php/update_password.php', 
-                                        type: 'POST',
-                                        dataType: 'json',
-                                        data: {
-                                            current_password: currentPassword,
-                                            new_password: newPassword,
-                                            retypeNew_password: retypeNew,
-                                            account_id: account_id
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                
-                                                displaySuccessMessage(response.message);
-                                                $('.security-confirmation').fadeOut();
-                                                
-                                                $('#current-password').val('');
-                                                $('#new-password').val('');
-                                                $('#retype-new-password').val('');
-                                                $('#hidden-account-id').val('');
-
-                                                $('.popup-confirmation-container').fadeOut();
-                                                $('.changing-username').fadeOut();
-                                                $('.change-username-details').fadeOut();
-                                                $('.change-password-details').fadeOut();
-                                                $('.settings-popup-overlay').fadeOut();
-                                                
-                                                $('#hidden-account-id').val('');
-                                            } else {
-                                                displayErrorMessage('Failed to update: ' + response.error);
-                                                $('.popup-confirmation-container').fadeOut();
-                                            }
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log('Error: ' + textStatus, errorThrown);
+                                            $('#update-email-id').val('');
+                                            displaySuccessMessage(response.message);
+                                        } else {
+                                            displayErrorMessage('Failed to verify: ' + response.error);
                                         }
-                                    });
-
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
                                 });
+                                
                                 
                             });
 
@@ -879,13 +653,20 @@ document.addEventListener("DOMContentLoaded", function() {
                             $('.popup-close-button').off('click').on('click', function(e) {
                                 e.preventDefault(); // Prevent default link behavior
                                 // Hide the popup if "no" is clicked
-                                $('.change-security-password').fadeOut();
-                                $('.security-confirmation').fadeOut();
                                 $('.settings-popup-overlay').fadeOut();
-                                $('.change-username-details').fadeOut();
-                                $('.change-password-details').fadeOut();
-                                $('.changing-username').fadeOut();
-                                $('.changing-password').fadeOut();
+                                $('.role-verification').fadeOut();
+                                $('.popup-table-container').fadeOut();
+                                
+                            });
+
+                            $('.popup-close-button-2').off('click').on('click', function(e) {
+                                e.preventDefault(); 
+
+                                $('.credentials-verification').fadeOut();
+                                $('.change-email-popup').fadeOut();
+                                $('#email-credential').val('');
+                                $('#username-credential').val('');
+                                $('#security-code').val('');
                                 
                             });
 
@@ -1019,44 +800,65 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <div class="settings-container">
                 <div class="settings-content">
-                        <div class="settings-header">
-                            <h1>Account Information</h1>
+                    <div class="settings-header">
+                        <h1>Account Information</h1>
+                    </div>
+                    <div class="settings-small-header">
+                        <h1>Email & Security Details</h1>
+                        <p>Manage your email, username and password.</p>
+                    </div>
+                    <div class="settings-main-content">
+                        <div class="settings-groups change-email">
+                            <h3>Change Email</h3>
+                            <i class="fa-solid fa-angle-right"></i>
                         </div>
-                        <div class="settings-small-header">
-                            <h1>Password & Security Details</h1>
-                            <p>Manage your passwords, username and security confirmation.</p>
+                        <div class="settings-groups change-username">
+                            <h3>Change Username</h3>
+                            <i class="fa-solid fa-angle-right"></i>
                         </div>
-                        <div class="settings-main-content">
-                            <div class="settings-groups change-security-passwords">
-                                <h3>Change Security Authentication</h3>
-                                <i class="fa-solid fa-angle-right"></i>
-                            </div>
-                            <div class="settings-groups change-username">
-                                <h3>Change Username</h3>
-                                <i class="fa-solid fa-angle-right"></i>
-                            </div>
-                            <div class="settings-groups change-password">
-                                <h3>Change Password</h3>
-                                <i class="fa-solid fa-angle-right"></i>
-                            </div>
-                            <div class="settings-groups remove-account">
-                                <h3>Remove Account</h3>
-                                <i class="fa-solid fa-angle-right"></i>
-                            </div>
+                        <div class="settings-groups change-password">
+                            <h3>Change Password</h3>
+                            <i class="fa-solid fa-angle-right"></i>
                         </div>
+                        <div class="settings-groups manage-accounts">
+                            <h3>Remove Account</h3>
+                            <i class="fa-solid fa-angle-right"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="settings-popup-overlay"></div>
 
+            <div class="settings-popup-container change-email-popup">
+                <div class="settings-popup-content">
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1>Change Email</h1>
+                            <i class="fa-regular fa-circle-xmark popup-close-button-2"></i>
+                        </div>
+                    </div>
+                    <div class="settings-popup-form">
+                        <input type="hidden" id="update-email-id">
+                        <div class="settings-popup-form-group">
+                            <label>New email</label>
+                            <input type="email" id="email-update">
+                        </div>
+                        <div class="settings-popup-button">
+                            <button type="button" class="update-email-button">change email</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <div class="settings-popup-container changing-username">
+
+            <div class="settings-popup-container change-username-popup">
                 <div class="settings-popup-content">
                     <div class="settings-popup-header">
                         <div class="header-authentication">
                             <h1>Change Username</h1>
                             <i class="fa-regular fa-circle-xmark popup-close-button"></i>
                         </div>
-                        <!-- <p>Your password must be at least 6 characters.</p> -->
                     </div>
                     <div class="settings-popup-form">
                         <input type="hidden" name="hidden_account_id" id="hidden-account-id">
@@ -1079,7 +881,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
 
-            <div class="settings-popup-container changing-password">
+            <div class="settings-popup-container change-password-popup">
                 <div class="settings-popup-content">
                     <div class="settings-popup-header">
                         <div class="header-authentication">
@@ -1111,106 +913,109 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
 
-            <div class="settings-popup-container change-security-password">
+            <div class="settings-popup-container credentials-verification">
                 <div class="settings-popup-content">
                     <div class="settings-popup-header">
                         <div class="header-authentication">
-                            <h1>Change Security</h1>
-                            <i class="fa-regular fa-circle-xmark popup-close-button"></i>
+                            <h1 class="settings-header-title"></h1>
+                            <i class="fa-regular fa-circle-xmark popup-close-button-2"></i>
                         </div>
-                        <!-- <p>Your password must be at least 6 characters.</p> -->
                     </div>
                     <div class="settings-popup-form">
                         <div class="settings-popup-form-group">
-                            <label for="date_establish">Favorite Color</label>
-                            <input type="text" id="change-favorite-color">
+                            <label for="email">Email</label>
+                            <input type="email" id="email-credential" name="email">
                         </div>
                         <div class="settings-popup-form-group">
-                            <label for="new_password">Favorite Pet</label>
-                            <input type="text" id="change-favorite-pet">
-                        </div>
-                        <div class="settings-popup-form-group">
-                            <label for="retype_password">Name one expensive place you visit?</label>
-                            <input type="text" id="change-expensive-place">
+                            <label for="username">username</label>
+                            <input type="text" id="username-credential">
                         </div>
                         <div class="settings-popup-button">
-                            <button type="button" class="update-security-button">update</button>
+                            <button type="button" class="verify-credentials">Verify</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="settings-popup-container security-confirmation">
+            <div class="settings-popup-container email-verification">
                 <div class="settings-popup-content">
-                    <div class="settings-popup-header header-authentication">
-                        <h1>Verification</h1>
-                        <i class="fa-regular fa-circle-xmark popup-close-button"></i>
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1 class="settings-header-title"></h1>
+                            <!-- <i class="fa-regular fa-circle-xmark popup-close-button-2"></i> -->
+                        </div>
+                        <p>Enter the code we sent to <strong><span id="email-address"></span></strong></p>
                     </div>
                     <div class="settings-popup-form">
                         <div class="settings-popup-form-group">
-                            <label for="date_establish">Favorite Color</label>
-                            <input type="text" id="favorite-color">
-                        </div>
-                        <div class="settings-popup-form-group">
-                            <label for="new_password">Favorite Pet</label>
-                            <input type="text" id="favorite-pet">
-                        </div>
-                        <div class="settings-popup-form-group">
-                            <label for="retype_password">Name one expensive place you visit?</label>
-                            <input type="text" id="expensive-place">
+                            <label for="email">Code</label>
+                            <input type="number" id="security-code">
                         </div>
                         <div class="settings-popup-button">
-                            <button type="button" class="verify">verify answers</button>
+                            <button type="button" class="verify-code">Verify</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="settings-popup-container change-username-details">
+            <div class="settings-popup-container email-verification-status">
+                <div class="settings-popup-content">
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1 class="settings-header-title"></h1>
+                            <!-- <i class="fa-regular fa-circle-xmark popup-close-button-2"></i> -->
+                        </div>
+                        <p>Enter the code we sent to <strong><span id="email-address-status"></span></strong></p>
+                    </div>
+                    <div class="settings-popup-form">
+                        <div class="settings-popup-form-group">
+                            <label for="email">Code</label>
+                            <input type="number" id="security-code-status">
+                        </div>
+                        <div class="settings-popup-button">
+                            <button type="button" class="verify-code-status">Verify</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup-table-container">
+                <i class="fa-regular fa-circle-xmark popup-close-button"></i>
+                <div class="popup-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>email</th>
+                                <th>username</th>
+                                <th>status</th>
+                                <th>action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="settings-popup-container role-verification">
                 <div class="settings-popup-content">
                     <div class="settings-popup-header">
                         <div class="header-authentication">
                             <h1>Roles</h1>
                             <i class="fa-regular fa-circle-xmark popup-close-button"></i>
                         </div>
-                        
                     </div>
                     <div class="settings-main-content">
-                        <div class="settings-groups change-admin-username" data-account-id="1">
+                        <div class="settings-groups role-admin" data-user-role="user_admin">
                             <h3>User Admin</h3>
                             <i class="fa-solid fa-angle-right"></i>
                         </div>
-                        <div class="settings-groups change-service-username" data-account-id="2">
+                        <div class="settings-groups role-service" data-user-role="user_service">
                             <h3>User Service</h3>
                             <i class="fa-solid fa-angle-right"></i>
                         </div>
-                        <div class="settings-groups change-kitchen-username" data-account-id="3">
-                            <h3>User Kitchen</h3>
-                            <i class="fa-solid fa-angle-right"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="settings-popup-container change-password-details">
-                <div class="settings-popup-content">
-                    <div class="settings-popup-header">
-                        <div class="header-authentication">
-                            <h1>Roles</h1>
-                            <i class="fa-regular fa-circle-xmark popup-close-button"></i>
-                        </div>
-                        
-                    </div>
-                    <div class="settings-main-content">
-                        <div class="settings-groups change-admin-password" data-account-id="1">
-                            <h3>User Admin</h3>
-                            <i class="fa-solid fa-angle-right"></i>
-                        </div>
-                        <div class="settings-groups change-service-password" data-account-id="2">
-                            <h3>User Service</h3>
-                            <i class="fa-solid fa-angle-right"></i>
-                        </div>
-                        <div class="settings-groups change-kitchen-password" data-account-id="3">
+                        <div class="settings-groups role-kitchen" data-user-role="user_kitchen">
                             <h3>User Kitchen</h3>
                             <i class="fa-solid fa-angle-right"></i>
                         </div>
