@@ -1,59 +1,64 @@
 <?php
-// Start the session or import any necessary configurations (e.g., database connection).
 session_start();
 include_once "../includes/connection.php";
 
-header('Content-Type: application/json');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $newUsername = $_POST['new_username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $account_id = $_POST['account_id'] ?? '';
 
-// Retrieve the posted data
-$current_username = isset($_POST['current_username']) ? $_POST['current_username'] : '';
-$new_username = isset($_POST['new_username']) ? $_POST['new_username'] : '';
-$retypeNew_username = isset($_POST['retypeNew_username']) ? $_POST['retypeNew_username'] : '';
-$account_id = isset($_POST['account_id']) ? $_POST['account_id'] : ''; // Assuming the account ID is passed from the form
-
-// Check if all fields have values
-if (empty($current_username) || empty($new_username) || empty($retypeNew_username)) {
-    echo json_encode(['success' => false, 'error' => 'All fields are required.']);
-    exit;
-}
-
-// Check if new_username and retypeNew_username match
-if ($new_username !== $retypeNew_username) {
-    echo json_encode(['success' => false, 'error' => 'New username and retype username do not match.']);
-    exit;
-}
-
-try {
-    // Prepare SQL query to verify if the current username matches the account_id
-    $verifyQuery = "SELECT account_username FROM accounts WHERE account_id = ? AND account_username = ?";
-    $verifyStmt = $conn->prepare($verifyQuery);
-    $verifyStmt->bind_param("is", $account_id, $current_username);
-    $verifyStmt->execute();
-    $verifyResult = $verifyStmt->get_result();
-
-    // Check if current username matches the one in the database
-    if ($verifyResult->num_rows === 0) {
-        echo json_encode(['success' => false, 'error' => 'Current username is incorrect.']);
+    // Validate inputs
+    if (empty($newUsername) || empty($password)) {
+        echo json_encode(['success' => false, 'error' => 'All fields are required.']);
         exit;
     }
 
-    // Prepare SQL query to update the username
-    $updateQuery = "UPDATE accounts SET account_username = ? WHERE account_id = ?";
-    $updateStmt = $conn->prepare($updateQuery);
-    $updateStmt->bind_param("si", $new_username, $account_id);
-    $updateStmt->execute();
-
-    // Check if any rows were updated
-    if ($updateStmt->affected_rows > 0) {
-        echo json_encode(['success' => true, 'message' => 'Username successfully updated!']);
-    } else {
-        echo json_encode(['success' => false, 'error' => 'No username was updated.']);
+    // Validate username format
+    if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $newUsername)) {
+        echo json_encode(['success' => false, 'error' => 'Username must be 3-20 characters and can only include letters, numbers, and underscores.']);
+        exit;
     }
-} catch (Exception $e) {
-    // Handle any exceptions
-    echo json_encode(['success' => false, 'error' => 'Error occurred: ' . $e->getMessage()]);
+
+    // Check if username is already taken
+    $query = "SELECT account_id FROM accounts WHERE account_username = ?";
+    $stmt_check = $conn->prepare($query);
+    $stmt_check->bind_param("s", $newUsername);
+    $stmt_check->execute();
+    $stmt_check->store_result();
+
+    if ($stmt_check->num_rows > 0) {
+        echo json_encode(['success' => false, 'error' => 'Username is already taken.']);
+        $stmt_check->close(); // Close the statement
+        exit;
+    }
+    $stmt_check->close(); // Close the statement after use
+
+    // Verify user's current password
+    $query = "SELECT account_password FROM accounts WHERE account_id = ?";
+    $stmt_verify = $conn->prepare($query);
+    $stmt_verify->bind_param("i", $account_id);
+    $stmt_verify->execute();
+    $stmt_verify->bind_result($hashedPassword);
+    $stmt_verify->fetch();
+    $stmt_verify->close(); // Close the statement
+
+    if (!password_verify($password, $hashedPassword)) {
+        echo json_encode(['success' => false, 'error' => 'Incorrect password.']);
+        exit;
+    }
+
+    // Update username
+    $query = "UPDATE accounts SET account_username = ? WHERE account_id = ?";
+    $stmt_update = $conn->prepare($query);
+    $stmt_update->bind_param("si", $newUsername, $account_id);
+
+    if ($stmt_update->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Failed to update username.']);
+    }
+
+    $stmt_update->close(); // Close the statement
+    $conn->close(); // Close the connection
 }
 
-// Close the database connection
-$conn->close();
-?>

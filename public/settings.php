@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     $('#question').text('Are you sure you want set this account as inactive?');
                                     
                                     $('.button-confirm').off('click').on('click', function(e) {
-
+                                        
                                         $.ajax({
                                             url: '../php/account_status_security_code.php', 
                                             type: 'POST',
@@ -410,7 +410,540 @@ document.addEventListener("DOMContentLoaded", function() {
 
                             loadAccounts();
 
-                            // -------------------------------------ROLE SERVICE CHANGE EMAIL-------------------------------------
+                    // -----------------------------------------Update Password--------------------------------  
+
+
+                            $(document).on('click', '.change-password', function(e) {
+                                e.preventDefault();
+                                // $('.changing-email-popup').fadeIn();
+                                $('.role-verification').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
+
+                                
+                                $('.role-admin').off('click').on('click', function(e) {
+                                    e.preventDefault();
+
+                                    $('.credentials-verification-password').fadeIn();
+                                    $('.settings-header-title').text('Enter Admin Credential for password reset');
+                                    
+                                    const user_role = $('.role-admin').data('user-role');
+
+                                    $('.verify-credentials-password').off('click').on('click', function(e) {
+                                        e.preventDefault();
+
+                                        const email = $('#email-credential-password').val();
+                                        const username = $('#username-credential-password').val();
+                                        console.log(user_role);
+                                        console.log(email);
+                                        console.log(username);
+                                        displaySuccessMessage('Please wait for response.');
+
+                                        $.ajax({
+                                            url: '../php/credentials_verification_change_password.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                email: email,
+                                                username: username,
+                                                user_role: user_role
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.email-verification-password').fadeIn();
+                                                    $('.credentials-verification-password').fadeOut();
+                                                    $('.settings-header-title').text('Check your email');
+                                                    $('#email-address-password').text(response.email);
+                                                    
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                    
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
+                                            }
+                                        });
+
+                                    });
+                                });
+                                    
+                            });
+
+
+                            $(document).on('click', '.change-password', function(e) {
+                                e.preventDefault();
+                                // $('.changing-email-popup').fadeIn();
+                                $('.role-verification').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
+
+                                
+                                $('.role-service').off('click').on('click', function(e) {
+                                    e.preventDefault();
+
+                                    $('.credentials-verification-password').fadeIn();
+                                    $('.settings-header-title').text('Enter Service Credential for password reset');
+                                    
+                                    const user_role = $('.role-service').data('user-role');
+
+                                    $('.verify-credentials-password').off('click').on('click', function(e) {
+                                        e.preventDefault();
+
+                                        const email = $('#email-credential-password').val();
+                                        const username = $('#username-credential-password').val();
+                                        console.log(user_role);
+                                        console.log(email);
+                                        console.log(username);
+                                        displaySuccessMessage('Please wait for response.');
+
+                                        $.ajax({
+                                            url: '../php/credentials_verification_change_password.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                email: email,
+                                                username: username,
+                                                user_role: user_role
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.email-verification-password').fadeIn();
+                                                    $('.credentials-verification-password').fadeOut();
+                                                    $('.settings-header-title').text('Check your email');
+                                                    $('#email-address-password').text(response.email);
+                                                    
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                    
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
+                                            }
+                                        });
+
+                                    });
+                                });
+                                    
+                            });
+
+
+                            $(document).on('click', '.change-password', function(e) {
+                                e.preventDefault();
+                                // $('.changing-email-popup').fadeIn();
+                                $('.role-verification').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
+
+                                
+                                $('.role-kitchen').off('click').on('click', function(e) {
+                                    e.preventDefault();
+
+                                    $('.credentials-verification-password').fadeIn();
+                                    $('.settings-header-title').text('Enter Kitchen Credential for password reset');
+                                    
+                                    const user_role = $('.role-kitchen').data('user-role');
+
+                                    $('.verify-credentials-password').off('click').on('click', function(e) {
+                                        e.preventDefault();
+
+                                        const email = $('#email-credential-password').val();
+                                        const username = $('#username-credential-password').val();
+                                        console.log(user_role);
+                                        console.log(email);
+                                        console.log(username);
+                                        displaySuccessMessage('Please wait for response.');
+
+                                        $.ajax({
+                                            url: '../php/credentials_verification_change_password.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                email: email,
+                                                username: username,
+                                                user_role: user_role
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.email-verification-password').fadeIn();
+                                                    $('.credentials-verification-password').fadeOut();
+                                                    $('.settings-header-title').text('Check your email');
+                                                    $('#email-address-password').text(response.email);
+                                                    
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                    
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
+                                            }
+                                        });
+
+                                    });
+                                });
+                                    
+                            });
+
+
+                            $(document).on('click', '.verify-code-password', function(e) {
+                                e.preventDefault();
+
+                                const security_code = $('#security-code-password').val();
+                                console.log(security_code);
+
+                                $.ajax({
+                                    url: '../php/security_code_verification_password.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        security_code: security_code
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            $('.change-password-popup').fadeIn();
+                                            $('.email-verification-password').fadeOut();
+                                            $('#email-credential-password').val('');
+                                            $('#username-credential-password').val('');
+
+                                            $('#update-password-id').val(response.account_id)
+                                            displaySuccessMessage(response.message);
+                                        } else {
+                                            displayErrorMessage('Failed to verify: ' + response.error);
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
+                                });
+                                
+                            });
+
+
+
+                            $(document).on('click', '.update-password-button', function(e) {
+                                e.preventDefault();
+
+                                const current_password = $('#current-password').val();
+                                const new_password = $('#new-password').val();
+                                const retype_password = $('#retype-new-password').val();
+                                const account_id = $('#update-password-id').val();
+
+                                console.log(account_id);
+
+
+                                if (!current_password || !new_password || !retype_password) {
+                                    displayErrorMessage('All fields are required.');
+                                    return;
+                                }
+
+                                if (!validatePassword(new_password)) {
+                                    displayErrorMessage('Password must be at least 8 characters long and include at least one number, and one special character.');
+                                    return;
+                                }
+
+                                if (new_password != retype_password) {
+                                    displayErrorMessage("New password and retype password do not match.");
+                                    return;
+                                }
+
+                                $('.popup-confirmation-container').fadeIn();
+                                $('#question').text('Are you sure you continue?');
+
+                                $('.button-confirm').off('click').on('click', function(e) {
+
+                                    $.ajax({
+                                        url: '../php/process_update_password.php',
+                                        type: 'POST',
+                                        dataType: 'json',
+                                        data: {
+                                            current_password: current_password,
+                                            new_password: new_password,
+                                            account_id: account_id
+                                        },
+                                        success: function(response) {
+                                            if (response.success) {
+                                                $('.change-username-popup').fadeOut();
+
+                                                $('#update-username-id').val('');
+                                                displaySuccessMessage(response.message);
+                                                $('.popup-confirmation-container').fadeOut();
+                                                $('.change-password-popup').fadeOut();
+                                            } else {
+                                                displayErrorMessage('Failed to verify: ' + response.error);
+                                                $('.popup-confirmation-container').fadeOut();
+                                            }
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            console.log('Error: ' + textStatus, errorThrown);
+                                        }
+                                    });
+
+                                });
+
+                                function validatePassword(password) {
+                                    const minLength = 8;
+                                    const hasNumber = /[0-9]/.test(password);
+                                    const hasSpecialChar = /[\W_]/.test(password);
+
+                                    return password.length >= minLength && hasNumber && hasSpecialChar;
+                                }
+                                
+                            });
+
+
+                        // -----------------------------------------Update Username--------------------------------    
+
+
+                            $(document).on('click', '.change-username', function(e) {
+                                e.preventDefault();
+                                // $('.changing-email-popup').fadeIn();
+                                $('.role-verification').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
+
+                                
+                                $('.role-admin').off('click').on('click', function(e) {
+                                    e.preventDefault();
+
+                                    $('.credentials-verification-username').fadeIn();
+                                    $('.settings-header-title').text('Enter Admin Credential for username reset');
+                                    
+                                    const user_role = $('.role-admin').data('user-role');
+
+                                    $('.verify-credentials-username').off('click').on('click', function(e) {
+                                        e.preventDefault();
+
+                                        const email = $('#email-credential-username').val();
+                                        const username = $('#username-credential-username').val();
+                                        console.log(user_role);
+                                        console.log(email);
+                                        console.log(username);
+                                        displaySuccessMessage('Please wait for response.');
+
+                                        $.ajax({
+                                            url: '../php/credentials_verification_change_username.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                email: email,
+                                                username: username,
+                                                user_role: user_role
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.email-verification-username').fadeIn();
+                                                    $('.credentials-verification-username').fadeOut();
+                                                    $('.settings-header-title').text('Check your email');
+                                                    $('#email-address-username').text(response.email);
+                                                    
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                    
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
+                                            }
+                                        });
+
+                                    });
+                                });
+                                    
+                            });
+
+
+                            $(document).on('click', '.change-username', function(e) {
+                                e.preventDefault();
+                                // $('.changing-email-popup').fadeIn();
+                                $('.role-verification').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
+
+                                
+                                $('.role-service').off('click').on('click', function(e) {
+                                    e.preventDefault();
+
+                                    $('.credentials-verification-username').fadeIn();
+                                    $('.settings-header-title').text('Enter Service Credential for username reset');
+                                    
+                                    const user_role = $('.role-service').data('user-role');
+
+                                    $('.verify-credentials-username').off('click').on('click', function(e) {
+                                        e.preventDefault();
+
+                                        const email = $('#email-credential-username').val();
+                                        const username = $('#username-credential-username').val();
+                                        console.log(user_role);
+                                        console.log(email);
+                                        console.log(username);
+                                        displaySuccessMessage('Please wait for response.');
+
+                                        $.ajax({
+                                            url: '../php/credentials_verification_change_username.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                email: email,
+                                                username: username,
+                                                user_role: user_role
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.email-verification-username').fadeIn();
+                                                    $('.credentials-verification-username').fadeOut();
+                                                    $('.settings-header-title').text('Check your email');
+                                                    $('#email-address-username').text(response.email);
+                                                    
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                    
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
+                                            }
+                                        });
+
+                                    });
+                                });
+                                    
+                            });
+
+                            $(document).on('click', '.change-username', function(e) {
+                                e.preventDefault();
+                                // $('.changing-email-popup').fadeIn();
+                                $('.role-verification').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
+
+                                
+                                $('.role-kitchen').off('click').on('click', function(e) {
+                                    e.preventDefault();
+
+                                    $('.credentials-verification-username').fadeIn();
+                                    $('.settings-header-title').text('Enter Service Credential for username reset');
+                                    
+                                    const user_role = $('.role-kitchen').data('user-role');
+
+                                    $('.verify-credentials-username').off('click').on('click', function(e) {
+                                        e.preventDefault();
+
+                                        const email = $('#email-credential-username').val();
+                                        const username = $('#username-credential-username').val();
+                                        console.log(user_role);
+                                        console.log(email);
+                                        console.log(username);
+                                        displaySuccessMessage('Please wait for response.');
+
+                                        $.ajax({
+                                            url: '../php/credentials_verification_change_username.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                email: email,
+                                                username: username,
+                                                user_role: user_role
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.email-verification-username').fadeIn();
+                                                    $('.credentials-verification-username').fadeOut();
+                                                    $('.settings-header-title').text('Check your email');
+                                                    $('#email-address-username').text(response.email);
+                                                    
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                    
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
+                                            }
+                                        });
+
+                                    });
+                                });
+                                    
+                            });
+
+
+                            $(document).on('click', '.verify-code-username', function(e) {
+                                e.preventDefault();
+
+                                const security_code = $('#security-code-username').val();
+                                console.log(security_code);
+
+                                $.ajax({
+                                    url: '../php/security_code_verification_username.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        security_code: security_code
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            $('.change-username-popup').fadeIn();
+                                            $('.email-verification-username').fadeOut();
+                                            $('#email-credential-username').val('');
+                                            $('#username-credential-username').val('');
+
+                                            $('#update-username-id').val(response.account_id)
+                                            displaySuccessMessage(response.message);
+                                        } else {
+                                            displayErrorMessage('Failed to verify: ' + response.error);
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
+                                });
+                                
+                            });
+
+
+                            $(document).on('click', '.update-username-button', function(e) {
+                                e.preventDefault();
+
+                                const new_username = $('#username-update').val();
+                                const curr_password = $('#username-current-password').val();
+                                const account_id = $('#update-username-id').val();
+
+                                console.log(account_id);
+
+                                $('.popup-confirmation-container').fadeIn();
+                                $('#question').text('Are you sure you continue?');
+
+                                $('.button-confirm').off('click').on('click', function(e) {
+
+                                    $.ajax({
+                                        url: '../php/update_username.php',
+                                        type: 'POST',
+                                        dataType: 'json',
+                                        data: {
+                                            new_username: new_username,
+                                            password: curr_password,
+                                            account_id: account_id
+                                        },
+                                        success: function(response) {
+                                            if (response.success) {
+                                                $('.change-username-popup').fadeOut();
+
+                                                $('#update-username-id').val('');
+                                                displaySuccessMessage(response.message);
+                                                $('.popup-confirmation-container').fadeOut();
+                                            } else {
+                                                displayErrorMessage('Failed to verify: ' + response.error);
+                                                $('.popup-confirmation-container').fadeOut();
+                                            }
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            console.log('Error: ' + textStatus, errorThrown);
+                                        }
+                                    });
+
+                                });
+                                
+                            });
+
+
+
+            // -------------------------------------ROLE SERVICE CHANGE EMAIL-------------------------------------
 
                             $(document).on('click', '.change-email', function(e) {
                                 e.preventDefault();
@@ -435,6 +968,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         console.log(user_role);
                                         console.log(email);
                                         console.log(username);
+                                        displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
                                             url: '../php/credentials_verification.php', 
@@ -492,6 +1026,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         console.log(user_role);
                                         console.log(email);
                                         console.log(username);
+                                        displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
                                             url: '../php/credentials_verification.php', 
@@ -550,6 +1085,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         console.log(user_role);
                                         console.log(email);
                                         console.log(username);
+                                        displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
                                             url: '../php/credentials_verification.php', 
@@ -663,9 +1199,17 @@ document.addEventListener("DOMContentLoaded", function() {
                                 e.preventDefault(); 
 
                                 $('.credentials-verification').fadeOut();
+                                $('.credentials-verification-username').fadeOut();
+                                $('.credentials-verification-password').fadeOut();
                                 $('.change-email-popup').fadeOut();
+                                $('.change-username-popup').fadeOut();
+                                $('.change-password-popup').fadeOut();
                                 $('#email-credential').val('');
                                 $('#username-credential').val('');
+                                $('#email-credential-username').val('');
+                                $('#username-credential-username').val('');
+                                $('#email-credential-password').val('');
+                                $('#username-credential-password').val('');
                                 $('#security-code').val('');
                                 
                             });
@@ -821,7 +1365,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <i class="fa-solid fa-angle-right"></i>
                         </div>
                         <div class="settings-groups manage-accounts">
-                            <h3>Remove Account</h3>
+                            <h3>manage Account</h3>
                             <i class="fa-solid fa-angle-right"></i>
                         </div>
                     </div>
@@ -829,6 +1373,8 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
 
             <div class="settings-popup-overlay"></div>
+
+            <!-- ----------------------- Change Email Popup ---------------------- -->
 
             <div class="settings-popup-container change-email-popup">
                 <div class="settings-popup-content">
@@ -851,45 +1397,45 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
 
+        <!-- ----------------------- Change username Popup ---------------------- -->
 
             <div class="settings-popup-container change-username-popup">
                 <div class="settings-popup-content">
                     <div class="settings-popup-header">
                         <div class="header-authentication">
                             <h1>Change Username</h1>
-                            <i class="fa-regular fa-circle-xmark popup-close-button"></i>
+                            <i class="fa-regular fa-circle-xmark popup-close-button-2"></i>
                         </div>
                     </div>
                     <div class="settings-popup-form">
-                        <input type="hidden" name="hidden_account_id" id="hidden-account-id">
+                        <input type="hidden" id="update-username-id">
                         <div class="settings-popup-form-group">
-                            <label for="current_password">current username</label>
-                            <input type="text" id="current-username">
+                            <label>New username</label>
+                            <input type="text" id="username-update">
                         </div>
                         <div class="settings-popup-form-group">
-                            <label for="new_password">new username</label>
-                            <input type="text" id="new-username">
-                        </div>
-                        <div class="settings-popup-form-group">
-                            <label for="retype_password">retype username</label>
-                            <input type="text" id="retype-new-username">
+                            <label>current password</label>
+                            <input type="text" id="username-current-password">
                         </div>
                         <div class="settings-popup-button">
-                            <button type="button" class="change-account-username-button">change username</button>
+                            <button type="button" class="update-username-button">change username</button>
                         </div>
                     </div>
                 </div>
             </div>
+
+   <!-- ----------------------- Change password popup ---------------------- -->
 
             <div class="settings-popup-container change-password-popup">
                 <div class="settings-popup-content">
                     <div class="settings-popup-header">
                         <div class="header-authentication">
                             <h1>Change Password</h1>
-                            <i class="fa-regular fa-circle-xmark popup-close-button"></i>
+                            <i class="fa-regular fa-circle-xmark popup-close-button-2"></i>
                         </div>
                     </div>
                     <div class="settings-popup-form">
+                        <input type="hidden" id="update-password-id">
                         <div class="settings-popup-form-group">
                             <label for="current_password">Current Password</label>
                             <input type="password" id="current-password">
@@ -906,12 +1452,67 @@ document.addEventListener("DOMContentLoaded", function() {
                             <i class="fas fa-eye showHidePassword"></i>
                         </div>
                         <div class="settings-popup-button">
-                            <button type="button" class="change-account-password-button">Change Password</button>
+                            <button type="button" class="update-password-button">Change Password</button>
                         </div>
                     </div>
 
                 </div>
             </div>
+
+
+            <!-- ----------------------- Credentials Verification for updating password ---------------------- -->
+
+            <div class="settings-popup-container credentials-verification-password">
+                <div class="settings-popup-content">
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1 class="settings-header-title"></h1>
+                            <i class="fa-regular fa-circle-xmark popup-close-button-2"></i>
+                        </div>
+                    </div>
+                    <div class="settings-popup-form">
+                        <div class="settings-popup-form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email-credential-password">
+                        </div>
+                        <div class="settings-popup-form-group">
+                            <label for="username">username</label>
+                            <input type="text" id="username-credential-password">
+                        </div>
+                        <div class="settings-popup-button">
+                            <button type="button" class="verify-credentials-password">Verify</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- ----------------------- Credentials Verification for updating username ---------------------- -->
+
+            <div class="settings-popup-container credentials-verification-username">
+                <div class="settings-popup-content">
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1 class="settings-header-title"></h1>
+                            <i class="fa-regular fa-circle-xmark popup-close-button-2"></i>
+                        </div>
+                    </div>
+                    <div class="settings-popup-form">
+                        <div class="settings-popup-form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email-credential-username" name="email">
+                        </div>
+                        <div class="settings-popup-form-group">
+                            <label for="username">username</label>
+                            <input type="text" id="username-credential-username">
+                        </div>
+                        <div class="settings-popup-button">
+                            <button type="button" class="verify-credentials-username">Verify</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!-- ----------------------- Credentials Verification for Updating Email ---------------------- -->
 
             <div class="settings-popup-container credentials-verification">
                 <div class="settings-popup-content">
@@ -937,6 +1538,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
 
+<!-- ----------------------- Email verification for updating email ---------------------- -->
+
             <div class="settings-popup-container email-verification">
                 <div class="settings-popup-content">
                     <div class="settings-popup-header">
@@ -957,6 +1560,54 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>
             </div>
+
+<!-- ----------------------- Email Verification for Update Username ---------------------- -->
+
+            <div class="settings-popup-container email-verification-username">
+                <div class="settings-popup-content">
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1 class="settings-header-title"></h1>
+                            <!-- <i class="fa-regular fa-circle-xmark popup-close-button-2"></i> -->
+                        </div>
+                        <p>Enter the code we sent to <strong><span id="email-address-username"></span></strong></p>
+                    </div>
+                    <div class="settings-popup-form">
+                        <div class="settings-popup-form-group">
+                            <label for="email">Code</label>
+                            <input type="number" id="security-code-username">
+                        </div>
+                        <div class="settings-popup-button">
+                            <button type="button" class="verify-code-username">Verify</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ----------------------- Email Verification for Update Password ---------------------- -->
+
+            <div class="settings-popup-container email-verification-password">
+                <div class="settings-popup-content">
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1 class="settings-header-title"></h1>
+                            <!-- <i class="fa-regular fa-circle-xmark popup-close-button-2"></i> -->
+                        </div>
+                        <p>Enter the code we sent to <strong><span id="email-address-password"></span></strong></p>
+                    </div>
+                    <div class="settings-popup-form">
+                        <div class="settings-popup-form-group">
+                            <label for="email">Code</label>
+                            <input type="number" id="security-code-password">
+                        </div>
+                        <div class="settings-popup-button">
+                            <button type="button" class="verify-code-password">Verify</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!-- ----------------------- Email Verification for Account Status ---------------------- -->
 
             <div class="settings-popup-container email-verification-status">
                 <div class="settings-popup-content">
@@ -979,6 +1630,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
 
+<!-- -----------------------View Accounts ---------------------- -->
+
             <div class="popup-table-container">
                 <i class="fa-regular fa-circle-xmark popup-close-button"></i>
                 <div class="popup-table-content">
@@ -997,6 +1650,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     </table>
                 </div>
             </div>
+
+<!-- ----------------------- Role Verification ---------------------- -->
 
             <div class="settings-popup-container role-verification">
                 <div class="settings-popup-content">

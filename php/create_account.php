@@ -18,15 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Password validation
-    if (strlen($password) < 8 || 
-        !preg_match('/[A-Z]/', $password) || 
-        !preg_match('/[a-z]/', $password) || 
-        !preg_match('/[0-9]/', $password) || 
-        !preg_match('/[\W_]/', $password)) {
-        echo json_encode(['success' => false, 'message' => 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.']);
+    if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $username)) {
+        echo json_encode(['success' => false, 'message' => 'Username must be 3-20 characters, does not have space, can only include letters, numbers, and underscores.']);
         exit;
     }
+    // Password validation
 
     // Check for duplicate email or username
     $checkQuery = "SELECT * FROM accounts WHERE account_username = ?";

@@ -132,16 +132,16 @@
                 });
 
                 // Show/hide password toggle
-                $('#showPassword').on('click', function () {
-                    $('#passwordInput').attr('type', 'text');
-                    $('#showPassword').hide();
-                    $('#hidePassword').show();
-                });
-
                 $('#hidePassword').on('click', function () {
-                    $('#passwordInput').attr('type', 'password');
+                    $('#passwordInput').attr('type', 'text');
                     $('#hidePassword').hide();
                     $('#showPassword').show();
+                });
+
+                $('#showPassword').on('click', function () {
+                    $('#passwordInput').attr('type', 'password');
+                    $('#showPassword').hide();
+                    $('#hidePassword').show();
                 });
 
                 $('.btnCancel').off('click').on('click', function(e) {

@@ -5,9 +5,11 @@ $searchCustomer = isset($_GET['search_archive']) ? $_GET['search_archive'] : '';
 
 // SQL query to join orders and payments tables and filter by customer name and payment status
 $sql = "SELECT o.order_id, o.customer_name, o.total_amount, o.order_date, o.order_time, p.payment_status, p.collectibles 
-        FROM orders o 
+        FROM orders o
         JOIN payments p ON o.order_id = p.order_id
-        WHERE p.payment_status = 'paid' AND p.collectibles = 'Y'";
+        WHERE p.payment_status = 'paid' AND p.collectibles = 'Y' 
+        ORDER BY o.order_date DESC";
+
 
 // Prepare parameters and types
 $params = [];
