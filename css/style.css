@@ -661,6 +661,12 @@
     cursor: pointer;
 }
 
+.chart-container canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
 .bottom-cards-container {
     display: flex;
     gap: 0.5rem;

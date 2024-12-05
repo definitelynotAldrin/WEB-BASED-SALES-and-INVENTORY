@@ -110,6 +110,8 @@
                                         displaySuccessMessage(response.message); // Use the success message
                                         $('#email').val('');
                                         $('#username').val('');
+                                        $('.security-confirmation').fadeOut();
+                            $('.settings-popup-overlay').fadeOut();
                                     } else {
                                         displayErrorMessage('Verification failed: ' + response.error);
                                     }
@@ -120,8 +122,8 @@
                             });
 
                             // Hide the popup after confirming
-                            $('.security-confirmation').fadeOut();
-                            $('.settings-popup-overlay').fadeOut();
+                            // $('.security-confirmation').fadeOut();
+                            // $('.settings-popup-overlay').fadeOut();
                         });
 
 

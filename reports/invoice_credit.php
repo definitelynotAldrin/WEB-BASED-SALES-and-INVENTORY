@@ -55,18 +55,37 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
     <meta charset="UTF-8">
     <title>Invoice Receipt</title>
     <style>
-        /* Styles for a 3" or 4" wide receipt */
-        body { font-family: Arial, sans-serif; width: 250px; margin: 0 auto; }
-        h2, p { text-align: center; margin: 5px 0; text-transform: capitalize;}
-        .receipt { border-top: 1px dashed #333; padding: 10px 0; }
-        .header, .footer { text-align: center; }
-        .content { margin-top: 10px; }
-        .item-list { width: 100%; }
-        .item-list th, .item-list td { text-align: left; padding: 4px; }
-        .item-list th { font-weight: bold; }
-        .summary { margin-top: 10px; }
-        .summary td { padding: 4px; text-align: right; text-transform: capitalize;}
-        .thank-you { margin-top: 15px; text-align: center; font-size: 0.9em; }
+        body {
+            font-family: Arial, sans-serif;
+            width: 250px; /* Matches receipt width */
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h2, p {
+            margin: 5px 0;
+            text-transform: capitalize;
+        }
+
+        .receipt {
+            border-top: 1px dashed #333;
+            padding: 10px 0;
+        }
+
+        .item-list {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .item-list th, .item-list td {
+            text-align: left;
+            padding: 4px;
+        }
+
+        .summary td {
+            text-align: right;
+        }
+
         .return-button{
             text-decoration: none;
             color: #333;
@@ -76,8 +95,14 @@ $payment_details = $stmt_payments->get_result()->fetch_assoc();
         }
 
         @media print {
-            body { margin: 0; }
-            .return-button{
+            body {
+                width: 58mm; /* Set based on printer paper width */
+                margin: 0 auto;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            .return-button {
                 display: none;
             }
         }

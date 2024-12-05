@@ -258,7 +258,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 const username = $(this).data('account-username'); 
                                 const account_id = $(this).data('account-id'); 
                                 $('.popup-confirmation-container').fadeIn();
-                                $('#question').text(`Are you sure you want to set this account name ${username} as active?`);
+                                $('#question').text(`Are you sure you want to set this account name ${username.toUpperCase()} as active?`);
 
                                 console.log(username);
                                 console.log(account_id);
@@ -334,6 +334,47 @@ document.addEventListener("DOMContentLoaded", function() {
                                         });
                                     });
                                 });
+
+
+                                $('.button-delete').off('click').on('click', function(e) {
+                                    e.preventDefault();
+
+                                    const account_id = $(this).data('account-id');
+                                    const username = "<?php echo $username; ?>";
+                                    console.log(account_id);
+
+                                    $('.popup-confirmation-container').fadeIn();
+                                    $('#question').text('Are you sure you want to delete this account?');
+                                    
+                                    $('.button-confirm').off('click').on('click', function(e) {
+                                        
+                                        $.ajax({
+                                            url: '../php/account_delete_security_code.php', 
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            data: {
+                                                account_id: account_id,
+                                                username: username
+                                            },
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    $('.popup-table-container').fadeOut();
+                                                    $('.email-verification-deletion').fadeIn();
+                                                    $('.popup-confirmation-container').fadeOut();
+                                                    $('#email-address-deletion').text(response.email);
+                                                    $('.settings-header-title').text('Check email to an account you want to update.');
+                                                        
+                                                } else {
+                                                    displayErrorMessage('Failed to verify: ' + response.error);
+                                                        
+                                                }
+                                            },
+                                            error: function(jqXHR, textStatus, errorThrown) {
+                                                console.log('Error: ' + textStatus, errorThrown);
+                                            }
+                                        });
+                                    });
+                                });
                                     
                             });
 
@@ -366,6 +407,85 @@ document.addEventListener("DOMContentLoaded", function() {
                                 });
                                 
                             });
+
+
+                            $(document).on('click', '.verify-code-deletion', function(e) {
+                                e.preventDefault();
+
+                                const security_code = $('#security-code-deletion').val();
+                                console.log(security_code);
+
+                                $.ajax({
+                                    url: '../php/security_code_verification_account_deletion.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        security_code: security_code
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            $('.email-verification-deletion').fadeOut();
+                                            $('.delete-account-popup').fadeIn();
+                                            loadAccounts();
+                                            displaySuccessMessage(response.message);
+                                            $('#security-code-deletion').val('');
+                                            $('#delete-account-id').val(response.account_id);
+                                            $('#email-address-deletion').text(response.email);
+                                        } else {
+                                            displayErrorMessage('Failed to verify: ' + response.error);
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
+                                });
+                                
+                            });
+
+
+                            $(document).on('click', '.delete-account-button', function (e) {
+                                e.preventDefault();
+
+                                const password = $('#delete-account-password').val();
+                                const account_id = $('#delete-account-id').val();
+
+                                $.ajax({
+                                    url: '../php/delete_account.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        password: password,
+                                        account_id: account_id
+                                    },
+                                    success: function (response) {
+                                        if (response.success) {
+                                            if (response.logout) {
+                                                // If logout is required (user deleted their own account)
+                                                $('.delete-account-popup').fadeOut();
+                                                $('.settings-popup-overlay').fadeOut();
+                                                $('#delete-account-id').val('');
+                                                displaySuccessMessage(response.message);
+                                                setTimeout(function () {
+                                                    window.location.href = '../public/login_panel.php'; // Redirect after 3 seconds
+                                                }, 3000);
+                                                
+                                            } else {
+                                                // Normal deletion behavior for other accounts
+                                                $('.delete-account-popup').fadeOut();
+                                                $('.settings-popup-overlay').fadeOut();
+                                                $('#delete-account-id').val('');
+                                                displaySuccessMessage(response.message);
+                                            }
+                                        } else {
+                                            displayErrorMessage('Failed to verify: ' + response.error);
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        console.log('Error: ' + textStatus, errorThrown);
+                                    }
+                                });
+                            });
+
                             
 
                             function loadAccounts() {
@@ -384,14 +504,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                                 tableBody += `
                                                     <tr>
-                                                        <td>${account.email}</td>
+                                                        <td class="truncate">${account.email}</td>
                                                         <td>${account.account_username}</td>
                                                         <td>${account.account_status}</td>
                                                         <td class="table-action">
                                                             <i class="fas fa-eye-slash button-active ${activeClass}" data-account-id="${account.account_id}" data-account-username="${account.account_username}"></i>
                                                             <i class="fa-regular fa-eye button-inactive ${inactiveClass}"
                                                                 data-account-id="${account.account_id}"></i>
-                                                            <i class="fa-regular fa-trash-can button-delete" data-account-id="${account.account_id}"></i>
+                                                            <i class="fa-regular fa-trash-can button-delete"
+                                                                data-account-id="${account.account_id}" data-account-email="${account.email}"></i>
                                                         </td>
                                                     </tr>
                                                 `;
@@ -604,7 +725,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             $('#email-credential-password').val('');
                                             $('#username-credential-password').val('');
 
-                                            $('#update-password-id').val(response.account_id)
+                                            $('#update-password-id').val(response.account_id);
                                             displaySuccessMessage(response.message);
                                         } else {
                                             displayErrorMessage('Failed to verify: ' + response.error);
@@ -883,7 +1004,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             $('#email-credential-username').val('');
                                             $('#username-credential-username').val('');
 
-                                            $('#update-username-id').val(response.account_id)
+                                            $('#update-username-id').val(response.account_id);
                                             displaySuccessMessage(response.message);
                                         } else {
                                             displayErrorMessage('Failed to verify: ' + response.error);
@@ -1138,9 +1259,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                             $('.change-email-popup').fadeIn();
                                             $('.email-verification').fadeOut();
                                             $('#email-credential').val('');
-                                            $('#username-credential').val('')
+                                            $('#username-credential').val('');
 
-                                            $('#update-email-id').val(response.account_id)
+                                            $('#update-email-id').val(response.account_id);
                                             displaySuccessMessage(response.message);
                                         } else {
                                             displayErrorMessage('Failed to verify: ' + response.error);
@@ -1192,6 +1313,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 $('.settings-popup-overlay').fadeOut();
                                 $('.role-verification').fadeOut();
                                 $('.popup-table-container').fadeOut();
+                                $('.delete-account-popup').fadeOut();
                                 
                             });
 
@@ -1204,6 +1326,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 $('.change-email-popup').fadeOut();
                                 $('.change-username-popup').fadeOut();
                                 $('.change-password-popup').fadeOut();
+                                $('.delete-account-popup').fadeOut();
                                 $('#email-credential').val('');
                                 $('#username-credential').val('');
                                 $('#email-credential-username').val('');
@@ -1459,6 +1582,31 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
 
+    <!-- ----------------------- Delete account validation ---------------------- -->
+
+            <div class="settings-popup-container delete-account-popup">
+                <div class="settings-popup-content">
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1>Enter Password </h1>
+                            <i class="fa-regular fa-circle-xmark popup-close-button"></i>
+                        </div>
+                    </div>
+                    <div class="settings-popup-form">
+                        <input type="hidden" id="delete-account-id">
+                        <div class="settings-popup-form-group">
+                            <label for="current_password">Password</label>
+                            <input type="password" id="delete-account-password">
+                            <i class="fas fa-eye showHidePassword"></i>
+                        </div>
+                        <div class="settings-popup-button">
+                            <button type="button" class="delete-account-button">Submit</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
 
             <!-- ----------------------- Credentials Verification for updating password ---------------------- -->
 
@@ -1625,6 +1773,30 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div>
                         <div class="settings-popup-button">
                             <button type="button" class="verify-code-status">Verify</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+<!-- ----------------------- Email Verification for Account Deletion ---------------------- -->
+
+            <div class="settings-popup-container email-verification-deletion">
+                <div class="settings-popup-content">
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1 class="settings-header-title"></h1>
+                            <!-- <i class="fa-regular fa-circle-xmark popup-close-button-2"></i> -->
+                        </div>
+                        <p>Enter the code we sent to <strong><span id="email-address-deletion"></span></strong></p>
+                    </div>
+                    <div class="settings-popup-form">
+                        <div class="settings-popup-form-group">
+                            <label for="email">Code</label>
+                            <input type="number" id="security-code-deletion">
+                        </div>
+                        <div class="settings-popup-button">
+                            <button type="button" class="verify-code-deletion">Verify</button>
                         </div>
                     </div>
                 </div>

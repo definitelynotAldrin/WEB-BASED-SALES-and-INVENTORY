@@ -1122,6 +1122,13 @@ td{
     color: var(--dark);
 }
 
+td.truncate {
+    max-width: 120px; /* Adjust as per your layout */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 
 .table-action i{
     font-size: 1rem;
@@ -1199,9 +1206,11 @@ td{
         height: auto;
     }
 
-    .settings-popup-container{
+    .settings-popup-container,
+    .popup-table-container{
         width: 95%;
     }
+
 }
 
 

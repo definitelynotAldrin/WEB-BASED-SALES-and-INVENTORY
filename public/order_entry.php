@@ -595,7 +595,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 $('#kilograms-popup').hide();
                                                 $('#popup-overlay').hide();
                                                 $('body').css('overflow', 'auto');
-                                                displaySuccessMessage(result.message);
+                                                // displaySuccessMessage(result.message);
                                             } else {
                                                 displayErrorMessage(result.message);
                                             }
