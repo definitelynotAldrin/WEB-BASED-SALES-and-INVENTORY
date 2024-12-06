@@ -644,11 +644,11 @@
     color: var(--white);
 }
 
-.btn-cancel{
+.btn-reset{
     background-color: var(--orange);
 }
 
-.btn-cancel:active{
+.btn-reset:active{
     background-color: #fb7208;
 }
 

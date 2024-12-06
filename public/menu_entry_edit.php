@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="success success-message" id="success-container"></div>
             <div class="content-header">
                 <div class="header-text">
-                    <h1>Wanna add some menu? <span></span></h1>
+                    <h1>Menu Update<span></span></h1>
                     <h4>Let's add delicious dishes and make sales...</h4>
                 </div>
                 <div class="header-profile">

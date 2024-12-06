@@ -660,12 +660,14 @@
     color: var(--white);
 }
 
-.btn-cancel, .button-remove{
+.btn-cancel, .button-remove,
+.btn-reset{
     background-color: var(--orange);
 }
 
 .btn-cancel:active,
-.button-remove:active{
+.button-remove:active,
+.btn-reset:active{
     background-color: #fb7208;
 }
 
@@ -864,6 +866,7 @@ select{
 .delete-confirmation-content h1{
     font-size: 1rem;
     color: var(--darker);
+    text-align: center;
 }
 
 .delete-confirmation-content p{
@@ -872,7 +875,7 @@ select{
 }
 
 .confirmation-button{
-    flex-direction: column;
+    flex-direction: row-reverse;
 }
 
 .confirmation-button button{
@@ -1058,6 +1061,11 @@ select{
     .registered-menu-section,
     .inserting-section{
         padding: 1rem;
+    }
+
+    .delete-confirmation-container{
+        padding: 25px;
+        width: 95%;
     }
    
 }

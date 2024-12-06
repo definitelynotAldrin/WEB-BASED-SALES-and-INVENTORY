@@ -1,5 +1,6 @@
 <?php
 include_once "../includes/connection.php";
+header('Content-Type: application/json');
 
 if (isset($_POST['product_id'])) {
     $product_id = $_POST['product_id'];
@@ -10,9 +11,11 @@ if (isset($_POST['product_id'])) {
     $stmt->bind_param("i", $product_id);
     
     if ($stmt->execute()) {
-        echo "success";
+        echo json_encode(['success' => true, 'message' => 'Item successfully set as inactive.']);
+        exit;
     } else {
-        echo "error";
+        echo json_encode(['success' => false, 'error' => 'Something went wrong!']);
+        exit;
     }
 
     $stmt->close();

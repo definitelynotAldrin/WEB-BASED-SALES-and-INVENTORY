@@ -35,31 +35,31 @@ document.addEventListener('DOMContentLoaded', function() {
 // -------------------------------delete confirmation-------------------------------------
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteBtns = document.querySelectorAll('.btn-delete');
-    const cancelBtns = document.querySelectorAll('.confirm-cancel');
-    const popupConfirmation = document.querySelector('.delete-confirmation-container');
-    const confirmationOverlay = document.querySelector('.delete-confirmation-overlay');
+// document.addEventListener('DOMContentLoaded', function() {
+//     const deleteBtns = document.querySelectorAll('.btn-delete');
+//     const cancelBtns = document.querySelectorAll('.confirm-cancel');
+//     const popupConfirmation = document.querySelector('.delete-confirmation-container');
+//     const confirmationOverlay = document.querySelector('.delete-confirmation-overlay');
 
-    deleteBtns.forEach(function(deleteBtn) {
-        deleteBtn.addEventListener('click', function () {
-            // Show the popup form and overlay
-            popupConfirmation.style.display = "block";
-            confirmationOverlay.style.display = "block";
-        });
-    });
+//     deleteBtns.forEach(function(deleteBtn) {
+//         deleteBtn.addEventListener('click', function () {
+//             // Show the popup form and overlay
+//             popupConfirmation.style.display = "block";
+//             confirmationOverlay.style.display = "block";
+//         });
+//     });
 
-    cancelBtns.forEach(function(cancelBtn) {
-        cancelBtn.addEventListener('click', function () {
-            // Hide the popup form and overlay
-            popupConfirmation.style.display = "none";
-            confirmationOverlay.style.display = "none";
-        });
-    });
+//     cancelBtns.forEach(function(cancelBtn) {
+//         cancelBtn.addEventListener('click', function () {
+//             // Hide the popup form and overlay
+//             popupConfirmation.style.display = "none";
+//             confirmationOverlay.style.display = "none";
+//         });
+//     });
 
-    confirmationOverlay.addEventListener('click', function() {
-        // Hide the popup form and overlay when clicking outside the form
-        popupConfirmation.style.display = "none";
-            confirmationOverlay.style.display = "none";
-    });
-});
+//     confirmationOverlay.addEventListener('click', function() {
+//         // Hide the popup form and overlay when clicking outside the form
+//         popupConfirmation.style.display = "none";
+//             confirmationOverlay.style.display = "none";
+//     });
+// });

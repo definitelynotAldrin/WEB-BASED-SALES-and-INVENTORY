@@ -441,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div>
 
                         <div class="form-groups button-group">
-                            <button class="btn-cancel" type="reset">
+                            <button class="btn-reset" type="reset">
                                 <i class="fa-solid fa-rotate-left"></i>
                                 <span>Reset Field</span>
                             </button>
@@ -502,77 +502,41 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             </script>
 
-                <?php
-                    include_once "../includes/connection.php";
-
-                    // Fetch all registered menu items
-                    $sql = "SELECT * FROM menu_items";
-                    $result = $conn->query($sql);
-
-                    ?>
-
-                    <div class="registered-menu-section">
-                        <div class="menu-header">
-                            <h1 class="menu-header-title">registered menu</h1>
-                            <div class="menu-category">
-                                <select name="menu_categories" id="menu_categories">
-                                    <option value="all">All Categories</option>
-                                    <option value="Main Course">Main Course</option>
-                                    <option value="Dessert">Dessert</option>
-                                    <option value="Beverages">Beverages</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="menu-card-content">
-                            <?php
-                            if ($result->num_rows > 0) {
-                                while($row = $result->fetch_assoc()) {
-                                    ?>
-                                    <input type="hidden" name="hidden_id" value="<?php echo $row['item_id']; ?>">
-                                    <div class="menu-cards menu-item" data-category="<?php echo $row['item_category']; ?>">
-                                        <div class="menu-card-img">
-                                            <img src="../uploads/<?php echo $row['item_image']; ?>" alt="<?php echo $row['item_name']; ?>">
-                                        </div>
-                                        <div class="menu-cards-group menu-details">
-                                            <h1 class="menu-cards-menu-title"><?php echo $row['item_name']; ?></h1>
-                                            <p class="menu-cards-menu-desc"><?php echo $row['item_category']; ?></p>
-                                        </div>
-                                        <div class="menu-cards-buttons">
-                                            <a href="menu_entry_edit.php?item_id=<?php echo $row['item_id']; ?>&success=You're now in update section">
-                                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <?php
-                                }
-                            } else {
-                                echo "<p>No menu items found.</p>";
-                            }
-                            ?>
-                        </div>
+            <div class="registered-menu-section">
+                <div class="menu-header">
+                    <h1 class="menu-header-title">Registered Menu</h1>
+                    <div class="menu-category">
+                        <select name="menu_categories" id="menu_categories">
+                            <option value="all">All Categories</option>
+                            <option value="Main Course">Main Course</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Beverages">Beverages</option>
+                        </select>
                     </div>
+                </div>
+                <div class="menu-card-content" id="menuCardContent">
+                    <!-- Menu items will be dynamically rendered here -->
+                </div>
+            </div>
 
-                    <?php
-                    $conn->close();
-                    ?>
 
-                    <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const categorySelect = document.getElementById('menu_categories');
-                        const menuItems = document.querySelectorAll('.menu-item');
+                <script>
+                    // document.addEventListener('DOMContentLoaded', function() {
+                    //     const categorySelect = document.getElementById('menu_categories');
+                    //     const menuItems = document.querySelectorAll('.menu-item');
 
-                        categorySelect.addEventListener('change', function() {
-                            const selectedCategory = this.value;
+                    //     categorySelect.addEventListener('change', function() {
+                    //         const selectedCategory = this.value;
 
-                            menuItems.forEach(function(item) {
-                                if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
-                                    item.style.display = 'flex';
-                                } else {
-                                    item.style.display = 'none';
-                                }
-                            });
-                        });
-                    });
+                    //         menuItems.forEach(function(item) {
+                    //             if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
+                    //                 item.style.display = 'flex';
+                    //             } else {
+                    //                 item.style.display = 'none';
+                    //             }
+                    //         });
+                    //     });
+                    // });
 
 
                     function capitalizeFirstLetter(str) {
@@ -581,18 +545,118 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         const elements = document.querySelectorAll('.menu-cards-menu-title');
                         elements.forEach(el => {
-                            el.textContent = capitalizeFirstLetter(el.textContent);
+                        el.textContent = capitalizeFirstLetter(el.textContent);
+                    });
+
+                    $(document).ready(function () {
+                        function fetchMenuItems(category = "all") {
+                            $.ajax({
+                                url: "../php/menu_items.php", // Endpoint for fetching menu items
+                                type: "GET",
+                                data: { category: category },
+                                dataType: "json",
+                                success: function (response) {
+                                    if (response.success) {
+                                        const menuCardContent = $("#menuCardContent");
+                                        menuCardContent.empty(); // Clear existing items
+                                        const menuItems = response.data;
+
+                                        if (menuItems.length > 0) {
+                                            menuItems.forEach((item) => {
+                                                menuCardContent.append(`
+                                                    <div class="menu-cards menu-item" data-category="${item.item_category}">
+                                                        <div class="menu-card-img">
+                                                            <img src="../uploads/${item.item_image}" alt="${item.item_name}">
+                                                        </div>
+                                                        <div class="menu-cards-group menu-details">
+                                                            <h1 class="menu-cards-menu-title">${item.item_name}</h1>
+                                                            <p class="menu-cards-menu-desc">${item.item_category}</p>
+                                                        </div>
+                                                        <div class="menu-cards-buttons">
+                                                            <a href="menu_entry_edit.php?item_id=${item.item_id}&success=You're now in update section">
+                                                                <i class="fa-regular fa-pen-to-square btn-edit"></i>
+                                                            </a>
+                                                            <i class="fa-regular fa-trash-can btn-delete" data-account-id="${item.item_id}"></i>
+                                                        </div>
+                                                    </div>
+                                                `);
+                                            });
+                                        } else {
+                                            menuCardContent.append("<p>No menu items found.</p>");
+                                        }
+                                    } else {
+                                        alert("Error fetching menu items: " + response.error);
+                                    }
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    console.log("Error: " + textStatus, errorThrown);
+                                },
+                            });
+                        }
+
+                        // Initial fetch of menu items
+                        fetchMenuItems();
+
+                        // Filter menu items by category
+                        $("#menu_categories").on("change", function () {
+                            const selectedCategory = $(this).val();
+                            fetchMenuItems(selectedCategory);
                         });
 
-                    </script>
+                        // Event delegation for dynamically added elements
+                        $("#menuCardContent").on("click", ".btn-delete", function (e) {
+                            e.preventDefault();
+
+                            const account_id = $(this).data("account-id");
+                            console.log(account_id);
+                            $(".delete-confirmation-container").fadeIn();
+                            $(".delete-confirmation-overlay").fadeIn();
+                            $("#question").text("Are you sure you want to delete this menu?");
+
+                            // Confirm delete button
+                            $(".confirm-delete").off("click").on("click", function (e) {
+                                e.preventDefault();
+                                $.ajax({
+                                    url: "../php/menu_delete.php",
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: {
+                                        account_id: account_id,
+                                    },
+                                    success: function (response) {
+                                        if (response.success) {
+                                            $(".delete-confirmation-container").fadeOut();
+                                            $(".delete-confirmation-overlay").fadeOut();
+                                            displaySuccessMessage(response.message);
+                                            fetchMenuItems(); // Refresh menu after deletion
+                                        } else {
+                                            displayErrorMessage(response.error);
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        console.log("Error: " + textStatus, errorThrown);
+                                    },
+                                });
+                            });
+                        });
+
+                        // Cancel delete button
+                        $(".confirm-cancel").off("click").on("click", function (e) {
+                            e.preventDefault();
+                            $(".delete-confirmation-container").fadeOut();
+                            $(".delete-confirmation-overlay").fadeOut();
+                        });
+                    });
+
+                    
+                </script>
 
             </div>
             <div class="delete-confirmation-overlay"></div>
             <div class="delete-confirmation-container">
                 <div class="delete-confirmation-content">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <h1>Are you sure?</h1>
-                    <p>Setting this item as an inactive will cause not showing in the order menu.</p>
+                    <h1 id="question"></h1>
                     <div class="form-groups button-group confirmation-button">
                         <button class="confirm-delete">remove</button>
                         <button class="confirm-cancel">cancel</button>

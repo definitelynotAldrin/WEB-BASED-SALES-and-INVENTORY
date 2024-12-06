@@ -401,7 +401,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                             </div>
                             <div class="form-groups button-group">
-                                <button class="btn-reset" type="reset">
+                                <button class="btn-cancel" type="reset">
                                     <i class="fa-solid fa-rotate-left"></i>
                                     <span>reset field</span>
                                 </button>
@@ -638,7 +638,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         const deleteButtons = document.querySelectorAll('.btn-delete');
                         const returnButtons = document.querySelectorAll('.btn-return');
                         const confirmationOverlay = document.querySelector('.delete-confirmation-overlay');
-                        const confirmationContainer = document.querySelector('.delete-confirmation-container');
+                        const confirmationContainer = document.querySelectorAll('.delete-confirmation-container');
                         const confirmDeleteButton = document.querySelector('.confirm-delete');
                         const confirmCancelButton = document.querySelector('.confirm-cancel');
                         const closePopup = document.querySelectorAll('.btn-close');
@@ -654,9 +654,13 @@ document.addEventListener("DOMContentLoaded", function() {
                         // Show confirmation popup when delete button is clicked
                         deleteButtons.forEach(button => {
                             button.addEventListener('click', function() {
-                                selectedProductId = this.getAttribute('data-product-id');
-                                confirmationOverlay.style.display = 'block';
-                                confirmationContainer.style.display = 'block';
+                                const productId = this.getAttribute('data-product-id');
+                                if (productId) {
+                                    console.log(`Product ID: ${productId}`);
+                                    selectedProductId = productId;
+                                } else {
+                                    console.error('data-product-id is null or undefined');
+                                }
                             });
                         });
 
@@ -664,63 +668,57 @@ document.addEventListener("DOMContentLoaded", function() {
                         confirmCancelButton.addEventListener('click', function() {
                             confirmationOverlay.style.display = 'none';
                             confirmationContainer.style.display = 'none';
+                            selectedProductId = null; // Reset the product ID
                         });
 
                         confirmDeleteButton.addEventListener('click', function() {
                             confirmationOverlay.style.display = 'none';
                             confirmationContainer.style.display = 'none';
+                            selectedProductId = null; // Reset the product ID
                         });
 
 
                     
 
                         // Confirm delete (set as inactive)
-                        $('.confirm-delete').on('click', function () {
-                            console.log(selectedProductId);
-
+                        confirmDeleteButton.addEventListener('click', function() {
                             if (selectedProductId) {
                                 // Send AJAX request to set the item as inactive
-                                $.ajax({
-                                    url: '../php/set_stock_inactive.php',
-                                    type: 'POST',
-                                    data: { product_id: selectedProductId },
-                                    success: function (response) {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', '../php/set_stock_inactive.php', true);
+                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === 4 && xhr.status === 200) {
                                         // Update the UI to reflect the inactive status
-                                        const menuCard = $(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
-                                        const deleteButton = menuCard.find('.btn-delete');
-                                        const returnButton = menuCard.find('.btn-return');
-                                        const editButton = menuCard.find('.btn-edit');
-                                        const addButton = menuCard.find('.btn-add');
-                                        const confirmationContainer = $('.delete-confirmation-container');
+                                        const menuCard = document.querySelector(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
+                                        const deleteButton = menuCard.querySelector('.btn-delete');
+                                        const returnButton = menuCard.querySelector('.btn-return');
+                                        const editButton = menuCard.querySelector('.btn-edit');
+                                        const addButton = menuCard.querySelector('.btn-add');
+                                        const confirmationContainer = document.querySelector('.delete-confirmation-container');
 
                                         // Hide delete button and show return button
-                                        deleteButton.hide();
-                                        returnButton.css('display', 'inline-block');
+                                        deleteButton.style.display = 'none';
+                                        returnButton.style.display = 'inline-block';
 
-                                        // Disable the edit & add buttons
-                                        editButton.css({
-                                            pointerEvents: 'none',
-                                            opacity: '0.5'
-                                        });
+                                        // Disable the edit & add button
+                                        editButton.style.pointerEvents = 'none';
+                                        editButton.style.opacity = '0.5';
 
-                                        addButton.css({
-                                            pointerEvents: 'none',
-                                            opacity: '0.5'
-                                        });
+                                        addButton.style.pointerEvents = 'none';
+                                        addButton.style.opacity = '0.5';
 
                                         // Hide confirmation popup
-                                        $('.confirmation-overlay').hide();
-                                        confirmationContainer.hide();
+                                        confirmationOverlay.style.display = 'none';
+                                        confirmationContainer.style.display = 'none';
                                         selectedProductId = null;
-                                        displaySuccessMessage(response.message);
-                                    },
-                                    error: function (xhr, status, error) {
-                                        console.error('Error:', error);
+
+                                        window.location.href = '../public/stocks_entry.php?success=Stocks item set as inactive';
                                     }
-                                });
+                                };
+                                xhr.send(`product_id=${selectedProductId}`);
                             }
                         });
-
 
                         // Show confirmation popup when return button is clicked
                         returnButtons.forEach(button => {
@@ -739,52 +737,46 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
 
                         // Confirm return (set as active)
-                        $('.return-btn').on('click', function (e) {
+                        confirmReturnButton.addEventListener('click', function(e) {
                             e.preventDefault(); // Prevent default link behavior
-
                             if (selectedProductId) {
                                 // Send AJAX request to set the item as active
-                                $.ajax({
-                                    url: '../php/set_stock_active.php',
-                                    type: 'POST',
-                                    data: { product_id: selectedProductId },
-                                    success: function (response) {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', '../php/set_stock_active.php', true);
+                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === 4 && xhr.status === 200) {
                                         // Update the UI to reflect the active status
-                                        const menuCard = $(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
-                                        const deleteButton = menuCard.find('.btn-delete');
-                                        const returnButton = menuCard.find('.btn-return');
-                                        const editButton = menuCard.find('.btn-edit');
-                                        const addButton = menuCard.find('.btn-add');
+                                        const menuCard = document.querySelector(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
+                                        const deleteButton = menuCard.querySelector('.btn-delete');
+                                        const returnButton = menuCard.querySelector('.btn-return');
+                                        const editButton = menuCard.querySelector('.btn-edit');
+                                        const addButton = menuCard.querySelector('.btn-add');
 
                                         // Show delete button and hide return button
-                                        deleteButton.css('display', 'inline-block');
-                                        returnButton.hide();
+                                        deleteButton.style.display = 'inline-block';
+                                        returnButton.style.display = 'none';
 
-                                        // Enable the edit and add buttons
-                                        editButton.css({
-                                            pointerEvents: 'auto',
-                                            opacity: '1'
-                                        });
+                                        // Enable the edit button
+                                        editButton.style.pointerEvents = 'auto';
+                                        editButton.style.opacity = '1';
 
-                                        addButton.css({
-                                            pointerEvents: 'auto',
-                                            opacity: '1'
-                                        });
+
+                                        addButton.style.pointerEvents = 'auto';
+                                        addButton.style.opacity = '1';
 
                                         // Hide return confirmation popup
-                                        $('.return-confirmation-overlay').hide();
-                                        $('.return-confirmation-container').hide();
+                                        returnOverlay.style.display = 'none';
+                                        returnContainer.style.display = 'none';
                                         selectedProductId = null;
 
-                                        displaySuccessMessage(response.message);
-                                    },
-                                    error: function (xhr, status, error) {
-                                        console.error('Error:', error);
+                                        window.location.href = '../public/stocks_entry.php?success=Stock item set as active';
                                     }
-                                });
+                                };
+                                xhr.send(`product_id=${selectedProductId}`);
+                                
                             }
                         });
-
                     });
                     </script>
                 </div>
