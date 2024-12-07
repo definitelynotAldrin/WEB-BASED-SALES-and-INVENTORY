@@ -266,7 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 unset($_SESSION['order_details']);
                 echo json_encode(['status' => 'success', 'message' => 'Order placed successfully.']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'No items in order - non existing order_id.']);
+                echo json_encode(['status' => 'error', 'message' => 'No items in order']);
             }
         }        
     } else {

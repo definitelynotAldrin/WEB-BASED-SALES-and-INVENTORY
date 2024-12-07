@@ -1314,6 +1314,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 $('.role-verification').fadeOut();
                                 $('.popup-table-container').fadeOut();
                                 $('.delete-account-popup').fadeOut();
+                                $('.update-tables-popup').fadeOut();
                                 
                             });
 
@@ -1340,6 +1341,60 @@ document.addEventListener("DOMContentLoaded", function() {
                             $('.button-cancel').off('click').on('click', function(e) {
                                 e.preventDefault(); // Prevent default link behavior
                                 $('.popup-confirmation-container').fadeOut();
+                            });
+                        });
+
+                        $(document).on('click', '.manage-tables', function(e) {
+                                e.preventDefault();
+                                $('.update-tables-popup').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
+                        });
+
+                        $(document).ready(function () {
+                            // Fetch and Populate Table Numbers
+                            function fetchTables() {
+                                $.ajax({
+                                    url: "../php/get_table_numbers_count.php", // PHP file to fetch table count
+                                    method: "GET",
+                                    dataType: "json",
+                                    success: function (data) {
+                                        // Update the input field with the total table count
+                                        $('#current-table').val(data.table); 
+                                    },
+                                    error: function (error) {
+                                        console.error("Error fetching table count:", error);
+                                    }
+                                });
+                            }
+
+
+                            // Initial Fetch
+                            fetchTables();
+
+                            // Add Table
+                            $(".numberIncrease").click(function () {
+                                $.ajax({
+                                    url: "../php/update_table_numbers.php",
+                                    method: "POST",
+                                    data: { action: "add" },
+                                    success: function (response) {
+                                        // displaySuccessMessage(response);
+                                        fetchTables();
+                                    }
+                                });
+                            });
+
+                            // Remove Table
+                            $(".numberDecrease").click(function () {
+                                $.ajax({
+                                    url: "../php/update_table_numbers.php",
+                                    method: "POST",
+                                    data: { action: "remove" },
+                                    success: function (response) {
+                                        // displaySuccessMessage(response);
+                                        fetchTables();
+                                    }
+                                });
                             });
                         });
 
@@ -1491,11 +1546,39 @@ document.addEventListener("DOMContentLoaded", function() {
                             <h3>manage Account</h3>
                             <i class="fa-solid fa-angle-right"></i>
                         </div>
+                        <div class="settings-groups manage-tables">
+                            <h3>manage tables</h3>
+                            <i class="fa-solid fa-angle-right"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="settings-popup-overlay"></div>
+
+              <!-- ----------------------- Change Email Popup ---------------------- -->
+
+            <div class="settings-popup-container update-tables-popup">
+                <div class="settings-popup-content">
+                    <div class="settings-popup-header">
+                        <div class="header-authentication">
+                            <h1 class="update-tables-title">Manage Table</h1>
+                            <i class="fa-regular fa-circle-xmark popup-close-button"></i>
+                        </div>
+                    </div>
+                    <div class="settings-popup-form">
+                        <div class="settings-popup-form-group table-number-group">
+                            <i class="fa-regular fa-square-minus numberDecrease"></i>
+                            <input type="number" id="current-table" disabled>
+                            <i class="fa-regular fa-square-plus numberIncrease"></i>
+                        </div>
+                        <!-- <div class="settings-popup-button">
+                            <i class="fa-regular fa-square-minus numberDecrease"></i>
+                            <i class="fa-regular fa-square-plus numberIncrease"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
 
             <!-- ----------------------- Change Email Popup ---------------------- -->
 

@@ -789,70 +789,70 @@ document.addEventListener("DOMContentLoaded", function() {
                             // Show the confirmation popup
                             $('.popup-confirmation-container').fadeIn();
                             $('.popup-overlay').fadeIn();
+                        });
 
-                            // When the confirm button in the popup is clicked
-                            $('.btnConfirm').on('click', function(e) {
-                                e.preventDefault();  // Prevent any default behavior of the button
+                        // Attach the confirm button click handler only once
+                        $('.btnConfirm').off('click').on('click', function(e) {
+                            e.preventDefault(); // Prevent any default behavior of the button
 
-                                // Gather customer data
-                                const customerData = {
-                                    customer_name: $('#customer-name').val(),
-                                    customer_note: $('#customer-note').val(),
-                                    customer_table: $('#customer-table').val(),
-                                    hidden_order_id:  $('#order-id').val(),
-                                    username: $('#account_username').val()
-                                };
+                            // Gather customer data
+                            const customerData = {
+                                customer_name: $('#customer-name').val(),
+                                customer_note: $('#customer-note').val(),
+                                customer_table: $('#customer-table').val(),
+                                hidden_order_id: $('#order-id').val(),
+                                username: $('#account_username').val()
+                            };
 
-                                console.log(customerData);
+                            console.log(customerData);
 
-                                // Send AJAX request to save customer info
-                                $.ajax({
-                                    url: '../php/add_orders.php', // Your PHP file
-                                    type: 'POST',
-                                    data: customerData,
-                                    success: function(response) {
-                                        // Log the entire response object for debugging
-                                        console.log(JSON.stringify(response));
+                            // Send AJAX request to save customer info
+                            $.ajax({
+                                url: '../php/add_orders.php', // Your PHP file
+                                type: 'POST',
+                                data: customerData,
+                                success: function(response) {
+                                    // Log the entire response object for debugging
+                                    console.log(JSON.stringify(response));
 
-                                        // Check if response is successful
-                                        if (response.status === 'success') {
-                                            displaySuccessMessage(response.message);
+                                    // Check if response is successful
+                                    if (response.status === 'success') {
+                                        displaySuccessMessage(response.message);
 
-                                            // Clear customer data fields
-                                            $('#customer-name').val('');
-                                            $('#customer-note').val('');
-                                            $('#customer-table').val('');
-                                            $('#order-id').val('');
+                                        // Clear customer data fields
+                                        $('#customer-name').val('');
+                                        $('#customer-note').val('');
+                                        $('#customer-table').val('');
+                                        $('#order-id').val('');
 
-                                            // Update the order summary or take any action for success here
-                                            updateOrderSummary();
-                                            updateTable();
-                                        } else {
-                                            // Handle error case
-                                            displayErrorMessage(response.message);
-                                        }
-
-                                        // Hide the popup after order is confirmed
-                                        $('.popup-confirmation-container').fadeOut();
-                                        $('.popup-overlay').fadeOut();
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.log('Error submitting customer info: ' + error); // Handle error
-                                        // Hide the popup in case of an error as well
-                                        $('.popup-confirmation-container').fadeOut();
-                                        $('.popup-overlay').fadeOut();
+                                        // Update the order summary or take any action for success here
+                                        updateOrderSummary();
+                                        updateTable();
+                                    } else {
+                                        // Handle error case
+                                        displayErrorMessage(response.message);
                                     }
-                                });
-                            });
 
-                            // Handle cancel button in the popup
-                            $('.btnCancel').on('click', function(e) {
-                                e.preventDefault();  // Prevent default behavior
-                                // Hide the popup if the user cancels
-                                $('.popup-confirmation-container').fadeOut();
-                                $('.popup-overlay').fadeOut();
+                                    // Hide the popup after order is confirmed
+                                    $('.popup-confirmation-container').fadeOut();
+                                    $('.popup-overlay').fadeOut();
+                                },
+                                error: function(xhr, status, error) {
+                                    console.log('Error submitting customer info: ' + error); // Handle error
+                                    // Hide the popup in case of an error as well
+                                    $('.popup-confirmation-container').fadeOut();
+                                    $('.popup-overlay').fadeOut();
+                                }
                             });
                         });
+
+                            // Handle cancel button in the popup
+                        $('.btnCancel').on('click', function() {
+                            $('.popup-confirmation-container').fadeOut();
+                            $('.popup-overlay').fadeOut();
+                            $('#customer-name, #customer-note, #customer-table').val('');
+                        });
+                        
                     });
 
 
@@ -1209,12 +1209,12 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group table-number-field">
-                                    <i class="fa-regular fa-square-minus numberDecrease"></i>
+                                    <!-- <i class="fa-regular fa-square-minus numberDecrease"></i> -->
                                     <select name="customer_table" id="customer-table">
                                         <option value="" hidden>Customer Table</option>
                                         <option value="occupied_table" id="occupied_table" hidden>Already have a table!</option>
                                     </select>
-                                    <i class="fa-regular fa-square-plus numberIncrease"></i>
+                                    <!-- <i class="fa-regular fa-square-plus numberIncrease"></i> -->
                                 </div>
                                 <button class="btnTable">tables availability</button>
                             </div>
@@ -1224,10 +1224,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <span>proceed to kitchen</span>
                                     <i class="fa-solid fa-arrow-right-long"></i>
                                 </button>
-                                <!-- <button type="button" id="standByOrder" name="standByOrder">
-                                    <span>stand by order</span>
-                                    <i class="fa-solid fa-arrow-right-long"></i>
-                                </button> -->
                             </div>
                         </div>
                     </div>

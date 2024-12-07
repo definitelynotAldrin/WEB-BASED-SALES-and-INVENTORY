@@ -252,7 +252,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             fetchLowStockItems();
 
                             // Optional: Set interval to refresh the notifications periodically
-                            setInterval(fetchLowStockItems, 3000); // Refresh every 30 seconds
+                            setInterval(fetchLowStockItems, 10000); // Refresh every 30 seconds
                         });
 
                         $(document).ready(function() {

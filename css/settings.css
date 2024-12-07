@@ -462,7 +462,7 @@
 
 
 .settings-container{
-    height: 85%;
+    height: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -589,8 +589,22 @@
 
 .change-email-popup,
 .change-username-popup,
-.change-password-popup{
+.change-password-popup,
+.update-tables-popup{
     z-index: 4;
+}
+
+.update-tables-popup{
+    width: 35vh;
+    border-radius: 6px;
+    padding-bottom: 20px;
+    padding-top: 25px;
+}
+
+.update-tables-popup .popup-close-button{
+    position: absolute;
+    top: 7px;
+    right: 7px;
 }
 
 .settings-popup-content{
@@ -610,7 +624,11 @@
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
-    
+}
+
+.update-tables-title{
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .header-authentication i{
@@ -633,11 +651,38 @@
     position: relative;
 }
 
+.table-number-group{
+    flex-direction: row;
+    align-items: center;
+}
+
+
 .settings-popup-form-group input{
     padding: 1rem 0.5rem;
     border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 12px;
     outline: none;
+}
+
+.table-number-group input{
+    width: 100%;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.table-number-group i{
+    font-size: 2rem;
+}
+
+.table-number-group .numberDecrease{
+    color: var(--red);
+}
+
+.table-number-group .numberIncrease{
+    color: var(--light-green);
 }
 
 .settings-popup-form-group input:focus{

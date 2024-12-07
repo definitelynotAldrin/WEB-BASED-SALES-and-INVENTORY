@@ -674,71 +674,83 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
 
                     $(document).on('click', '.button-credit', function() {
-                        // Get the order_id from the hidden input field
-                        const orderId = $('#credit-order-id').val();
-                        const totalAmount = $('#credit-total-amount').val();
-                        const creditNote = $('#credit-note').val();
-                        const paymentStatus = 'credit';
-                        const username = $('#account_username').val();
-
-                        // Log the data to console for debugging
-                        console.log("Order ID:", orderId);
-                        
-
+                        // Show the confirmation popup
+                        $('.popup-confirmation-container').fadeIn();
+                        $('.popup-overlay').fadeIn().css('pointer-events', 'none');
                         $('#question').text('Are you sure you want to save this order as credit?');
-                        $('.popup-confirmation-container').fadeIn(); // Show the popup
-                        $('.popup-overlay').fadeIn();
-                        $('.popup-overlay').css('pointer-events', 'none');
+                    });
 
-                        $('.btnConfirm').off('click').on('click', function(e) {
-                            e.preventDefault(); // Prevent default link behavior
+                    // Attach the confirm button click handler only once
+                    $('.btnConfirm').off('click').on('click', function(e) {
+                        e.preventDefault(); // Prevent default behavior
 
-                            // Send the payment data via AJAX to save
-                            $.ajax({
-                                url: '../php/save_payment_as_credit.php',
-                                type: 'POST',
-                                dataType: 'json', // Specify that the response should be JSON
-                                data: {
-                                    order_id: orderId,
-                                    total_amount: totalAmount,
-                                    credit_note: creditNote,
-                                    payment_status: paymentStatus,
-                                    username: username
-                                },
-                                success: function(response) {
-                                    if (response.status === 'success') {
-                                        displaySuccessMessage('Order successfully saved as credit!');
-                                        $('.popup-settlement-credit').fadeOut();
-                                        $('.popup-confirmation-container').fadeOut();
-                                        $('.popup-overlay').fadeOut();
-                                        fetchOrders();
-                                        fetchSettledOrders();
-                                        $('#credit-note').val('');
-                                        const orderId = $('#credit-order-id').val();
-                                        window.location.href = `../reports/invoice_credit.php?order_id=${orderId}`;
-                                    } else {
-                                        displayErrorMessage(response.message);
-                                        $('.popup-confirmation-container').fadeOut();
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    // This will help debug any server errors
-                                    console.log("AJAX Error:", error);
-                                    displayErrorMessage('An unexpected error occurred.');
-                                    $('.popup-confirmation-container').fadeOut();
+                        // Disable the confirm button to avoid multiple clicks
+                        $('.btnConfirm').prop('disabled', true);
+
+                        // Gather credit payment data
+                        const creditData = {
+                            order_id: $('#credit-order-id').val(),
+                            total_amount: $('#credit-total-amount').val(),
+                            credit_note: $('#credit-note').val(),
+                            payment_status: 'credit',
+                            username: $('#account_username').val()
+                        };
+
+                        console.log(creditData); // Log data for debugging
+
+                        // Send AJAX request to save credit payment
+                        $.ajax({
+                            url: '../php/save_payment_as_credit.php',
+                            type: 'POST',
+                            data: creditData,
+                            dataType: 'json', // Expect a JSON response
+                            success: function(response) {
+                                // Re-enable the confirm button
+                                $('.btnConfirm').prop('disabled', false);
+
+                                console.log(response); // Log the response for debugging
+
+                                if (response.status === 'success') {
+                                    displaySuccessMessage('Order successfully saved as credit!');
+                                    
+                                    // Clear input fields
+                                    $('#credit-note').val('');
+
+                                    // Update relevant data and UI
+                                    fetchOrders();
+                                    fetchSettledOrders();
+
+                                    // Redirect to the credit invoice report
+                                    const orderId = creditData.order_id;
+                                    window.location.href = `../reports/invoice_credit.php?order_id=${orderId}`;
+                                } else {
+                                    displayErrorMessage(response.message); // Handle server-side error
                                 }
-                            });
 
+                                // Hide the popup
+                                $('.popup-confirmation-container').fadeOut();
+                                $('.popup-overlay').fadeOut();
+                            },
+                            error: function(xhr, status, error) {
+                                // Re-enable the confirm button
+                                $('.btnConfirm').prop('disabled', false);
+
+                                console.error('AJAX Error:', error); // Log the error for debugging
+                                displayErrorMessage('An unexpected error occurred.');
+
+                                // Hide the popup on error
+                                $('.popup-confirmation-container').fadeOut();
+                                $('.popup-overlay').fadeOut();
+                            }
                         });
+                    });
 
-                        // Handle cancellation (no button)
-                        $('.btnCancel').off('click').on('click', function(e) {
-                            e.preventDefault(); // Prevent default link behavior
-                            // Hide the popup if "no" is clicked
-                            $('.popup-confirmation-container').fadeOut();
-                            $('.popup-overlay').css('pointer-events', 'auto');
-                        });
+                    $('.btnCancel').off('click').on('click', function(e) {
+                        e.preventDefault(); // Prevent default behavior
 
+                        // Hide the confirmation popup
+                        $('.popup-confirmation-container').fadeOut();
+                        $('.popup-overlay').fadeOut().css('pointer-events', 'auto');
                     });
 
 
