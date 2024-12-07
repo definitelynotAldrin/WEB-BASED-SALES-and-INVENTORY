@@ -647,7 +647,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                         $('#cash-tendered').val(''); 
                                         $('#discounted-amount').val('')
                                         const orderId = $('#order-id').val();
-                                        window.location.href = `../reports/invoice.php?order_id=${orderId}`;
+                                        setTimeout(() => {
+                                            window.open(`../reports/invoice.php?order_id=${orderId}`, '_blank');
+                                        }, 2000);
                                     } else {
                                         displayErrorMessage(response.message);
                                         $('.popup-confirmation-container').fadeOut();
@@ -712,6 +714,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                 if (response.status === 'success') {
                                     displaySuccessMessage('Order successfully saved as credit!');
+                                    $('.popup-settlement-credit').fadeOut();
                                     
                                     // Clear input fields
                                     $('#credit-note').val('');
@@ -722,7 +725,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                     // Redirect to the credit invoice report
                                     const orderId = creditData.order_id;
-                                    window.location.href = `../reports/invoice_credit.php?order_id=${orderId}`;
+                                    setTimeout(() => {
+                                        window.open(`../reports/invoice_credit.php?order_id=${orderId}`, '_blank');
+                                    }, 2000);
                                 } else {
                                     displayErrorMessage(response.message); // Handle server-side error
                                 }
@@ -1348,12 +1353,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                             $('.table-body').empty();
                                             $('.total-section .total-field span').html("");
                                             $('.total-section .payment-field:first-of-type span').text("");
-                                            $('#customer_note').text("");
+                                            $('#customer_note').val("");
                                             $('.popup-confirmation-container').fadeOut();
                                             $('.popup-overlay').fadeOut();
 
                                             const orderIds = selectedOrderIds.join(','); // Join all selected order IDs into a comma-separated string
-                                            window.location.href = `../reports/invoice_credit_payment.php?order_ids=${orderIds}`;
+                                            setTimeout(() => {
+                                                window.open(`../reports/invoice_credit_payment.php?order_ids=${orderIds}`, '_blank');
+                                            }, 2000);
                                         } else {
                                             displayErrorMessage(response.message);
                                         }
