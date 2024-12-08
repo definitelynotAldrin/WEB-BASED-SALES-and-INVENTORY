@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
-                                console.log(username, user_role)
+                                // console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;
@@ -478,7 +478,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 $(document).on('click', '.customers-cards', function() {
                     var orderId = $(this).data('order-id'); // Get the order ID from the clicked card
-                    console.log(orderId); 
+                    // console.log(orderId); 
                     // AJAX request to fetch the order details
                     $.ajax({
                         url: '../php/fetch_order_log_details.php', // PHP script to handle fetching order details

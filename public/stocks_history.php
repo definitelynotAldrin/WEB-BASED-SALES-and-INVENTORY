@@ -300,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
-                                console.log(username, user_role)
+                                // console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;

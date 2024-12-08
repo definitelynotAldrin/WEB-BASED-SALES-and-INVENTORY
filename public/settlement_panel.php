@@ -298,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
-                                console.log(username, user_role)
+                                // console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;
@@ -417,14 +417,14 @@ document.addEventListener("DOMContentLoaded", function() {
                             data: { order_id: orderId }, // Pass the order ID
                             dataType: 'json',
                             success: function(response) {
-                                console.log(JSON.stringify(response)); // Debugging log
+                                // console.log(JSON.stringify(response)); // Debugging log
                             
 
                                 if (response.success) {
 
                                     $('#order-id').val(orderId); // Set the value of the hidden input
 
-                                    console.log(orderId);
+                                    // console.log(orderId);
                                     // Show the popup
                                     $('.popup-settlement-paid').fadeIn();
                                     $('.popup-overlay').fadeIn();
@@ -533,14 +533,14 @@ document.addEventListener("DOMContentLoaded", function() {
                             data: { order_id: orderId }, // Pass the order ID
                             dataType: 'json',
                             success: function(response) {
-                                console.log(JSON.stringify(response)); // Debugging log
+                                // console.log(JSON.stringify(response)); // Debugging log
                             
 
                                 if (response.success) {
 
                                     $('#credit-order-id').val(orderId); // Set the value of the hidden input
 
-                                    console.log(orderId);
+                                    // console.log(orderId);
                                     // Show the popup
                                     $('.popup-settlement-credit').fadeIn();
                                     $('.popup-overlay').fadeIn();
@@ -604,13 +604,13 @@ document.addEventListener("DOMContentLoaded", function() {
                         const username = $('#account_username').val();
 
                         // Log the data to console for debugging
-                        console.log("Order ID:", orderId);
-                        console.log("Total Amount:", totalAmount);
-                        console.log("Discounted Amount:", discountedAmount);
-                        console.log("Cash Tendered:", cashTendered);
-                        console.log("Change Due:", changeDue);
-                        console.log("Account username:", username);
-                        console.log(discount_type)
+                        // console.log("Order ID:", orderId);
+                        // console.log("Total Amount:", totalAmount);
+                        // console.log("Discounted Amount:", discountedAmount);
+                        // console.log("Cash Tendered:", cashTendered);
+                        // console.log("Change Due:", changeDue);
+                        // console.log("Account username:", username);
+                        // console.log(discount_type)
 
                         $('#question').text('Are you sure settling this order?');
                         $('.popup-confirmation-container').fadeIn(); // Show the popup
@@ -698,7 +698,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             username: $('#account_username').val()
                         };
 
-                        console.log(creditData); // Log data for debugging
+                        // console.log(creditData); // Log data for debugging
 
                         // Send AJAX request to save credit payment
                         $.ajax({
@@ -710,7 +710,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 // Re-enable the confirm button
                                 $('.btnConfirm').prop('disabled', false);
 
-                                console.log(response); // Log the response for debugging
+                                // console.log(response); // Log the response for debugging
 
                                 if (response.status === 'success') {
                                     displaySuccessMessage('Order successfully saved as credit!');
@@ -1307,12 +1307,12 @@ document.addEventListener("DOMContentLoaded", function() {
                             const groupId = generateRandomString(8);
 
                             // Log to console for debugging
-                            console.log("Selected Order IDs:", selectedOrderIds);
-                            console.log("Total Amount (Credit):", totalAmountCredit);
-                            console.log("Cash Tendered (Credit):", cashTenderedCredit);
-                            console.log("Change Due (Credit):", changeDueCredit);
-                            console.log("Account username:", username);
-                            console.log("Generated Group ID:", groupId);
+                            // console.log("Selected Order IDs:", selectedOrderIds);
+                            // console.log("Total Amount (Credit):", totalAmountCredit);
+                            // console.log("Cash Tendered (Credit):", cashTenderedCredit);
+                            // console.log("Change Due (Credit):", changeDueCredit);
+                            // console.log("Account username:", username);
+                            // console.log("Generated Group ID:", groupId);
 
                             if (selectedOrderIds.length === 0) {
                                 displayErrorMessage("Please select at least one order to proceed.");

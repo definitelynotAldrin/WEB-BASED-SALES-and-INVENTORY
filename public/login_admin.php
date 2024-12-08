@@ -133,6 +133,8 @@
                             // Hide the popup if "no" is clicked
                             $('.security-confirmation').fadeOut(); // Show the popup
                             $('.settings-popup-overlay').fadeOut();
+                            $('#email').val('');
+                            $('#username').val('');
                         });
                     });
                 });

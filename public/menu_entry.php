@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
-                                console.log(username, user_role)
+                                // console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;
@@ -608,7 +608,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             e.preventDefault();
 
                             const account_id = $(this).data("account-id");
-                            console.log(account_id);
+                            // console.log(account_id);
                             $(".delete-confirmation-container").fadeIn();
                             $(".delete-confirmation-overlay").fadeIn();
                             $("#question").text("Are you sure you want to delete this menu?");

@@ -260,8 +260,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                 $('.popup-confirmation-container').fadeIn();
                                 $('#question').text(`Are you sure you want to set this account name ${username.toUpperCase()} as active?`);
 
-                                console.log(username);
-                                console.log(account_id);
+                                // console.log(username);
+                                // console.log(account_id);
 
                                 $('.button-confirm').off('click').on('click', function(e) {
                                     $.ajax({
@@ -300,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                     const account_id = $(this).data('account-id');
                                     const username = "<?php echo $username; ?>";
-                                    console.log(account_id);
+                                    // console.log(account_id);
 
                                     $('.popup-confirmation-container').fadeIn();
                                     $('#question').text('Are you sure you want set this account as inactive?');
@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                     const account_id = $(this).data('account-id');
                                     const username = "<?php echo $username; ?>";
-                                    console.log(account_id);
+                                    // console.log(account_id);
 
                                     $('.popup-confirmation-container').fadeIn();
                                     $('#question').text('Are you sure you want to delete this account?');
@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 e.preventDefault();
 
                                 const security_code = $('#security-code-status').val();
-                                console.log(security_code);
+                                // console.log(security_code);
 
                                 $.ajax({
                                     url: '../php/security_code_verification_account_status.php',
@@ -413,7 +413,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 e.preventDefault();
 
                                 const security_code = $('#security-code-deletion').val();
-                                console.log(security_code);
+                                // console.log(security_code);
 
                                 $.ajax({
                                     url: '../php/security_code_verification_account_deletion.php',
@@ -554,9 +554,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         const email = $('#email-credential-password').val();
                                         const username = $('#username-credential-password').val();
-                                        console.log(user_role);
-                                        console.log(email);
-                                        console.log(username);
+                                        // console.log(user_role);
+                                        // console.log(email);
+                                        // console.log(username);
                                         displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
@@ -611,9 +611,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         const email = $('#email-credential-password').val();
                                         const username = $('#username-credential-password').val();
-                                        console.log(user_role);
-                                        console.log(email);
-                                        console.log(username);
+                                        // console.log(user_role);
+                                        // console.log(email);
+                                        // console.log(username);
                                         displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
@@ -668,9 +668,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         const email = $('#email-credential-password').val();
                                         const username = $('#username-credential-password').val();
-                                        console.log(user_role);
-                                        console.log(email);
-                                        console.log(username);
+                                        // console.log(user_role);
+                                        // console.log(email);
+                                        // console.log(username);
                                         displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
@@ -709,7 +709,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 e.preventDefault();
 
                                 const security_code = $('#security-code-password').val();
-                                console.log(security_code);
+                                // console.log(security_code);
 
                                 $.ajax({
                                     url: '../php/security_code_verification_password.php',
@@ -748,7 +748,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 const retype_password = $('#retype-new-password').val();
                                 const account_id = $('#update-password-id').val();
 
-                                console.log(account_id);
+                                // console.log(account_id);
 
 
                                 if (!current_password || !new_password || !retype_password) {
@@ -834,9 +834,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         const email = $('#email-credential-username').val();
                                         const username = $('#username-credential-username').val();
-                                        console.log(user_role);
-                                        console.log(email);
-                                        console.log(username);
+                                        // console.log(user_role);
+                                        // console.log(email);
+                                        // console.log(username);
                                         displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
@@ -891,9 +891,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         const email = $('#email-credential-username').val();
                                         const username = $('#username-credential-username').val();
-                                        console.log(user_role);
-                                        console.log(email);
-                                        console.log(username);
+                                        // console.log(user_role);
+                                        // console.log(email);
+                                        // console.log(username);
                                         displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
@@ -947,9 +947,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         const email = $('#email-credential-username').val();
                                         const username = $('#username-credential-username').val();
-                                        console.log(user_role);
-                                        console.log(email);
-                                        console.log(username);
+                                        // console.log(user_role);
+                                        // console.log(email);
+                                        // console.log(username);
                                         displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
@@ -988,7 +988,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 e.preventDefault();
 
                                 const security_code = $('#security-code-username').val();
-                                console.log(security_code);
+                                // console.log(security_code);
 
                                 $.ajax({
                                     url: '../php/security_code_verification_username.php',
@@ -1025,7 +1025,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 const curr_password = $('#username-current-password').val();
                                 const account_id = $('#update-username-id').val();
 
-                                console.log(account_id);
+                                // console.log(account_id);
 
                                 $('.popup-confirmation-container').fadeIn();
                                 $('#question').text('Are you sure you continue?');
@@ -1086,9 +1086,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         const email = $('#email-credential').val();
                                         const username = $('#username-credential').val();
-                                        console.log(user_role);
-                                        console.log(email);
-                                        console.log(username);
+                                        // console.log(user_role);
+                                        // console.log(email);
+                                        // console.log(username);
                                         displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
@@ -1144,9 +1144,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         const email = $('#email-credential').val();
                                         const username = $('#username-credential').val();
-                                        console.log(user_role);
-                                        console.log(email);
-                                        console.log(username);
+                                        // console.log(user_role);
+                                        // console.log(email);
+                                        // console.log(username);
                                         displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
@@ -1203,9 +1203,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                                         const email = $('#email-credential').val();
                                         const username = $('#username-credential').val();
-                                        console.log(user_role);
-                                        console.log(email);
-                                        console.log(username);
+                                        // console.log(user_role);
+                                        // console.log(email);
+                                        // console.log(username);
                                         displaySuccessMessage('Please wait for response.');
 
                                         $.ajax({
@@ -1245,7 +1245,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 e.preventDefault();
 
                                 const security_code = $('#security-code').val();
-                                console.log(security_code);
+                                // console.log(security_code);
 
                                 $.ajax({
                                     url: '../php/security_code_verification.php',
@@ -1444,7 +1444,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
-                                console.log(username, user_role)
+                                // console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;

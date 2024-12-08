@@ -110,6 +110,8 @@
                                         displaySuccessMessage(response.message); // Use the success message
                                         $('#email').val('');
                                         $('#username').val('');
+                                        $('.security-confirmation').fadeOut();
+                                        $('.settings-popup-overlay').fadeOut();
                                     } else {
                                         displayErrorMessage('Verification failed: ' + response.error);
                                     }
@@ -120,8 +122,6 @@
                             });
 
                             // Hide the popup after confirming
-                            $('.security-confirmation').fadeOut();
-                            $('.settings-popup-overlay').fadeOut();
                         });
                         
                         // Handle cancellation (no button)
@@ -130,6 +130,8 @@
                             // Hide the popup if "no" is clicked
                             $('.security-confirmation').fadeOut(); // Show the popup
                             $('.settings-popup-overlay').fadeOut();
+                            $('#email').val('');
+                            $('#username').val('');
                         });
                     });
                 });

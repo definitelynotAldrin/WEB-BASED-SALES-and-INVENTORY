@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
-                                console.log(username, user_role)
+                                // console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;
@@ -549,8 +549,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         var orderDetailId = $(this).data('detail-id');
                         var orderId = $(this).data('order-id');
 
-                        console.log(orderDetailId);
-                        console.log(orderId);
+                        // console.log(orderDetailId);
+                        // console.log(orderId);
                         $('#question').text('Are you sure you want to cancel this item?');
                         $('.popup-confirmation-container').fadeIn();
                         $('.popup-overlay').fadeIn();
@@ -719,7 +719,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 $(document).on('click', '#cancel-order-button', function() {
                     var orderId = $(this).data('order-id');
 
-                    console.log(orderId);
+                    // console.log(orderId);
                     $('#question').text('Are you sure you want to cancel this order?');
                     $('.popup-confirmation-container').fadeIn(); // Show the popup
                     $('.popup-overlay').fadeIn();

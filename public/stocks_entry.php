@@ -290,7 +290,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
-                                console.log(username, user_role)
+                                // console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;
@@ -676,7 +676,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         // Confirm delete (set as inactive)
                         $('.confirm-delete').on('click', function () {
-                            console.log(selectedProductId);
+                            // console.log(selectedProductId);
 
                             if (selectedProductId) {
                                 // Send AJAX request to set the item as inactive

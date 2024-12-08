@@ -125,7 +125,7 @@ if (strtotime($user["reset_token_expires_at"]) <= time()) {
                             const repeat_password = $('#repeat-password').val();
                             const token = $('#token').val();
 
-                            console.log(token);
+                            // console.log(token);
 
                             $.ajax({
                                 url: '../php/process_reset_password.php',

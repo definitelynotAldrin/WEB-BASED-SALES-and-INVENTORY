@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 var user_role = "<?php echo $user_role; ?>";
                                 var textMessage = $('#message-input').val();
 
-                                console.log(username, user_role)
+                                // console.log(username, user_role)
                                 if (textMessage.trim() === "") {
                                     displayErrorMessage("Please enter a message.");
                                     return;
@@ -567,10 +567,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
                             $('#kilograms-popup .btn-proceed').on('click', function() {
                                 const quantity = selectedQuantity || parseFloat($('#custom_kg').val());
-                                console.log("Selected Quantity: ", quantity); // Check quantity
-                                console.log("Selected Menu ID: ", selectedMenuId); // Check menu ID
-                                console.log("Selected Menu Name: ", selectedMenuName); // Check menu name
-                                console.log("Selected Menu Price: ", selectedMenuPrice); // Check menu price
+                                // console.log("Selected Quantity: ", quantity); // Check quantity
+                                // console.log("Selected Menu ID: ", selectedMenuId); // Check menu ID
+                                // console.log("Selected Menu Name: ", selectedMenuName); // Check menu name
+                                // console.log("Selected Menu Price: ", selectedMenuPrice); // Check menu price
 
                                 if (quantity && selectedMenuId && selectedMenuName && ItemCategory) {
                                     const orderData = {
@@ -580,7 +580,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         menu_price: selectedMenuPrice,
                                         menu_category: ItemCategory,
                                     };
-                                    console.log("Order Data: ", orderData); // Check order data----------------
+                                    // console.log("Order Data: ", orderData); 
 
                                     $.ajax({
                                         url: '../php/add_order_detail.php',
@@ -804,7 +804,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 username: $('#account_username').val()
                             };
 
-                            console.log(customerData);
+                            // console.log(customerData);
 
                             // Send AJAX request to save customer info
                             $.ajax({
@@ -813,7 +813,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 data: customerData,
                                 success: function(response) {
                                     // Log the entire response object for debugging
-                                    console.log(JSON.stringify(response));
+                                    // console.log(JSON.stringify(response));
 
                                     // Check if response is successful
                                     if (response.status === 'success') {
@@ -983,7 +983,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     type: 'POST',
                                     dataType: 'json',
                                     success: function(response) {
-                                        console.log(JSON.stringify(response));
+                                        // console.log(JSON.stringify(response));
 
                                         if (response.status === 'success') {
                                             const tbody = $('.table-orders-container tbody');
