@@ -398,21 +398,21 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group total-field">
                                     <h3>order status</h3>
-                                    <span></span>
+                                    <span class="order-status"></span>
                                 </div>
                                 <div class="card-bottom-group total-field">
                                     <h3>total</h3>
-                                    <span></span>
-                                </div>
-                                <div class="card-bottom-group">
-                                    <h3>Payment Status</h3>
-                                    <span class="payment-status"></span>
+                                    <span class="total-amount"></span>
                                 </div>
                             </div>
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group note-field">
                                     <h3>note</h3>
                                     <textarea name="" id="customer_note" disabled></textarea>
+                                </div>
+                                <div class="card-bottom-group">
+                                    <h3>Payment Status</h3>
+                                    <span class="payment-status"></span>
                                 </div>
                             </div>
                             <div class="card-bottom-groups">
@@ -516,8 +516,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                 });
 
                                 // Update total, order status, and note
-                                $('.total-section .total-field span').html(`&#8369; ${response.total_amount}`);
-                                $('.total-section .total-field:first-of-type span').text(response.order_status);
+                                $('.total-amount').html(`&#8369; ${response.total_amount}`);
+                                $('.order-status').text(response.order_status);
                                 $('#customer_note').val(response.customer_note);
                             } else {
                                 displayErrorMessage('Error fetching order details');
