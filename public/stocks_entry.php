@@ -469,7 +469,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             style="<?php echo ($row['stock_status'] === 'inactive') ? 'pointer-events: none; opacity: 0.5;' : ''; ?>"></i>
 
                                             <!-- Delete button (only show if active) -->
-                                            <i class="fa-regular fa-trash-can btn-delete" 
+                                            <i class="fa-regular fa-eye-slash btn-inactive" 
                                             data-product-id="<?php echo $row['stock_id']; ?>" 
                                             style="<?php echo ($row['stock_status'] === 'inactive') ? 'display: none;' : ''; ?>"></i>
 
@@ -477,6 +477,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <i class="fa-solid fa-rotate-left btn-return" 
                                             data-product-id="<?php echo $row['stock_id']; ?>" 
                                             style="<?php echo ($row['stock_status'] === 'active') ? 'display: none;' : ''; ?>"></i>
+
+                                            <i class="fa-regular fa-trash-can btn-delete"
+                                            data-product-id="<?php echo $row['stock_id']; ?>" 
+                                            style="<?php echo ($row['stock_status'] === 'inactive') ? 'pointer-events: none; opacity: 0.5;' : ''; ?>"></i>
                                         </div>
                                     </div>
 
@@ -635,10 +639,10 @@ document.addEventListener("DOMContentLoaded", function() {
         <!-- --------------------------Set Status for stock------------------------ -->
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
-                        const deleteButtons = document.querySelectorAll('.btn-delete');
+                        const deleteButtons = document.querySelectorAll('.btn-inactive');
                         const returnButtons = document.querySelectorAll('.btn-return');
                         const confirmationOverlay = document.querySelector('.delete-confirmation-overlay');
-                        const confirmationContainer = document.querySelector('.delete-confirmation-container');
+                        const confirmationContainer = document.querySelector('.inactivity-confirmation');
                         const confirmDeleteButton = document.querySelector('.confirm-delete');
                         const confirmCancelButton = document.querySelector('.confirm-cancel');
                         const closePopup = document.querySelectorAll('.btn-close');
@@ -687,11 +691,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                     success: function (response) {
                                         // Update the UI to reflect the inactive status
                                         const menuCard = $(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
-                                        const deleteButton = menuCard.find('.btn-delete');
+                                        const deleteButton = menuCard.find('.btn-inactive');
                                         const returnButton = menuCard.find('.btn-return');
                                         const editButton = menuCard.find('.btn-edit');
                                         const addButton = menuCard.find('.btn-add');
-                                        const confirmationContainer = $('.delete-confirmation-container');
+                                        const confirmationContainer = $('.inactivity-confirmation');
 
                                         // Hide delete button and show return button
                                         deleteButton.hide();
@@ -751,7 +755,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     success: function (response) {
                                         // Update the UI to reflect the active status
                                         const menuCard = $(`[data-product-id="${selectedProductId}"]`).closest('.menu-cards');
-                                        const deleteButton = menuCard.find('.btn-delete');
+                                        const deleteButton = menuCard.find('.btn-inactive');
                                         const returnButton = menuCard.find('.btn-return');
                                         const editButton = menuCard.find('.btn-edit');
                                         const addButton = menuCard.find('.btn-add');
@@ -785,6 +789,47 @@ document.addEventListener("DOMContentLoaded", function() {
                             }
                         });
 
+                            $(document).on('click', '.btn-delete', function (e) {
+                                e.preventDefault();
+                                $('.delete-confirmation').show();
+                                $('.delete-confirmation-overlay').show();
+                                const stock_id = $(this).data('product-id');
+                                console.log(stock_id);
+
+                                $(document).on('click', '.delete-confirm', function (e) {
+                                    e.preventDefault();
+
+                                    $.ajax({
+                                        url: '../php/delete_stock_item.php',
+                                        type: 'POST',
+                                        dataType: 'json',
+                                        data: {
+                                            stock_id: stock_id
+                                        },
+                                        success: function (response) {
+                                            if (response.success) {
+                                                $('.delete-confirmation').hide();
+                                                $('.delete-confirmation-overlay').hide();
+
+                                                displaySuccessMessage(response.message); 
+                                            } else {
+                                                $('.delete-confirmation').hide();
+                                                $('.delete-confirmation-overlay').hide();
+                                                displayErrorMessage(response.error);
+                                            }
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            console.log('Error: ' + textStatus, errorThrown);
+                                        }
+                                    });
+                                });
+                            });
+
+                            $(document).on('click', '.cancel-confirm', function (e) {
+                                e.preventDefault();
+                                $('.delete-confirmation').hide();
+                                $('.delete-confirmation-overlay').hide();
+                            });
                     });
                     </script>
                 </div>
@@ -793,7 +838,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="popup-overlay"></div>
             <div class="popup-form-container update-stock-details">
                 <div class="popup-form-header">
-                    <h1>update item</h1>
+                    <h1>update stock</h1>
                 </div>
                 <div class="popup-content">
                     <form action="../php/stocks_update.php" class="popup-form" method="POST" enctype="multipart/form-data">
@@ -857,17 +902,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
             </div>
             <div class="delete-confirmation-overlay"></div>
-            <div class="delete-confirmation-container">
+            <div class="delete-confirmation-container inactivity-confirmation">
                 <div class="delete-confirmation-content">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <h1>Are you sure?</h1>
-                    <p>Setting this item as an inactive will cause inactivity of the product on the menu.</p>
+                    <p>Setting this item as an inactive might cause inactivity of the product on the menu.</p>
                     <div class="form-groups button-group confirmation-button">
                         <button class="confirm-delete">set as inactive</button>
                         <button class="confirm-cancel">cancel</button>
                     </div>
                 </div>
             </div>
+
+            <div class="delete-confirmation-container delete-confirmation">
+                <div class="delete-confirmation-content">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <h1>Are you sure you want to delete?</h1>
+                    <p>Deleting this stock might cause inactivity of the product on the menu.</p>
+                    <div class="form-groups button-group confirmation-button">
+                        <button class="delete-confirm">delete item</button>
+                        <button class="cancel-confirm">cancel</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="pop-up-overlay return-confirmation-overlay"></div>
             <div class="pop-up-container return-confirmation-container">
                 <div class="pop-up-content return-confirmation-content">

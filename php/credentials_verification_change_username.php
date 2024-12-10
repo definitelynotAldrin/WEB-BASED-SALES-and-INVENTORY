@@ -74,7 +74,7 @@ if (isset($_POST['email'], $_POST['user_role'], $_POST['username'])) {
     $mail->Subject = "Username Reset";
     $mail->Body = <<<END
     <strong>Your Account Security Code</strong> <br>
-    Hi <strong>$user_name</strong>, <br>
+    Hi <strong>$user_name</strong>, We received a code request for updating password <br>
     Your security code is <br>
     <strong>$randomNumber</strong><br>
     To help us confirm your identity, paste this code into the system. It can only be used once.

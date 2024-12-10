@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt_update->bind_param("si", $newUsername, $account_id);
 
     if ($stmt_update->execute()) {
-        echo json_encode(['success' => true]);
+        echo json_encode(['success' => true, 'message' => 'Successfully updated username.']);
     } else {
         echo json_encode(['success' => false, 'error' => 'Failed to update username.']);
     }

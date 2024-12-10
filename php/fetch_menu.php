@@ -11,12 +11,14 @@ $sql = "
     GROUP_CONCAT(s.stock_name) AS ingredients, 
     SUM(CASE WHEN s.stock_status = 1 THEN 0 ELSE 1 END) AS inactive_stock_count,  -- Counts inactive stocks
     SUM(CASE WHEN s.stock_quantity = 0 THEN 1 ELSE 0 END) AS low_quantity_count,   -- Counts stocks with quantity = 0
+    SUM(CASE WHEN s.stock_id IS NULL THEN 1 ELSE 0 END) AS missing_stock_count,    -- Counts missing stocks
     GROUP_CONCAT(CASE WHEN s.stock_status = 0 THEN 'inactive' ELSE 'active' END) AS stock_statuses,
     GROUP_CONCAT(CASE WHEN s.stock_quantity = 0 THEN 'low' ELSE 'sufficient' END) AS quantity_statuses
 FROM menu_items mi
 LEFT JOIN menu_item_stocks mis ON mi.item_id = mis.menu_item_id
 LEFT JOIN stocks s ON mis.stock_id = s.stock_id
-WHERE 1=1"; // Base condition to simplify adding AND clauses
+WHERE 1=1";
+ // Base condition to simplify adding AND clauses
 
 // Filter by category if it's not 'all'
 if ($category !== 'all') {
@@ -54,8 +56,9 @@ if ($result->num_rows > 0) {
         // Handle potential NULL or empty values for item_category
         $itemCategory = !empty($row['item_category']) ? $row['item_category'] : 'undefined';
     
-        // Mark menu item as inactive if any ingredient has low stock or is inactive
-        $inactiveClass = ($row['inactive_stock_count'] > 0 || $row['low_quantity_count'] > 0) ? 'inactive-card' : '';
+       // Mark menu item as inactive if any ingredient is missing, has low stock, or is inactive
+$inactiveClass = ($row['inactive_stock_count'] > 0 || $row['low_quantity_count'] > 0 || $row['missing_stock_count'] > 0) ? 'inactive-card' : '';
+
     
         $menuItems[] = [
             'item_id' => $row['item_id'],

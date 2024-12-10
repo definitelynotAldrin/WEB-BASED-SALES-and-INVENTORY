@@ -32,7 +32,8 @@ if ($user === null) {
 }
 
 if (strtotime($user["reset_token_expires_at"]) <= time()) {
-    die("token has expired");
+    header("Location: ../public/login_panel");
+    
 }
 
 ?>
@@ -80,14 +81,14 @@ if (strtotime($user["reset_token_expires_at"]) <= time()) {
                 <div class="form-group">
                     <label for="password">password</label>
                     <input type="text" name="password" id="password">
-                    <i class="fas fa-eye show-password" id="showPassword"></i>
-                    <i class="fas fa-eye-slash hide-password" id="hidePassword"></i>
+                    <i class="fas fa-eye" id="showPassword"></i>
+                    <i class="fas fa-eye-slash" id="hidePassword"></i>
                 </div>
                 <div class="form-group">
                     <label for="password">repeat-password</label>
                     <input type="password" name="repeat_password" id="repeat-password">
-                    <i class="fas fa-eye show-password" id="showPassword"></i>
-                    <i class="fas fa-eye-slash hide-password" id="hidePassword"></i>
+                    <i class="fas fa-eye" id="showPassword"></i>
+                    <i class="fas fa-eye-slash" id="hidePassword"></i>
                 </div>
                 <div class="button-group">
                     <button type="submit" id="button-confirm">confirm reset</button>
@@ -204,5 +205,34 @@ if (strtotime($user["reset_token_expires_at"]) <= time()) {
     </div>
 <script src="../js/showPass.js"></script>
 <script src="../js/alert_disappear.js"></script>
+<script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Select all icons with class 'showHidePassword'
+    const toggles = document.querySelectorAll('.showHidePassword');
+
+    toggles.forEach(toggle => {
+        // Add event listener to each toggle icon
+        toggle.addEventListener('click', function() {
+            const passwordInput = toggle.previousElementSibling; // Get the input field right before the icon
+
+            // Toggle between password and text type
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggle.classList.remove('fa-eye');
+                toggle.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = "password";
+                toggle.classList.remove('fa-eye-slash');
+                toggle.classList.add('fa-eye');
+            }
+        });
+    });
+});
+
+
+
+ </script>
+</script>
 </body>
 </html>

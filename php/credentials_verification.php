@@ -73,7 +73,7 @@ if (isset($_POST['email'], $_POST['user_role'], $_POST['username'])) {
     $mail->addAddress($email);
     $mail->Subject = "Email Reset";
     $mail->Body = <<<END
-    <strong>Your Account Security Code</strong> <br>
+    <strong>Your Account Security Code</strong> We received a code request for updating password <br>
     Hi <strong>$user_name</strong>, <br>
     Your security code is <br>
     <strong>$randomNumber</strong><br>

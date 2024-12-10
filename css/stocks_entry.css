@@ -769,7 +769,12 @@ select{
 }
 
 .btn-edit, .btn-delete, .btn-return, .btn-add{
-    font-size: 1.2rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-inactive{
+    font-size: 0.9rem;
     cursor: pointer;
 }
 
@@ -777,7 +782,7 @@ select{
     color: var(--light-green);
 }
 
-.btn-delete{
+.btn-delete, .btn-inactive{
     color: var(--red);
 }
 
@@ -920,13 +925,14 @@ select{
     border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-.confirm-delete{
+.confirm-delete, .delete-confirm{
     background-color: var(--red);
     font-weight: 500;
     color: var(--white);
 }
 
-.confirm-delete:active{
+.confirm-delete:active,
+.delete-confirm:active{
     background-color: #7b0303;
 }
 
