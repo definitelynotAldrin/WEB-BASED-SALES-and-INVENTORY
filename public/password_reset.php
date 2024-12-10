@@ -80,15 +80,15 @@ if (strtotime($user["reset_token_expires_at"]) <= time()) {
                 <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>" id="token">
                 <div class="form-group">
                     <label for="password">password</label>
-                    <input type="text" name="password" id="password">
-                    <i class="fas fa-eye" id="showPassword"></i>
-                    <i class="fas fa-eye-slash" id="hidePassword"></i>
+                    <input type="password" name="password" id="password">
+                    <i class="fas fa-eye hide-password" id="showPassword"></i>
+                    <i class="fas fa-eye-slash show-password" id="hidePassword"></i>
                 </div>
                 <div class="form-group">
                     <label for="password">repeat-password</label>
                     <input type="password" name="repeat_password" id="repeat-password">
-                    <i class="fas fa-eye" id="showPassword"></i>
-                    <i class="fas fa-eye-slash" id="hidePassword"></i>
+                    <i class="fas fa-eye hide-password" id="showPassword"></i>
+                    <i class="fas fa-eye-slash show-password" id="hidePassword"></i>
                 </div>
                 <div class="button-group">
                     <button type="submit" id="button-confirm">confirm reset</button>
@@ -171,6 +171,27 @@ if (strtotime($user["reset_token_expires_at"]) <= time()) {
                     });
                 });
 
+                $(document).ready(function() {
+                    // Toggle password visibility for individual input fields
+                    $('.form-group').on('click', '.hide-password, .show-password', function() {
+                        const $icon = $(this); // The clicked icon
+                        const $input = $icon.closest('.form-group').find('input'); // The corresponding input field
+
+                        if ($icon.hasClass('show-password')) {
+                            // Show password
+                            $input.attr('type', 'text');
+                            $icon.hide(); // Hide the "hide-password" icon
+                            $icon.siblings('.hide-password').show(); // Show the "show-password" icon
+                        } else {
+                            // Hide password
+                            $input.attr('type', 'password');
+                            $icon.hide(); // Hide the "show-password" icon
+                            $icon.siblings('.show-password').show(); // Show the "hide-password" icon
+                        }
+                    });
+                });
+
+
 
                 function displaySuccessMessage(message1) {
                     // Create a div to hold the success message
@@ -203,36 +224,7 @@ if (strtotime($user["reset_token_expires_at"]) <= time()) {
                 }
         </script>
     </div>
-<script src="../js/showPass.js"></script>
 <script src="../js/alert_disappear.js"></script>
-<script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Select all icons with class 'showHidePassword'
-    const toggles = document.querySelectorAll('.showHidePassword');
-
-    toggles.forEach(toggle => {
-        // Add event listener to each toggle icon
-        toggle.addEventListener('click', function() {
-            const passwordInput = toggle.previousElementSibling; // Get the input field right before the icon
-
-            // Toggle between password and text type
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                toggle.classList.remove('fa-eye');
-                toggle.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = "password";
-                toggle.classList.remove('fa-eye-slash');
-                toggle.classList.add('fa-eye');
-            }
-        });
-    });
-});
-
-
-
- </script>
 </script>
 </body>
 </html>
