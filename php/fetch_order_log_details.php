@@ -7,6 +7,7 @@ if (isset($_GET['order_id'])) {
     // Updated SQL query to group items by item_name and order_item_status
     $sql = "SELECT 
         p.username AS payment_username,  -- Alias for username from payments
+        p.payment_status, 
         o.username AS order_username,
         o.customer_name, 
         o.order_date, 
@@ -46,6 +47,7 @@ if (isset($_GET['order_id'])) {
 
         // Store static order data once (only from the first row)
         $orderData = [
+            'payment_status' => $firstRow['payment_status'] ?? "?",
             'payment_username' => $firstRow['payment_username'] ?? "?",  // From payments table
             'order_username' => $firstRow['order_username'] ?? "?",      // From orders table
             'customer_name' => $firstRow['customer_name'],
@@ -74,7 +76,8 @@ if (isset($_GET['order_id'])) {
         // Send response back to the frontend
         echo json_encode([
             'success' => true,
-            'payment_username' => $orderData['payment_username'],  
+            'payment_status' => $orderData['payment_status'], 
+            'payment_username' => $orderData['payment_username'],
             'order_username' => $orderData['order_username'],  
             'customer_name' => $orderData['customer_name'],
             'order_date' => $orderData['order_date'],

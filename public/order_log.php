@@ -404,6 +404,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <h3>total</h3>
                                     <span></span>
                                 </div>
+                                <div class="card-bottom-group">
+                                    <h3>Payment Status</h3>
+                                    <span class="payment-status"></span>
+                                </div>
                             </div>
                             <div class="card-bottom-groups">
                                 <div class="card-bottom-group note-field">
@@ -490,6 +494,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 // Update customer name and order date/time
                                 $('.waiter-username').text(response.order_username);
                                 $('.cashier-username').text(response.payment_username);
+                                $('.payment-status').text(response.payment_status);
                                 $('.customer-name').text(response.customer_name);
                                 $('.customer-table').text(response.customer_table);
                                 $('.order-date').text(response.order_date);
