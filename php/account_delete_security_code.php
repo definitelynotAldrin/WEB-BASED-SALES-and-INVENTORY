@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 include_once "../includes/connection.php";
 date_default_timezone_set('Asia/Manila');
 
-$mysqli = new mysqli("localhost", "root", "", "campano_db");
+$mysqli = new mysqli('localhost', 'u169343664_root', 'Campano_db00', 'u169343664_campano_db');
 
 if ($mysqli->connect_error) {
     echo json_encode(['success' => false, 'error' => 'Database connection failed']);

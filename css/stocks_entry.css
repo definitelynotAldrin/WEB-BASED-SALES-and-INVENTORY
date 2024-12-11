@@ -1082,6 +1082,14 @@ select{
     }
 
     
+    .alert, .success{
+        width: 90%;
+        top: 50%;
+        background-color: var(--light-green);
+        color: white;
+    }
+
+    
 }
 
 @media (max-width: 650px){

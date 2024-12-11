@@ -204,7 +204,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
                             if (sessionUserRole === 'user_service') {
                                 $('.main-header-title').text('Service Interface');
-                            } else{
+                            }
+                            else if (sessionUserRole === 'user_kitchen'){
+                                $('.main-header-title').text('Kitchen Interface');
+                            } 
+                            else{
                                 $('.main-header-title').text('Admin Interface');
                             }
                         });

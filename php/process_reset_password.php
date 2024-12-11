@@ -9,7 +9,7 @@ $token_hash = hash("sha256", $token);
 
 include_once "../includes/connection.php";
 
-$mysqli = new mysqli("localhost", "root", "", "campano_db");
+$mysqli = new mysqli('localhost', 'u169343664_root', 'Campano_db00', 'u169343664_campano_db');
 
 // Check for connection errors
 if ($mysqli->connect_error) {

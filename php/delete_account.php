@@ -15,7 +15,7 @@ if (empty($password)) {
 }
 
 // Initialize database connection
-$conn = new mysqli("localhost", "root", "", "campano_db");
+$conn = new mysqli('localhost', 'u169343664_root', 'Campano_db00', 'u169343664_campano_db');
 if ($conn->connect_error) {
     echo json_encode(["success" => false, "error" => "Database connection failed"]);
     exit;

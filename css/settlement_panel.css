@@ -59,7 +59,7 @@
     padding: 2rem;
     display: flex;
     flex-direction: column;
-    z-index: 2;
+    z-index: 15;
 }
 
 .side-navigation-logo{
@@ -298,7 +298,7 @@
     box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
     margin-top: 3rem;
     display: none;
-    z-index: 9999;
+    z-index: 10;
 }
 
 .notification-title{
