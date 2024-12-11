@@ -868,6 +868,17 @@
     border: 1px solid var(--dark-green);
 }
 
+@media (max-width: 370px){
+
+    .collectibles-header{
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+
+    
+}
+
 
 
 @media (max-width: 480px){
@@ -909,6 +920,7 @@
     .notification-main-wrapper{
         width: 85vw;
     }
+    
 }
 
 @media (max-width: 699px){

@@ -7,13 +7,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set a timeout to hide the alerts after 5 seconds (5000 milliseconds)
     if (alertDanger) {
         setTimeout(function() {
-            alertDanger.style.opacity = '0';
+            alertDanger.style.display = 'none';
         }, 3000);
     }
 
     if (alertSuccess) {
         setTimeout(function() {
-            alertSuccess.style.opacity = '0';
+            alertSuccess.style.display = 'none';
         }, 3000);
     }
 });
