@@ -12,7 +12,7 @@ if(!isset($account_id)){
 
 if ($user_role !== 'user_admin') {
     // Redirect to login or error page if user does not have the right role
-    header('Location: ../public/login_panel');
+    header('Location: ../public/login_panel.php');
     exit();
 }
 
@@ -100,43 +100,43 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="menu">
                     <ul class="nav-lists">
                         <li id="dashboard" class="navbar-item">
-                            <a href="../public/index">
+                            <a href="../public/index.php">
                                 <i class="fa-solid fa-border-all"></i>
                                 <span class="link-text">dashboard</span>
                             </a>
                         </li>
                         <li id="menu_entry" class="navbar-item">
-                            <a href="../public/menu_entry">
+                            <a href="../public/menu_entry.php">
                                 <i class="fa-solid fa-shrimp"></i>
                                 <span class="link-text">Menu data entry</span>
                             </a>
                         </li>
                         <li id="stocks_entry" class="navbar-item">
-                            <a href="../public/stocks_entry">
+                            <a href="../public/stocks_entry.php">
                                 <i class="fa-solid fa-cubes"></i>
                                 <span class="link-text">stocks data entry</span>
                             </a>
                         </li>
                         <li id="order_entry" class="navbar-item">
-                            <a href="../public/order_entry">
+                            <a href="../public/order_entry.php">
                                 <i class="fa-solid fa-rectangle-list"></i>
                                 <span class="link-text">order data entry</span>
                             </a>
                         </li>
                         <li id="order_log" class="navbar-item">
-                            <a href="../public/order_log">
+                            <a href="../public/order_log.php">
                                 <i class="fa-solid fa-box-archive"></i>
                                 <span class="link-text">order log</span>
                             </a>
                         </li>
                         <li id="kitchen" class="navbar-item">
-                            <a href="../public/kitchen_dashboard">
+                            <a href="../public/kitchen_dashboard.php">
                                 <i class="fa-solid fa-kitchen-set"></i>
                                 <span class="link-text">kitchen dashboard</span>
                             </a>
                         </li>
                         <li id="settlement" class="navbar-item">
-                            <a href="../public/settlement_panel">
+                            <a href="../public/settlement_panel.php">
                                 <i class="fa-solid fa-credit-card"></i>
                                 <span class="link-text">settlement</span>
                             </a>

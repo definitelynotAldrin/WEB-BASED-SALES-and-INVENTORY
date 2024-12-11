@@ -28,11 +28,11 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 if ($user === null) {
-    header("Location: ../public/login_panel");
+    header('Location: ../public/login_panel.php');
 }
 
 if (strtotime($user["reset_token_expires_at"]) <= time()) {
-    header("Location: ../public/login_panel");
+    header('Location: ../public/login_panel.php');
     
 }
 

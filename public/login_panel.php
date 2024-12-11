@@ -31,7 +31,7 @@
                     <img src="../assets/img_bg.jpg" alt="" class="card-image">
                 </div>
                 <div class="card-content">
-                    <a href="../public/login_admin" class="card-link">
+                    <a href="../public/login_admin.php" class="card-link">
                         <span>admin</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
@@ -42,7 +42,7 @@
                     <img src="../assets/service.jpg" alt="" class="card-image">
                 </div>
                 <div class="card-content">
-                    <a href="../public/login_service" class="card-link">
+                    <a href="../public/login_service.php" class="card-link">
                         <span>service</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
@@ -53,7 +53,7 @@
                     <img src="../assets/kitchen image (1).jpg" alt="" class="card-image">
                 </div>
                 <div class="card-content">
-                    <a href="../public/login_kitchen" class="card-link">
+                    <a href="../public/login_kitchen.php" class="card-link">
                         <span>kitchen</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>

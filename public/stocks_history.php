@@ -13,7 +13,7 @@ if(!isset($account_id)){
 
 if ($user_role !== 'user_admin') {
     // Redirect to login or error page if user does not have the right role
-    header('Location: ../public/login_panel');
+    header('Location: ../public/login_panel.php');
     exit();
 }
 
