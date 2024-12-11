@@ -10,13 +10,25 @@ if ($conn->connect_error) {
 }
 
 // Query to fetch all accounts
-$sql = "SELECT email, account_username, account_status, account_id FROM accounts";
+$sql = "SELECT email, account_username, account_status, date_time, account_id FROM accounts";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $accounts = [];
     while ($row = $result->fetch_assoc()) {
-        $accounts[] = $row;
+        // Format date and time
+        $dateTime = new DateTime($row['date_time']);
+        $formattedDate = $dateTime->format('M d, Y'); // Example: Dec 11, 2024
+        $formattedTime = $dateTime->format('g:i A');  // Example: 9:50 AM
+
+        $accounts[] = [
+            'email' => $row['email'],
+            'account_username' => $row['account_username'],
+            'account_status' => $row['account_status'],
+            'date' => $formattedDate,
+            'time' => $formattedTime,
+            'account_id' => $row['account_id']
+        ];
     }
     echo json_encode(["success" => true, "data" => $accounts]);
 } else {
@@ -24,3 +36,4 @@ if ($result->num_rows > 0) {
 }
 
 $conn->close();
+?>

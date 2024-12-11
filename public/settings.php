@@ -252,6 +252,105 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         $(document).ready(function() {
 
+
+
+                            $('.create-accounts').on('click', function() {
+                                $('.create-account-popup').fadeIn();
+                                $('.settings-popup-overlay').fadeIn();
+                            });
+
+                            $('.btnSignup').on('click', function (e) {
+                                e.preventDefault();
+
+                                const role = $('#createRole').val();
+                                const email = $('#createEmail').val();
+                                const username = $('#createUsername').val();
+                                const password = $('#passwordInput').val();
+
+                                
+
+                                // Input validation
+                                if (!role || !email || !username || !password) {
+                                    displayErrorMessage('All fields are required.');
+                                    return;
+                                }
+
+                                if (!validatePassword(password)) {
+                                    displayErrorMessage('Password must be at least 8 characters long and include at least one number, and one special character.');
+                                    return;
+                                }
+
+                                $('.popup-confirmation-container').fadeIn(); // Show the popup
+                                $('.popup-overlay').fadeIn();
+
+                                $('#question').text('Are you sure you want to create this account?');
+
+                                $('.button-confirm').off('click').on('click', function(e) {
+                                    e.preventDefault();
+
+                                    $.ajax({
+                                        url: '../php/create_account.php', // Path to your PHP script
+                                        type: 'POST',
+                                        dataType: 'json',
+                                        data: {
+                                            role: role,
+                                            email: email,
+                                            username: username,
+                                            password: password
+                                        },
+                                        success: function (response) {
+                                            if (response.success) {
+                                                displaySuccessMessage(response.message);
+                                                // Optionally clear the form
+                                                $('form')[0].reset();
+                                                $('.popup-confirmation-container').fadeOut();
+                                                $('.popup-overlay').fadeOut();
+                                                loadAccounts();
+                                            } else {
+                                                displayErrorMessage(response.message);
+                                                $('.popup-confirmation-container').fadeOut();
+                                                $('.popup-overlay').fadeOut();
+                                            }
+                                        },
+                                        error: function () {
+                                            $('#error-container').text('An error occurred. Please try again.').show();
+                                        }
+                                    });
+                                });
+
+                                function validatePassword(password) {
+                                    const minLength = 8;
+                                    const hasNumber = /[0-9]/.test(password);
+                                    const hasSpecialChar = /[\W_]/.test(password);
+
+                                    return password.length >= minLength && hasNumber && hasSpecialChar;
+                                }
+                                // AJAX request
+
+                            });
+
+                            // Show/hide password toggle
+                            $('#hidePassword').on('click', function () {
+                                $('#passwordInput').attr('type', 'text');
+                                $('#hidePassword').hide();
+                                $('#showPassword').show();
+                            });
+
+                            $('#showPassword').on('click', function () {
+                                $('#passwordInput').attr('type', 'password');
+                                $('#showPassword').hide();
+                                $('#hidePassword').show();
+                            });
+
+                            $('.btnCancel').off('click').on('click', function(e) {
+                                e.preventDefault(); // Prevent default link behavior
+                                $('.popup-confirmation-container').fadeOut();
+                                $('.popup-overlay').fadeOut();
+                            });
+
+
+
+
                             $(document).on('click', '.button-active', function(e) {
                                 e.preventDefault();
 
@@ -291,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             $(document).on('click', '.manage-accounts', function(e) {
                                 e.preventDefault();
 
-                                $('.popup-table-container').fadeIn();
+                                $('.manage-account-popup').fadeIn();
                                 $('.settings-popup-overlay').fadeIn();
 
                                 
@@ -317,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             },
                                             success: function(response) {
                                                 if (response.success) {
-                                                    $('.popup-table-container').fadeOut();
+                                                    $('.manage-account-popup').fadeOut();
                                                     $('.email-verification-status').fadeIn();
                                                     $('.popup-confirmation-container').fadeOut();
                                                     $('#email-address-status').text(response.email);
@@ -358,7 +457,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             },
                                             success: function(response) {
                                                 if (response.success) {
-                                                    $('.popup-table-container').fadeOut();
+                                                    $('.manage-account-popup').fadeOut();
                                                     $('.email-verification-deletion').fadeIn();
                                                     $('.popup-confirmation-container').fadeOut();
                                                     $('#email-address-deletion').text(response.email);
@@ -507,6 +606,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                         <td class="truncate">${account.email}</td>
                                                         <td>${account.account_username}</td>
                                                         <td>${account.account_status}</td>
+                                                        <td>${account.date} ${account.time}</td>
                                                         <td class="table-action">
                                                             <i class="fas fa-eye-slash button-active ${activeClass}" data-account-id="${account.account_id}" data-account-username="${account.account_username}"></i>
                                                             <i class="fa-regular fa-eye button-inactive ${inactiveClass}"
@@ -517,7 +617,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                                     </tr>
                                                 `;
                                             });
-                                            $('.popup-table-container tbody').html(tableBody);
+                                            $('.manage-account-popup tbody').html(tableBody);
                                         } else {
                                             alert(response.error);
                                         }
@@ -1312,9 +1412,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                 // Hide the popup if "no" is clicked
                                 $('.settings-popup-overlay').fadeOut();
                                 $('.role-verification').fadeOut();
-                                $('.popup-table-container').fadeOut();
+                                $('.manage-account-popup').fadeOut();
                                 $('.delete-account-popup').fadeOut();
                                 $('.update-tables-popup').fadeOut();
+                                $('.create-account-popup').fadeOut();
                                 
                             });
 
@@ -1544,6 +1645,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div>
                         <div class="settings-groups manage-accounts">
                             <h3>manage Account</h3>
+                            <i class="fa-solid fa-angle-right"></i>
+                        </div>
+                        <div class="settings-groups create-accounts">
+                            <h3>create Account</h3>
                             <i class="fa-solid fa-angle-right"></i>
                         </div>
                         <div class="settings-groups manage-tables">
@@ -1885,9 +1990,46 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
 
-<!-- -----------------------View Accounts ---------------------- -->
+            <!-- -----------------------Create Accounts ------------------------>
 
-            <div class="popup-table-container">
+            <div class="form-container create-account-popup">
+                <div class="form-container-header">
+                    <h1>Create Account</h1>
+                    <i class="fa-regular fa-circle-xmark popup-close-button"></i>
+                </div>
+                <form action="" method="POST">
+                    <div class="form-group">
+                        <select name="role" id="createRole">
+                            <option value="" hidden>select role</option>
+                            <option value="user_admin">admin</option>
+                            <option value="user_service">service</option>
+                            <option value="user_kitchen">kitchen</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Email</label>
+                        <input type="email" name="email" placeholder="example@gmail.com" id="createEmail">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">username</label>
+                        <input type="text" name="username" id="createUsername">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">password</label>
+                        <input type="password" name="password" id="passwordInput">
+                        <i class="fas fa-eye" id="showPassword"></i>
+                        <i class="fas fa-eye-slash" id="hidePassword"></i>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btnSignup">Sign up</button>
+                    </div>
+                </form>
+            </div>
+
+<!-- -----------------------View Accounts ------------------------>
+
+            <div class="popup-table-container manage-account-popup">
+                <h1>Manage account</h1>
                 <i class="fa-regular fa-circle-xmark popup-close-button"></i>
                 <div class="popup-table-content">
                     <table>
@@ -1896,6 +2038,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <th>email</th>
                                 <th>username</th>
                                 <th>status</th>
+                                <th>date & time</th>
                                 <th>action</th>
                             </tr>
                         </thead>

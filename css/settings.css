@@ -1111,7 +1111,7 @@
 }
 
 .popup-table-container{
-    width: 70vh;
+    width: 95vh;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1131,6 +1131,12 @@
     position: absolute;
     top: 15px;
     right: 15px;
+}
+
+.popup-table-container h1{
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--darker);
 }
 
 .popup-table-content{
@@ -1168,7 +1174,7 @@ td{
 }
 
 td.truncate {
-    max-width: 120px; /* Adjust as per your layout */
+    max-width: 200px; /* Adjust as per your layout */
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -1195,6 +1201,133 @@ td.truncate {
 .table-action .hidden{
     display: none;
 }
+
+
+
+
+.form-container{
+    width: 70vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--white);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 30px;
+    z-index: 2;
+    display: none;
+}
+
+.form-container-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-container-header .popup-close-button{
+    font-size: 1.2rem;
+    color: var(--red);
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+  
+  form{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .form-group{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+  }
+  
+  .account-form{
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .form-group label{
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .form-group input, select{
+    font-size: 1rem;
+    font-weight: 500;
+    width: 100%;
+    padding: 0.5rem;
+    padding-left: 0.7rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    outline: none;
+    background-color: rgba(221, 221, 221, 0.5);
+  }
+  
+  .form-group select{
+    text-transform: capitalize;
+  }
+  
+  .form-group a{
+    text-decoration: underline;
+    color: var(--darker);
+  }
+  
+  .form-group a:active{
+    color: var(--blue);
+  }
+  
+  .button-group{
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .button-group button{
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: var(--white);
+    background-color: var(--light-green);
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+  
+  .button-group button:active{
+    background-color: var(--dark-green);
+  }
+  
+  
+  
+  .form-group #showPassword,
+  .form-group #hidePassword {
+      position: absolute;
+      top: 60%;
+      right: 20px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: rgba(0, 0, 0, 0.7);
+  }
+  
+  .fa-eye-slash {
+      display: none;
+  }
+  
+  
 
 @media (max-width: 480px){
 
@@ -1252,9 +1385,16 @@ td.truncate {
     }
 
     .settings-popup-container,
-    .popup-table-container{
+    .popup-table-container,
+    .form-container{
         width: 95%;
     }
+
+    .popup-table-content th, td{
+        white-space: nowrap;
+        padding: 10px 1rem;
+    }
+    
 
 }
 
